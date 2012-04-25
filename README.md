@@ -3,7 +3,7 @@ imgcache.js
 
 Description
 -----------
-This library has for purpose to cache images using the new html5 filesystem API : if the page is viewed offline and its images are cached through this mechanism, they will be shown instead of an empty image.
+The purpose of this JS library is to cache images using the new html5 File API : if the page is viewed offline and its images are cached through this mechanism, they will be shown instead of an empty image.
 
 It is especially useful for mobile web applications using Phonegap/Cordova where normal browser cache cannot be relied upon and where offline navigation is quite common.
 
