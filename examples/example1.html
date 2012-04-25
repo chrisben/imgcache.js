@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Examples</title>
+	<script src="jquery-1.6.4.min.js"></script>
+	<script src="../js/imgcache.js"></script>
+	<!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
+	<script src="../cordova.js"></script>
+	<script>
+		var startTest = function() {
+			// see console output for debug info
+			ImgCache.options.debug = true;
+			ImgCache.options.usePersistentCache = true;
+
+			ImgCache.init();
+		};
+
+		if (typeof(cordova) !== 'undefined') {
+			// cordova test
+			console.log('cordova start');
+			document.addEventListener('deviceready', startTest, false);
+		} else {
+			// normal browser test
+			startTest();
+		}
+
+	$(document).ready(function () {
+
+		var show_img_src = function() {
+			$('img[data-desc]').each(function() {
+				$img = $(this);
+				$desc = $('#' + $img.attr('data-desc') );
+				$desc.html('src="' + $img.attr('src') + '"');
+			});
+		};
+
+		$('#clear_cache').click(function(e) {
+			e.preventDefault();
+			ImgCache.clearCache();
+		});
+
+		$('#show_src').click(function(e) {
+			e.preventDefault();
+			show_img_src();
+		});
+
+		$('#cache_images').click(function(e) {
+			e.preventDefault();
+			$('img').each(function() {
+				ImgCache.cacheFile($(this).attr('src'));
+			});
+		});
+
+		$('#use_cache').click(function(e) {
+			e.preventDefault();
+			$('img').each(function() {
+				ImgCache.useCachedFile($(this));
+			});
+		});
+
+		$('#use_online').click(function(e) {
+			e.preventDefault();
+			$('img').each(function() {
+				ImgCache.useOnlineFile($(this));
+			});
+		});
+
+		$('#cache_folder').click(function(e) {
+			$(this).attr('href', ImgCache.getCacheFolderURI());
+		});
+	});
+	</script>
+	<style>
+		/* just to make the page look a little nicer.. no use for the example in itself.. */
+		.note {
+			background-color: #bbb;
+			margin: 1em;
+			padding: 1em;
+			display: inline-block;
+			float: right;
+			clear: right;
+		}
+		code {
+			display: block;
+			margin: 0.5em;
+		}
+		ul#actions li {
+			margin: 0.8em;
+		}
+		body { background-color: #eef;  }
+		h1 { text-align: center; }
+	</style>
+</head>
+<body>
+
+<h1>imgcache.js - examples</h1>
+
+<div class="note">
+<p>Don't forget to accept your browser request to store data on the local computer!</p>
+</div>
+
+<div class="note">
+<p>If seen in Chrome from file://, run chrome with the following flags: <code>--allow-file-access-from-files --allow-file-access</code> in order to <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">avoid a security error</a>.</p>
+<p>Otherwise run the page from a web server.</p>
+</div>
+
+<h2>Actions</h2>
+<ul id="actions">
+	<li><a href="#" id="clear_cache">Clear the local filesystem cache</a></li>
+	<li><a href="#" id="cache_images">Cache images locally</a></li>
+	<li><a href="#" id="use_cache">Replace images with cached files</a></li>
+	<li><a href="#" id="use_online">Revert to original online images</a></li>
+	<li><a href="#" id="show_src">Show/update img src text</a></li>
+	<li><a href="#" id="cache_folder" target="new">Navigate into local cache folder</a></li>
+</ul>
+<div>
+	<h3>Local image</h3>
+	<img src="kitty.jpg" width="150" height="157" id="local" data-desc="local_desc">
+	<p id="local_desc"></p>
+</div>
+<hr>
+<div>
+	<h3>Remote image</h3>
+	<!-- random image on domain with CORS enabled -->
+	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png" width="120" height="82" id="remote_cors" data-desc="remote_cors_desc">
+	<p id="remote_cors_desc"></p>
+</div>
+
+</body>
+</html>

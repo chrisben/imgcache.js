@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns		= "http://www.w3.org/ns/widgets"
+	xmlns:gap	= "http://phonegap.com/ns/1.0"
+	id		= "imgcache.js"
+	versionCode	= "1"
+	version 	= "1.0.0">
+
+	<name>imgcache.js</name>
+
+	<description>Test application</description>
+
+	<author href="http://www.wobis.fr"
+		email="christophe.benoit@wobis.fr">
+		Christophe Benoit
+	</author>
+
+	<feature name="http://api.phonegap.com/1.0/file"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+
+	<preference name="orientation" value="default" />
+	<preference name="target-device" value="universal" />
+	<preference name="fullscreen" value="true" />
+
+	<access origin=".*" />
+</widget>
