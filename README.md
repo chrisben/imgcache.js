@@ -12,7 +12,7 @@ Used with imagesloaded as shown in examples/example2.html, you can see that it c
 * replace images with cached version if fail to load
 This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
 
-This library should work with Phonegap/Cordova 1.x so the supported platforms should be:
+This library works with Phonegap/Cordova 1.7 so the supported platforms should be:
 * Android
 * BlackBerry WebWorks (OS 5.0 and higher)
 * iOS
@@ -25,7 +25,7 @@ All methods are asynchronous. Use callbacks if required.
 Requirements
 ------------
 * jQuery (any version from 1.6 should do)
-* Phonegap/Cordova *optional* : v1.x
+* Phonegap/Cordova *optional* : >= v1.7
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Release Notes
@@ -63,7 +63,7 @@ Used with Phonegap/Cordova:
 <feature name="http://api.phonegap.com/1.0/file"/>
 ```
 * ImgCache.init() to be called onDeviceReady, not before!
-* [Known issue] (https://issues.apache.org/jira/browse/CB-539) with FileTransfer.download in Cordova 1.5+ 1.6x .. waiting for 1.7 for real tests..
+* [Known issue] (https://issues.apache.org/jira/browse/CB-539) with FileTransfer.download in Cordova 1.5+ 1.6x .. 1.7 does fix the problem.
 
 Used with Chrome (v > 12 I believe..) or future browsers that support the html5 filesystem API:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server..
