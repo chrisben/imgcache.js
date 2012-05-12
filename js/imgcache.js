@@ -17,11 +17,11 @@
 var ImgCache = {
 	// options to override before using the library (but after loading this script!)
 	options: {
-		debug: false,			/* write to console? */
+		debug: false,			/* write log (to console)? */
 		localCacheFolder: 'imgcache',	/* name of the cache folder */
 		useDataURI: false,		/* use src="data:.."? otherwise will use src="filesystem:.." */
 		chromeQuota: 10*1024*1024,	/* allocated cache space : here 10Mb */
-		usePersistentCache: true
+		usePersistentCache: true	/* false: use temporary cache storage */
 	}
 };
 
@@ -144,6 +144,9 @@ var ImgCache = {
 				//TODO: error_callback(error)
 				logging('Image ' + uri + ' could not be downloaded - status: ' + xhr.status);
 			}
+		};
+		xhr.onerror = function() {
+			logging('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status);
 		};
 		xhr.send();
 	};
