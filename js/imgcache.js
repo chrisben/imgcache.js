@@ -229,7 +229,7 @@ var ImgCache = {
 	};
 
 	// $img: jQuery object of an <img/> element
-	ImgCache.useCachedFile = function($img, fail_callback) {
+	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
 
 		if (!ImgCache.filesystem || !ImgCache.dirEntry || !$img)
 			return;
@@ -259,17 +259,18 @@ var ImgCache = {
 						var base64content = e.target.result;
 						if (!base64content) {
 							logging('Error: file in cache ' + filename + ' is empty');
-							if (fail_callback) fail_callback();
+							if (fail_callback) fail_callback($img);
 							return;
 						}
 						_setNewImgPath($img, base64content, img_src);
 						logging('File ' + filename + ' loaded from cache');
+						if (success_callback) success_callback($img);
 					};
 					reader.readAsDataURL(file);
 				};
 				var _fail = function(error) {
 					logging('Error: Failed to read file ' + error.code);
-					if (fail_callback) fail_callback();
+					if (fail_callback) fail_callback($img);
 				};
 
 				entry.file(_win, _fail);
@@ -278,12 +279,13 @@ var ImgCache = {
 				var new_url = _getFileEntryURL(entry);
 				_setNewImgPath($img, new_url, img_src);
 				logging('File ' + filename + ' loaded from cache');
+				if (success_callback) success_callback($img);
 			}
 		};
 		// if file does not exist in cache, cache it now!
 		var _fail = function(e) {
 			logging('File ' + filename + ' not in cache');
-			if (fail_callback) fail_callback();
+			if (fail_callback) fail_callback($img);
 		};
 		ImgCache.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
 	}
