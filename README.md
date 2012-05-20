@@ -30,12 +30,16 @@ Requirements
 
 Release Notes
 -------------
+* v0.2 Cached filenames are now using hash of source url (SHA-1)
 * v0.1 Initial release
 
 License
 -------
 Copyright 2012 (c) Christophe BENOIT
 Apache License http://www.apache.org/licenses/LICENSE-2.0
+
+Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
+The copyright for this part belongs to the creator of this work.
 
 High level API
 --------------
@@ -77,5 +81,4 @@ otherwise the local filesystem will not be accessible (security error)
 Todo
 ----
 * Automated tests
-* Local files should be stored uniquely depending on their original full path: currently if two files have the same name, they will be overwritten
 * Find a solution for cache invalidation in case an image changes
