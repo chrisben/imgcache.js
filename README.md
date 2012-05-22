@@ -9,18 +9,18 @@ It is especially useful for mobile web applications using Phonegap/Cordova where
 
 Used with imagesloaded as shown in examples/example2.html, you can see that it can automatically:
 * store images in cache
-* replace images with cached version if fail to load
+* replace images with cached version if they fail to load (offline / busy server..)
 This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
 
 This library works with Phonegap/Cordova 1.7 so the supported platforms should be:
-* Android
+* Android [TESTED]
+* iOS [TESTED]
 * BlackBerry WebWorks (OS 5.0 and higher)
-* iOS
 * Windows Phone 7 ( Mango )
 
 It has also been made to work with the original html5 File API - currently only implemented in recent Chrome versions - to speed up testing of a whole web application from the desktop.
 
-All methods are asynchronous. Use callbacks if required.
+All methods are asynchronous : use callbacks if required.
 
 Requirements
 ------------
@@ -68,7 +68,10 @@ Used with Phonegap/Cordova:
 <feature name="http://api.phonegap.com/1.0/file"/>
 ```
 * ImgCache.init() to be called onDeviceReady, not before!
-* [Known issue] (https://issues.apache.org/jira/browse/CB-539) with FileTransfer.download in Cordova 1.5+ 1.6x .. 1.7 does fix the problem.
+* Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard:
+```xml
+<access origin="*" />
+```
 
 Used with Chrome (v > 12 I believe..) or future browsers that support the html5 filesystem API:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server..
@@ -83,3 +86,4 @@ Todo
 ----
 * Automated tests
 * Find a solution for cache invalidation in case an image changes
+* When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method
