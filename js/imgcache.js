@@ -145,7 +145,7 @@ var ImgCache = {
 						writer.onerror = error_callback;
 						writer.onwriteend = function() { success_callback(fileEntry);  };
 
-						var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;
+						var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 						var bb = new BlobBuilder();
 						bb.append(xhr.response);
 						var mime_type = xhr.getResponseHeader('Content-type');

@@ -36,6 +36,7 @@ Release Notes
 License
 -------
 Copyright 2012 (c) Christophe BENOIT
+
 Apache License http://www.apache.org/licenses/LICENSE-2.0
 
 Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
