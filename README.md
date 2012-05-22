@@ -37,7 +37,7 @@ License
 -------
 Copyright 2012 (c) Christophe BENOIT
 
-Apache License http://www.apache.org/licenses/LICENSE-2.0
+Apache License - see LICENSE.md
 
 Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
 The copyright for this part belongs to the creator of this work.
@@ -86,4 +86,4 @@ Todo
 ----
 * Automated tests
 * Find a solution for cache invalidation in case an image changes
-* When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method
+* When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)
