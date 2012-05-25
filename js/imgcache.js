@@ -76,7 +76,11 @@ var ImgCache = {
 	var FileGetExtension = function(filename) {
 		if (!filename)
 			return '';
-		return filename.split('.').pop();
+		var ext = filename.split('.').pop();
+		// make sure it's a realistic file extension - for images no more than 4 characters long (.jpeg)
+		if (!ext || ext.length > 4)
+			return '';
+		return ext;
 	};
 
 	/***********************************************
