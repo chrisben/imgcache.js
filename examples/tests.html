@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>imgcache.js - Tests</title>
+	<script src="jquery-1.6.4.min.js"></script>
+	<script src="../js/imgcache.js"></script>
+	<!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
+	<script src="../cordova.js"></script>
+	<script>
+		var logger = function(str, level) {
+			var levelClass = '';
+			if (level == 1) levelClass='info';
+			if (level == 2) levelClass='warn';
+			if (level == 3) levelClass='error';
+			$('#log').append($('<li></li>').addClass(levelClass).text(str));
+		};
+		var startTest = function() {
+			// see console output for debug info
+			ImgCache.options.debug = true;
+			ImgCache.options.usePersistentCache = true;
+			ImgCache.options.customLogger = logger;
+
+			$('#version').text('imgcache.js version ' + ImgCache.version);
+
+			var $test_img = $('#test_img');
+
+			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
+			var tests_list = [
+				{
+					name: 'init',
+					test: function(ok, nok) {
+						ImgCache.init(ok, nok);
+					} 
+				},
+				{
+					name: 'cacheFile', 
+					test: function(ok, nok) {
+						ImgCache.cacheFile($test_img.attr('src'), ok, nok);
+					}
+				},
+				{ 
+					name: 'useCachedFile',
+					test: function(ok, nok) {
+						ImgCache.useCachedFile($test_img, ok, nok);
+					}
+				},
+				{ 
+					name: 'useOnlineFile', 
+					test: function(ok, nok) {
+						ImgCache.useOnlineFile($test_img);
+						if ($test_img.attr('src').match('^http') == 'http')
+							ok();
+						else
+							nok();
+					}  
+				},
+				{ 
+					name: 'clearCache',
+					test: function(ok, nok) { 
+						ImgCache.clearCache(ok, nok);
+					}
+				},
+				{
+					name: 'getCacheFolderURI',
+					test: function(ok, nok) { 
+						var folder = ImgCache.getCacheFolderURI();
+						logger('Output: ' + folder, 1);
+						if (folder && folder.length)
+							ok();
+						else
+							nok();
+					}
+				}
+			];
+
+			var num_tests = tests_list.length;
+			var item = 0;
+			var success_count = 0;
+
+			var test_method = function(result) {
+				if (result !== undefined) { 
+					if (result) {
+						logger('> Result: SUCCESS', 1);
+						success_count ++;
+					}
+					else
+						logger('> Result: FAILURE', 3);
+				}
+				if (item >= num_tests) {
+					$('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
+					return;
+				}
+
+				var cur_test = tests_list[item];
+				logger('*** Testing ' + cur_test.name + ' ['+(item+1)+'/'+num_tests+']', 1);
+				// ready for next one
+				item ++;
+				//starts test now!
+				cur_test.test(function() { test_method(true) }, function() {test_method(false)});
+			};
+
+			test_method();
+		};
+
+		if (typeof(cordova) !== 'undefined') {
+			// cordova test
+			console.log('cordova start');
+			document.addEventListener('deviceready', startTest, false);
+		} else {
+			// normal browser test
+			$(document).ready(function () {
+				startTest();
+			});
+		}
+	</script>
+	<style>
+		/* just to make the page look a little nicer.. no use for the example in itself.. */
+		.note {
+			background-color: #bbb;
+			margin: 1em;
+			padding: 1em;
+			display: inline-block;
+			float: right;
+			clear: right;
+		}
+                code { 
+                        display: block;
+                        margin: 0.5em;
+                }
+		body { background-color: #eef;  }
+		h1 { text-align: center; }
+		#log { clear: both; }
+		#log li.error { background-color: #f99; }
+		#log li.warn { background-color: #ff8c00; }
+		#log li.info { background-color: #87cefa; }
+		#version { font-size: 1.2em; }
+		#result { font-size: 1.5em; font-weight: bold; }
+		#test_img { display: none; }
+	</style>
+</head>
+<body>
+
+<h1>imgcache.js - automated tests</h1>
+
+<div class="note">
+<p>Don't forget to accept your browser request to store data on the local computer!</p>
+</div>
+
+<div class="note">
+<p>If seen in Chrome from file://, run chrome with the following flags: <code>--allow-file-access-from-files --allow-file-access</code> in order to <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">avoid a security error</a>.</p>
+<p>Otherwise run the page from a web server.</p>
+</div>
+
+<!-- this is the test image, it needs to in a CORS enabled domain -->
+<img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
+
+<br/>
+
+<p id="version"></p>
+
+<div id="result">
+</div>
+
+<ul id="log">
+	<h2>log</h2>
+</ul>
+
+</body>
+</html>

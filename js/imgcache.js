@@ -1,4 +1,4 @@
-/*! imgcache.js v0.2
+/*! imgcache.js
    Copyright 2012 Christophe BENOIT
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,9 @@ var ImgCache = {
 		useDataURI: false,		/* use src="data:.."? otherwise will use src="filesystem:.." */
 		chromeQuota: 10*1024*1024,	/* allocated cache space : here 10Mb */
 		usePersistentCache: true	/* false: use temporary cache storage */
-	}
+		/* customLogger */		/* if function defined, will use this one to log events */
+	},
+	version: 0.3
 };
 
 (function($) {
@@ -48,9 +50,18 @@ var ImgCache = {
 	};
 
 
-	var logging = function(str) {
-		if (ImgCache.options.debug)
-			console.log(str);
+	// level: 1=INFO, 2=WARNING, 3=ERROR
+	var logging = function(str, level) {
+		if (ImgCache.options.debug) {
+			if (ImgCache.options.customLogger)
+				ImgCache.options.customLogger(str, level);
+			else {
+				if (level == 1) str = 'INFO: ' + str;
+				if (level == 2) str = 'WARN: ' + str;
+				if (level == 3) str = 'ERROR: ' + str;
+				console.log(str);
+			}
+		}
 	};
 
 	// returns lower cased filename from full URI
@@ -112,11 +123,11 @@ var ImgCache = {
 			return;
 
 		var _fail = function(error) {
-			logging('Failed to get/create local cache directory: ' + error.code);
+			logging('Failed to get/create local cache directory: ' + error.code, 3);
 		};
 		var _getDirSuccess = function(dirEntry) {
 			ImgCache.dirEntry = dirEntry;
-			logging('Local cache folder opened: ' + dirEntry.fullPath);
+			logging('Local cache folder opened: ' + dirEntry.fullPath, 1);
 			if (callback) callback();
 		};
 		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
@@ -159,11 +170,11 @@ var ImgCache = {
 				}, error_callback);
 			} else {
 				//TODO: error_callback(error)
-				logging('Image ' + uri + ' could not be downloaded - status: ' + xhr.status);
+				logging('Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3);
 			}
 		};
 		xhr.onerror = function() {
-			logging('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status);
+			logging('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3);
 		};
 		xhr.send();
 	};
@@ -173,11 +184,11 @@ var ImgCache = {
 		return entry.toURL ? entry.toURL() : entry.toURI();
 	}
 
-	ImgCache.init = function(init_callback) {
-		ImgCache.init_callback = init_callback;
+	ImgCache.init = function(success_callback, error_callback) {
+		ImgCache.init_callback = success_callback;
 
 		var _gotFS = function(filesystem) {
-			logging('LocalFileSystem opened');
+			logging('LocalFileSystem opened', 1);
 
 			// store filesystem handle
 			ImgCache.filesystem = filesystem;
@@ -185,7 +196,8 @@ var ImgCache = {
 			_createCacheDir(ImgCache.init_callback);
 		};
 		var _fail = function(error) {
-			logging('Failed to initialise LocalFileSystem ' + error.code);
+			logging('Failed to initialise LocalFileSystem ' + error.code, 3);
+			if (error_callback) error_callback();
 		};
 		if (is_cordova()) {
 			// PHONEGAP
@@ -196,7 +208,8 @@ var ImgCache = {
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 			window.storageInfo = window.storageInfo || window.webkitStorageInfo;
 			if (!window.storageInfo) {
-				logging('Your browser does not support the html5 File API');
+				logging('Your browser does not support the html5 File API', 2);
+				if (error_callback) error_callback();
 				return;
 			}
 			// request space for storage
@@ -206,13 +219,13 @@ var ImgCache = {
 				persistence, 
 				quota_size,
 				function() { /* success*/ window.requestFileSystem(persistence, quota_size, _gotFS, _fail);  },
-				function(error) { /* error*/ logging('Failed to request quota: ' + error.code) }
+				function(error) { /* error*/ logging('Failed to request quota: ' + error.code, 3); if (error_callback) error_callback(); }
 			);
 		}
 	};
 
 	// this function will not check if image cached or not => will overwrite existing data
-	ImgCache.cacheFile = function(img_src) {
+	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
 
 		if (!ImgCache.filesystem || !ImgCache.dirEntry || !img_src)
 			return;
@@ -224,17 +237,20 @@ var ImgCache = {
 			img_src,
 			filePath,
 			function(entry) {
-				logging('Download complete: ' + entry.fullPath);
+				logging('Download complete: ' + entry.fullPath, 1);
+				if (success_callback) success_callback();
 			},
 			function(error) {
-				if (error.source) logging('Download error source: ' + error.source);
-				if (error.target) logging('Download error target: ' + error.target);
-				logging('Download error code: ' + error.code);
+				if (error.source) logging('Download error source: ' + error.source, 3);
+				if (error.target) logging('Download error target: ' + error.target, 3);
+				logging('Download error code: ' + error.code, 3);
+				if (fail_callback) fail_callback();
 			}
 		);
 	};
 
 	// $img: jQuery object of an <img/> element
+	// Synchronous method
 	ImgCache.useOnlineFile = function($img) {
 		if (!$img)
 			return;
@@ -275,18 +291,18 @@ var ImgCache = {
 						} */
 						var base64content = e.target.result;
 						if (!base64content) {
-							logging('Error: file in cache ' + filename + ' is empty');
+							logging('File in cache ' + filename + ' is empty', 2);
 							if (fail_callback) fail_callback($img);
 							return;
 						}
 						_setNewImgPath($img, base64content, img_src);
-						logging('File ' + filename + ' loaded from cache');
+						logging('File ' + filename + ' loaded from cache', 1);
 						if (success_callback) success_callback($img);
 					};
 					reader.readAsDataURL(file);
 				};
 				var _fail = function(error) {
-					logging('Error: Failed to read file ' + error.code);
+					logging('Failed to read file ' + error.code, 3);
 					if (fail_callback) fail_callback($img);
 				};
 
@@ -295,13 +311,13 @@ var ImgCache = {
 				// using src="filesystem:" kind of url
 				var new_url = _getFileEntryURL(entry);
 				_setNewImgPath($img, new_url, img_src);
-				logging('File ' + filename + ' loaded from cache');
+				logging('File ' + filename + ' loaded from cache', 1);
 				if (success_callback) success_callback($img);
 			}
 		};
 		// if file does not exist in cache, cache it now!
 		var _fail = function(e) {
-			logging('File ' + filename + ' not in cache');
+			logging('File ' + filename + ' not in cache', 1);
 			if (fail_callback) fail_callback($img);
 		};
 		ImgCache.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
@@ -310,19 +326,19 @@ var ImgCache = {
 	// clears the cache
 	ImgCache.clearCache = function(success_callback, error_callback) {
 		if (!ImgCache.filesystem || !ImgCache.dirEntry) {
-			logging('ImgCache not loaded yet!');
+			logging('ImgCache not loaded yet!', 2);
 			return;
 		}
 
 		// delete cache dir completely
 		ImgCache.dirEntry.removeRecursively(
 			function(parent) {
-				logging('Local cache cleared');
+				logging('Local cache cleared', 1);
 				// recreate the cache dir now
 				_createCacheDir(success_callback);
 			},
 			function(error) { 
-				logging('Failed to remove directory or its contents: ' + error.code);
+				logging('Failed to remove directory or its contents: ' + error.code, 3);
 				if (error_callback) error_callback();
 			}
 		);
@@ -330,9 +346,10 @@ var ImgCache = {
 
 	// returns the URI of the local cache folder (filesystem:)
 	// this function is more useful for the examples than for anything else..
+	// Synchronous method
 	ImgCache.getCacheFolderURI = function() {
 		if (!ImgCache.filesystem || !ImgCache.dirEntry) {
-			logging('ImgCache not loaded yet!');
+			logging('ImgCache not loaded yet!', 2);
 			return;
 		}
 

@@ -30,6 +30,7 @@ Requirements
 
 Release Notes
 -------------
+* v0.3 Added granularity to log entries + callbacks to all asynchronous methods + automated tests page
 * v0.2 Cached filenames are now using hash of source url (SHA-1)
 * v0.1 Initial release
 
@@ -84,6 +85,5 @@ otherwise the local filesystem will not be accessible (security error)
 
 Todo
 ----
-* Automated tests
 * Find a solution for cache invalidation in case an image changes
 * When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)
