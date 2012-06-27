@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: 0.3
+	version: 0.4
 };
 
 (function($) {
@@ -238,6 +238,24 @@ var ImgCache = {
 			filePath,
 			function(entry) {
 				logging('Download complete: ' + entry.fullPath, 1);
+
+				// iOS: the file should not be backed up in iCloud
+				// new from cordova 1.8 only
+				if (entry.setMetadata) {
+				entry.setMetadata(
+					function() {
+					/* success*/
+						logging('com.apple.MobileBackup metadata set', 1);
+					},
+					function() {
+					/* failure */
+						logging('com.apple.MobileBackup metadata could not be set', 2);
+					},
+					{ "com.apple.MobileBackup": 1 }
+					// 1=NO backup oddly enough..
+				);
+				}
+
 				if (success_callback) success_callback();
 			},
 			function(error) {
