@@ -46,6 +46,10 @@ var ImgCache = {
 	};
 
 	var is_cordova = function() {
+		if ((typeof navigator !== "undefined" && navigator !== null) 
+	      && (navigator.userAgent != null) && /chrome/.test(navigator.userAgent.toLowerCase())) {
+	      return false;
+	    }
 		return (typeof(cordova) !== 'undefined' || typeof(phonegap) !== 'undefined');
 	};
 
