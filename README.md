@@ -66,12 +66,12 @@ Notes
 -----
 Used with Phonegap/Cordova:
 * Requires the File API permission in config.xml:
-```xml
+```
 <feature name="http://api.phonegap.com/1.0/file"/>
 ```
 * ImgCache.init() to be called onDeviceReady, not before!
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard:
-```xml
+```
 <access origin="*" />
 ```
 
@@ -82,7 +82,7 @@ Used with Chrome (v > 12 I believe..) or future browsers that support the html5 
 --allow-file-access-from-files --allow-file-access
 ```
 otherwise the local filesystem will not be accessible (security error)
-* To navigate through the local filesystem open a new tab with filesystem:http://<sitedomain>/persistent/
+* To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/
 
 Todo
 ----
