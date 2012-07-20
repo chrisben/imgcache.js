@@ -278,7 +278,7 @@ var ImgCache = {
 			return fileEntry.file(function(file) {
 				var reader = new FileReader();
 				reader.onloadend = success_callback;
-				reader.readAsBinaryString(file);
+				reader.readAsText(file);
 				return;
 			}, fail_callback);
 		}, fail_callback);
