@@ -112,6 +112,23 @@ var ImgCache = {
 		return (local_root ? local_root + '/' : '') + filename;
 	};
 
+	ImgCache.isCached = function(img_src, callback) {
+		path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
+		errorHandler = function() {
+			callback(false);
+		};
+		return ImgCache.filesystem.root.getFile(path, {}, function(fileEntry) {
+			return fileEntry.file(function(file) {
+				var reader;
+				reader = new FileReader();
+				reader.onloadend = function() {
+					callback(true);
+				};
+				return reader.readAsText(file);
+			}, errorHandler);
+		}, errorHandler);
+	};
+
 	var _setNewImgPath = function($img, new_src, old_src) {
 		$img.attr('src', new_src);
 		// store previous url in case we need to reload it
@@ -130,7 +147,7 @@ var ImgCache = {
 			logging('Local cache folder opened: ' + dirEntry.fullPath, 1);
 			if (callback) callback();
 		};
-		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
+		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);
 	};
 
 	// This is a wrapper for phonegap's FileTransfer object in order to implement the same feature
@@ -216,7 +233,7 @@ var ImgCache = {
 			var quota_size = ImgCache.options.chromeQuota;
 			var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
 			window.storageInfo.requestQuota(
-				persistence, 
+				persistence,
 				quota_size,
 				function() { /* success*/ window.requestFileSystem(persistence, quota_size, _gotFS, _fail);  },
 				function(error) { /* error*/ logging('Failed to request quota: ' + error.code, 3); if (error_callback) error_callback(); }
@@ -372,7 +389,7 @@ var ImgCache = {
 				// recreate the cache dir now
 				_createCacheDir(success_callback);
 			},
-			function(error) { 
+			function(error) {
 				logging('Failed to remove directory or its contents: ' + error.code, 3);
 				if (error_callback) error_callback();
 			}
