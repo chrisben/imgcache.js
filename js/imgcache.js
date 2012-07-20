@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: 0.4
+	version: 0.5
 };
 
 (function($) {
@@ -265,6 +265,23 @@ var ImgCache = {
 				if (fail_callback) fail_callback();
 			}
 		);
+	};
+
+	// checks if a copy of the file has already been cached
+	ImgCache.isCached = function(img_src, success_callback, fail_callback) {
+
+		if (!ImgCache.filesystem || !ImgCache.dirEntry)
+			return;
+
+		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
+		return ImgCache.filesystem.root.getFile(path, {}, function(fileEntry) {
+			return fileEntry.file(function(file) {
+				var reader = new FileReader();
+				reader.onloadend = success_callback;
+				reader.readAsBinaryString(file);
+				return;
+			}, fail_callback);
+		}, fail_callback);
 	};
 
 	// $img: jQuery object of an <img/> element

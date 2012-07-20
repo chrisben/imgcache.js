@@ -34,9 +34,22 @@
 					} 
 				},
 				{
+					name: 'isCached',
+					test: function(ok, nok) {
+						// expected result: failure
+						ImgCache.isCached($test_img.attr('src'), nok, ok);
+					}
+				},
+				{
 					name: 'cacheFile', 
 					test: function(ok, nok) {
 						ImgCache.cacheFile($test_img.attr('src'), ok, nok);
+					}
+				},
+				{
+					name: 'isCached',
+					test: function(ok, nok) {
+						ImgCache.isCached($test_img.attr('src'), ok, nok);
 					}
 				},
 				{ 
@@ -59,6 +72,12 @@
 					name: 'clearCache',
 					test: function(ok, nok) { 
 						ImgCache.clearCache(ok, nok);
+					}
+				},
+				{
+					name: 'isCached',
+					test: function(ok, nok) {
+						ImgCache.isCached($test_img.attr('src'), nok, ok);
 					}
 				},
 				{

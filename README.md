@@ -30,6 +30,7 @@ Requirements
 
 Release Notes
 -------------
+* v0.5 Added isCached method (thanks to David Novakovic)
 * v0.4 Set cache files to not be backed up by iCloud (iOS only - requires Cordova 1.8+)
 * v0.3 Added granularity to log entries + callbacks to all asynchronous methods + automated tests page
 * v0.2 Cached filenames are now using hash of source url (SHA-1)
@@ -48,6 +49,7 @@ High level API
 --------------
 * ImgCache.init() *initialises the local cache*
 * ImgCache.cacheFile() *writes a copy of a file into the local cache*
+* ImgCache.isCached() *checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.useCachedFile() *replaces the img src with the cached version*
 * ImgCache.useOnlineFile() *replaces back the img src with the original (online) version*
 
