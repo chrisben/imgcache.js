@@ -30,6 +30,7 @@ Requirements
 
 Release Notes
 -------------
+* v0.5.1 Fixed behaviour of isCached method
 * v0.5 Added isCached method (thanks to David Novakovic)
 * v0.4 Set cache files to not be backed up by iCloud (iOS only - requires Cordova 1.8+)
 * v0.3 Added granularity to log entries + callbacks to all asynchronous methods + automated tests page

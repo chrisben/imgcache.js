@@ -37,7 +37,8 @@
 					name: 'isCached',
 					test: function(ok, nok) {
 						// expected result: failure
-						ImgCache.isCached($test_img.attr('src'), nok, ok);
+						ImgCache.isCached($test_img.attr('src'),
+							function(src, res) { if (res) nok(); else ok(); });
 					}
 				},
 				{
@@ -49,7 +50,8 @@
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
-						ImgCache.isCached($test_img.attr('src'), ok, nok);
+						ImgCache.isCached($test_img.attr('src'),
+							function(src, res) { if (res) ok(); else nok();  });
 					}
 				},
 				{ 
@@ -77,7 +79,9 @@
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
-						ImgCache.isCached($test_img.attr('src'), nok, ok);
+						// expected result: failure
+						ImgCache.isCached($test_img.attr('src'),
+							function(src, res) { if (res) nok(); else ok();  });
 					}
 				},
 				{

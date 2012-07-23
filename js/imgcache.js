@@ -268,20 +268,23 @@ var ImgCache = {
 	};
 
 	// checks if a copy of the file has already been cached
-	ImgCache.isCached = function(img_src, success_callback, fail_callback) {
-
-		if (!ImgCache.filesystem || !ImgCache.dirEntry)
+	// Reminder: this is an asynchronous method!
+	// Answer to the question comes in response_callback as the second argument (first being the path)
+	ImgCache.isCached = function(img_src, response_callback) {
+		// sanity check
+		if (!ImgCache.filesystem || !ImgCache.dirEntry || !response_callback)
 			return;
 
 		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
-		return ImgCache.filesystem.root.getFile(path, {}, function(fileEntry) {
-			return fileEntry.file(function(file) {
-				var reader = new FileReader();
-				reader.onloadend = success_callback;
-				reader.readAsText(file);
-				return;
-			}, fail_callback);
-		}, fail_callback);
+		var ret = function(exists) {
+			response_callback(img_src, exists);
+		};
+		// try to get the file entry: if it fails, there's no such file in the cache
+		ImgCache.filesystem.root.getFile(
+			path,
+			{ create: false },
+			function() { ret(true); },
+			function() { ret(false); });
 	};
 
 	// $img: jQuery object of an <img/> element
