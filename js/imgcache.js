@@ -45,9 +45,11 @@ var ImgCache = {
 	    this.fragment  = result[5] || null;
 	};
 
-	var is_cordova = function() {
-		return (typeof(cordova) !== 'undefined' || typeof(phonegap) !== 'undefined');
-	};
+	var is_application = (function() {
+		var is_cordova = typeof(cordova) !== 'undefined' || typeof(phonegap) !== 'undefined';
+		var is_http_protocol = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+		return is_cordova && !is_http_protocol;
+	}());
 
 
 	// level: 1=INFO, 2=WARNING, 3=ERROR
@@ -136,7 +138,7 @@ var ImgCache = {
 	// This is a wrapper for phonegap's FileTransfer object in order to implement the same feature
 	// in Chrome (and possibly extra browsers in the future)
 	var FileTransferWrapper = function(filesystem) {
-		if (is_cordova()) {
+		if (is_application) {
 			// PHONEGAP
 			this.fileTransfer = new FileTransfer();
 		}
@@ -199,7 +201,7 @@ var ImgCache = {
 			logging('Failed to initialise LocalFileSystem ' + error.code, 3);
 			if (error_callback) error_callback();
 		};
-		if (is_cordova()) {
+		if (is_application) {
 			// PHONEGAP
 			var persistence = (ImgCache.options.usePersistentCache ? LocalFileSystem.PERSISTENT : LocalFileSystem.TEMPORARY);
 			window.requestFileSystem(persistence, 0, _gotFS, _fail);
