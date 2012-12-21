@@ -151,7 +151,7 @@ var ImgCache = {
 		// CHROME - browsers
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', uri, true);
-		xhr.responseType = 'arraybuffer';
+		xhr.responseType = 'blob';
 		xhr.onload = function(event){
 			if (xhr.response && (xhr.status == 200 || xhr.status == 0)) {
 				filesystem.root.getFile(localPath, { create:true }, function(fileEntry) {
@@ -159,12 +159,7 @@ var ImgCache = {
 
 						writer.onerror = error_callback;
 						writer.onwriteend = function() { success_callback(fileEntry);  };
-
-						var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
-						var bb = new BlobBuilder();
-						bb.append(xhr.response);
-						var mime_type = xhr.getResponseHeader('Content-type');
-						writer.write(bb.getBlob(mime_type), error_callback);
+						writer.write(xhr.response, error_callback);
 
 					}, error_callback);
 				}, error_callback);
@@ -393,6 +388,6 @@ var ImgCache = {
 
 		return _getFileEntryURL(ImgCache.dirEntry);
 	};
-})(jQuery);
+})(window.jQuery || window.Zepto);
 
 
