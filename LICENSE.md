@@ -1,7 +1,7 @@
 Apache License
 ==============
 
-Copyright 2012 (c) Christophe BENOIT
+Copyright 2012-2013 (c) Christophe BENOIT
 
 *Version 2.0, January 2004*
 

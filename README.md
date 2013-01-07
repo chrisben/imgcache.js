@@ -24,12 +24,13 @@ All methods are asynchronous : use callbacks if required.
 
 Requirements
 ------------
-* jQuery (any version from 1.6 should do)
+* jQuery (any version from 1.6 should do) or Zepto
 * Phonegap/Cordova *optional* : >= v1.7
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Release Notes
 -------------
+* v0.5.2 Fixed isCache for Android  + now works with Zepto + using new Chrome Blob
 * v0.5.1 Fixed behaviour of isCached method
 * v0.5 Added isCached method (thanks to David Novakovic)
 * v0.4 Set cache files to not be backed up by iCloud (iOS only - requires Cordova 1.8+)
@@ -39,7 +40,7 @@ Release Notes
 
 License
 -------
-Copyright 2012 (c) Christophe BENOIT
+Copyright 2012-2013 (c) Christophe BENOIT
 
 Apache License - see LICENSE.md
 

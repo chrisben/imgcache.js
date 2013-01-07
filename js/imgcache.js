@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: 0.5
+	version: 0.5.2
 };
 
 (function($) {
@@ -87,6 +87,7 @@ var ImgCache = {
 	var FileGetExtension = function(filename) {
 		if (!filename)
 			return '';
+		filename = filename.split('?')[0];
 		var ext = filename.split('.').pop();
 		// make sure it's a realistic file extension - for images no more than 4 characters long (.jpeg)
 		if (!ext || ext.length > 4)
@@ -271,6 +272,10 @@ var ImgCache = {
 			return;
 
 		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
+		if (device.platform.indexOf("Android") == 0 && path.indexOf("file://") == 0) {
+			// issue #4 -- android specific
+			path = path.substr(7);
+		}
 		var ret = function(exists) {
 			response_callback(img_src, exists);
 		};
