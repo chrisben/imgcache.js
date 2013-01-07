@@ -272,8 +272,8 @@ var ImgCache = {
 			return;
 
 		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
-		if (device.platform.indexOf("Android") == 0 && path.indexOf("file://") == 0) {
-			// issue #4 -- android specific
+		if (is_cordova() && device.platform && device.platform.indexOf('Android') == 0 && path.indexOf('file://') == 0) {
+			// issue #4 -- android cordova specific
 			path = path.substr(7);
 		}
 		var ret = function(exists) {
