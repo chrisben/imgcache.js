@@ -24,6 +24,7 @@
 			$('#version').text('imgcache.js version ' + ImgCache.version);
 
 			var $test_img = $('#test_img');
+			var $test_div = $('#test_div');
 
 			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
 			var tests_list = [
@@ -48,6 +49,13 @@
 					}
 				},
 				{
+					name: 'cacheBackground', 
+					test: function(ok, nok) {
+						ImgCache.cacheBackground($test_div, ok, nok);
+					}
+				},
+
+				{
 					name: 'isCached',
 					test: function(ok, nok) {
 						ImgCache.isCached($test_img.attr('src'),
@@ -60,6 +68,13 @@
 						ImgCache.useCachedFile($test_img, ok, nok);
 					}
 				},
+				{ 
+					name: 'useCachedBackground',
+					test: function(ok, nok) {
+						ImgCache.useCachedBackground($test_div, ok, nok);
+					}
+				},
+
 				{ 
 					name: 'useOnlineFile', 
 					test: function(ok, nok) {
@@ -177,6 +192,8 @@
 
 <!-- this is the test image, it needs to in a CORS enabled domain -->
 <img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
+<!-- this is the test div, it needs to in a CORS enabled domain -->
+<div id="test_div" style="background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png);"></div>
 
 <br/>
 
