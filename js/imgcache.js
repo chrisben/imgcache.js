@@ -382,6 +382,64 @@ var ImgCache = {
 		);
 	};
 
+	ImgCache.cacheBackground = function($div, success_callback, fail_callback) {
+        var regexp = /\((.+)\)/
+        var img_src = regexp.exec($div.css('background-image'))[1];
+        console.log("Found image URL: " + img_src);
+        ImgCache.cacheFile(img_src, success_callback, fail_callback);
+    }
+
+        // $img: jQuery object of an <div/> element
+    ImgCache.useCachedBackground = function($div, success_callback, fail_callback) {
+
+        if (!ImgCache.filesystem || !ImgCache.dirEntry || !$div)
+            return;
+
+        var regexp = /\((.+)\)/
+        var img_src = regexp.exec($div.css('background-image'))[1];
+        var filename = URIGetFileName(img_src);
+        var filePath = _getCachedFilePath(img_src); // we need only a relative path
+
+        var _gotFileEntry = function(entry) {
+            if (ImgCache.options.useDataURI) {
+                var _win = function(file) {
+                    var reader = new FileReader();
+                    reader.onloadend = function(e) {
+                        var base64content = e.target.result;
+                        if (!base64content) {
+                            logging('File in cache ' + filename + ' is empty', 2);
+                            if (fail_callback) fail_callback($div);
+                            return;
+                        }
+                        _setNewImgPath($img, base64content, img_src);
+                        logging('File ' + filename + ' loaded from cache', 1);
+                        if (success_callback) success_callback($div);
+                    };
+                    reader.readAsDataURL(file);
+                };
+                var _fail = function(error) {
+                    logging('Failed to read file ' + error.code, 3);
+                    if (fail_callback) fail_callback($div);
+                };
+
+                entry.file(_win, _fail);
+            } else {
+                // using src="filesystem:" kind of url
+                var new_url = _getFileEntryURL(entry);
+                $('.featured').css('background-image', 'url(' + new_url + ')');
+                //_setNewImgPath($img, new_url, img_src);
+                logging('File ' + filename + ' loaded from cache', 1);
+                if (success_callback) success_callback($div);
+            }
+        };
+        // if file does not exist in cache, cache it now!
+        var _fail = function(e) {
+            logging('File ' + filename + ' not in cache', 1);
+            if (fail_callback) fail_callback($div);
+        };
+        ImgCache.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
+    }
+
 	// returns the URI of the local cache folder (filesystem:)
 	// this function is more useful for the examples than for anything else..
 	// Synchronous method
