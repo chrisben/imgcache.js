@@ -160,6 +160,7 @@ var ImgCache = {
 		}
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', uri, true);
+		xhr.setRequestHeader('Cache-Control', 'no-cache');
 		xhr.responseType = 'blob';
 		xhr.onload = function(event){
 			if (xhr.response && (xhr.status == 200 || xhr.status == 0)) {
