@@ -159,8 +159,26 @@ var ImgCache = {
 			}
 		}
 		var xhr = new XMLHttpRequest();
+
+		// CORS/S3/Cloudfront compatibility
+		// For cloudfront, bust cache when origin changes.  ref: https://forums.aws.amazon.com/message.jspa?messageID=422504#422532  
+		// Make sure cloudfront distribution behavior is set to forward query strings, and S3 bucket CORS policy is set.  
+		// Permissive but workable S3 CORS policy: AllowedOrigin=*, AllowedMethod=GET, AllowedHeader=*.  
+		var crossDomain = /^http/.test(uri) && uri.indexOf(location.origin) != 0;
+		if (crossDomain) {
+			logging( 'Cross-domain support enabled', 1 );
+			uri = uri + ( uri.indexOf('?') < 0 ? '?' : '&') + "origin=" + encodeURIComponent(location.origin);
+		}
+
 		xhr.open('GET', uri, true);
-		xhr.setRequestHeader('Cache-Control', 'no-cache');
+		
+		// Image in the browser cache may not have Access-Control-Allow-Origin set, since, for example, S3 does not send ACAO
+		// for a preceding GET that excluded Origin in its request (e.g. a GET resulting from <img src=...>).
+		// So XHR cannot use the cache (it likely wouldn't, since the Cloudfront cache-buster will also likely bust the browser cache).
+		if (crossDomain) {
+			xhr.setRequestHeader('Cache-Control', 'no-cache');
+		}
+
 		xhr.responseType = 'blob';
 		xhr.onload = function(event){
 			if (xhr.response && (xhr.status == 200 || xhr.status == 0)) {
