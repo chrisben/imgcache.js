@@ -150,6 +150,14 @@ var ImgCache = {
 		var filesystem = this.filesystem;
 
 		// CHROME - browsers
+		var _fail = function( str, level, error_callback ) {
+			logging(str, level);
+			// mock up FileTransferError, so at least caller knows there was a problem.
+			// Normally, the error.code in the callback is a FileWriter error, we return 0 if the error was an XHR error
+			if (error_callback) { 
+				error_callback({code: 0, source: uri, target: localPath});
+			}
+		}
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', uri, true);
 		xhr.responseType = 'blob';
@@ -165,12 +173,11 @@ var ImgCache = {
 					}, error_callback);
 				}, error_callback);
 			} else {
-				//TODO: error_callback(error)
-				logging('Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3);
+				_fail('Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3, error_callback);
 			}
 		};
 		xhr.onerror = function() {
-			logging('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3);
+			_fail('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3, error_callback);
 		};
 		xhr.send();
 	};
