@@ -129,7 +129,22 @@ var ImgCache = {
 		var _getDirSuccess = function(dirEntry) {
 			ImgCache.dirEntry = dirEntry;
 			logging('Local cache folder opened: ' + dirEntry.fullPath, 1);
-			if (callback) callback();
+
+            //Put .nomedia file in cache directory so Android doesn't index it.
+            if (is_cordova() && device.platform && device.platform.indexOf('Android') == 0) {
+    
+                function androidNoMediaFileCreated(entry) {
+                    logging('.nomedia file created.');
+                    if (callback) callback();
+                }
+    
+                dirEntry.getFile(".nomedia", {create: true, exclusive: false}, androidNoMediaFileCreated, _fail);
+            }
+            else
+            {
+                if (callback) callback();
+            }
+			
 		};
 		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
 	};
