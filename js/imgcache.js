@@ -448,7 +448,7 @@ var ImgCache = {
             } else {
                 // using src="filesystem:" kind of url
                 var new_url = _getFileEntryURL(entry);
-                $('.featured').css('background-image', 'url(' + new_url + ')');
+                $div.css('background-image', 'url(' + new_url + ')');
                 //_setNewImgPath($img, new_url, img_src);
                 logging('File ' + filename + ' loaded from cache', 1);
                 if (success_callback) success_callback($div);
