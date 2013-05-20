@@ -24,7 +24,8 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: '0.5.2'
+	version: '0.5.2',
+	ready: false
 };
 
 (function($) {
@@ -144,6 +145,9 @@ var ImgCache = {
             {
                 if (callback) callback();
             }
+
+            ImgCache.ready = true;
+            $(document).trigger('ImgCacheReady');            
 			
 		};
 		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
