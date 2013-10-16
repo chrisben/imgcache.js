@@ -36,7 +36,9 @@ Installation
 To use `imgcache.js`, you need to copy `js/imgcache.js` and add it to your
 application's Javascript. You can then load it like so:
 
-    <script src="imgcache.js" type="application/javascript"></script>
+```html
+<script src="imgcache.js" type="application/javascript"></script>
+```
     
 Using with PhoneGap/Cordova:
 * Requires the File API permission in `config.xml`: `<feature name="http://api.phonegap.com/1.0/file"/>`
@@ -51,21 +53,25 @@ Setup your cache
 ----------------
 Before initializing the cache, you must specify any default options you wish to configure:
 
-    // write log to console
-    ImgCache.options.debug = true;
-    
-    // increase allocated space on Chrome to 50MB, default was 10MB
-    ImgCache.options.chromeQuota = 50*1024*1024;
-    
+```javascript
+// write log to console
+ImgCache.options.debug = true;
+
+// increase allocated space on Chrome to 50MB, default was 10MB
+ImgCache.options.chromeQuota = 50*1024*1024;
+```
+
 See `ImgCache.options` at the top of the source file for more settings.
-    
+
 After setting any custom configuration, initialize the cache:
 
-    ImgCache.init(function(){
-      alert('cache created successfully!');
-    }, function(){
-      alert('check the log for errors');
-    });
+```javascript
+ImgCache.init(function(){
+  alert('cache created successfully!');
+}, function(){
+  alert('check the log for errors');
+});
+````
     
 If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called in `onDeviceReady`, not before!
 
@@ -75,7 +81,9 @@ Storing images
 --------------
 Images are stored into the local folder specified by `ImgCache.options.localCacheFolder`. To add a file to the cache:
 
-    ImgCache.cacheFile('my-cdn.com/users/2/profile.jpg');
+```javascript
+ImgCache.cacheFile('my-cdn.com/users/2/profile.jpg');
+```
 
 TODO: add documentation for `ImgCache.cacheBackground`
 
@@ -83,43 +91,51 @@ Using cached images
 -------------------
 Once an image is stored in the cache, you can replace the file displayed by the image tag:
 
-    target = $('img#profile');
-    ImgCache.cacheFile(target.attr('src'), function(){
-      ImgCache.useCachedFile(target, function(){
-        alert('now using local copy');
-      }, function(){
-        alert('could not load from cache');
-      })
-    });
+```javascript
+target = $('img#profile');
+ImgCache.cacheFile(target.attr('src'), function(){
+  ImgCache.useCachedFile(target, function(){
+    alert('now using local copy');
+  }, function(){
+    alert('could not load from cache');
+  })
+});
+```
     
 To check if a file is stored locally:
 
-    ImgCache.isCached(target.attr('src'), function(path, success){
-      if(success){
-        // already cached
-        ImgCache.useCachedFile(target);
-      } else {
-        // not there, need to cache the image
-        ImgCache.cacheFile(target.attr('src'), function(){
-          ImgCache.useCachedFile(target);
-        });
-      }
+```javascript
+ImgCache.isCached(target.attr('src'), function(path, success){
+  if(success){
+    // already cached
+    ImgCache.useCachedFile(target);
+  } else {
+    // not there, need to cache the image
+    ImgCache.cacheFile(target.attr('src'), function(){
+      ImgCache.useCachedFile(target);
     });
+  }
+});
+```
     
 When you no longer want to use the locally cached file:
 
-    target = $('img#profile');
-    ImgCache.useOnlineFile(target);
+```javascript
+target = $('img#profile');
+ImgCache.useOnlineFile(target);
+```
 
 Clearing the cache
 ------------------
 To remove all cached files, clear the local cache folder:
 
-    ImgCache.clearCache(function(){
-      // continue cleanup...
-    }, function(){
-      // something went wrong
-    });
+```javascript
+ImgCache.clearCache(function(){
+  // continue cleanup...
+}, function(){
+  // something went wrong
+});
+```
     
 There is currently no way to invalidate single images from the cache.
 
