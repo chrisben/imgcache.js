@@ -1,26 +1,17 @@
 imgcache.js
 ===========
+The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using
+PhoneGap/Cordova (version >= 1.7) or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
+(e.g. Chrome).
 
-Description
------------
-The purpose of this JS library is to cache images using the new [html5 File API](https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications). If the page is viewed offline and its images are cached through this mechanism, they will be shown instead of an empty image.
-
-This library is especially useful for mobile web applications using PhoneGap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.
-
-Used with imagesloaded as shown in examples/example2.html, you can see that it can automatically:
-* store images in cache
-* replace images with cached version if they fail to load (offline / busy server..)
-This is the best solution I have found so far to provide easy caching of images within a PhoneGap web app.
-
-This library works with PhoneGap/Cordova 1.7 so the supported platforms should be:
+This library is especially useful for mobile web applications using PhoneGap/Cordova where the normal browser
+cache cannot be relied upon and where offline navigation is quite common.
 * Android [TESTED]
 * iOS [TESTED]
 * BlackBerry WebWorks (OS 5.0 and higher)
 * Windows Phone 7 ( Mango )
 
-It has also been made to work with the original html5 File API - currently only implemented in recent Chrome versions - to speed up testing of a whole web application from the desktop.
-
-All methods are asynchronous : use callbacks if required.
+All methods are asynchronous, so make sure to use success and error callbacks where required :)
 
 Using imgcache.js
 =================
@@ -30,6 +21,9 @@ Requirements
 * jQuery (any version from 1.6 should do) or Zepto
 * PhoneGap/Cordova (v >= 1.7) *optional*
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
+    imagesloaded is useful for caching images after the original remote version has been loaded (as shown
+    in `examples/example2.html`). This is the best solution I have found so far to provide easy caching of
+    images within a PhoneGap web app.
 
 Installation
 ----------
@@ -44,9 +38,9 @@ Using with PhoneGap/Cordova:
 * Requires the File API permission in `config.xml`: `<feature name="http://api.phonegap.com/1.0/file"/>`
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
     
-Using with Chrome (v > 12 I believe...) or future browsers that support the [html5 filesystem API](http://caniuse.com/filesystem):
+Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
-* If page opened locally (file:// ..), chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
+* If the page is opened locally (file:// ..), Chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
 * To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/
     
 Setup your cache
