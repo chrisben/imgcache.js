@@ -3,16 +3,16 @@ imgcache.js
 
 Description
 -----------
-The purpose of this JS library is to cache images using the new html5 File API : if the page is viewed offline and its images are cached through this mechanism, they will be shown instead of an empty image.
+The purpose of this JS library is to cache images using the new [html5 File API](https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications). If the page is viewed offline and its images are cached through this mechanism, they will be shown instead of an empty image.
 
-It is especially useful for mobile web applications using Phonegap/Cordova where normal browser cache cannot be relied upon and where offline navigation is quite common.
+This library is especially useful for mobile web applications using PhoneGap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.
 
 Used with imagesloaded as shown in examples/example2.html, you can see that it can automatically:
 * store images in cache
 * replace images with cached version if they fail to load (offline / busy server..)
-This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
+This is the best solution I have found so far to provide easy caching of images within a PhoneGap web app.
 
-This library works with Phonegap/Cordova 1.7 so the supported platforms should be:
+This library works with PhoneGap/Cordova 1.7 so the supported platforms should be:
 * Android [TESTED]
 * iOS [TESTED]
 * BlackBerry WebWorks (OS 5.0 and higher)
@@ -28,21 +28,21 @@ Using imgcache.js
 Requirements
 ------------
 * jQuery (any version from 1.6 should do) or Zepto
-* Phonegap/Cordova *optional* : >= v1.7
+* PhoneGap/Cordova (v >= 1.7) *optional*
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
-Setting up
+Installation
 ----------
 To use `imgcache.js`, you need to copy `js/imgcache.js` and add it to your
 application's Javascript. You can then load it like so:
 
     <script src="imgcache.js" type="application/javascript"></script>
     
-Using with Phonegap/Cordova:
-* Requires the File API permission in config.xml: `<feature name="http://api.phonegap.com/1.0/file"/>`
+Using with PhoneGap/Cordova:
+* Requires the File API permission in `config.xml`: `<feature name="http://api.phonegap.com/1.0/file"/>`
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
     
-Usin with Chrome (v > 12 I believe..) or future browsers that support the html5 filesystem API:
+Using with Chrome (v > 12 I believe...) or future browsers that support the [html5 filesystem API](http://caniuse.com/filesystem):
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
 * If page opened locally (file:// ..), chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
 * To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/
@@ -67,7 +67,7 @@ After setting any custom configuration, initialize the cache:
       alert('check the log for errors');
     });
     
-If you're using imgcache.js with Phonegap/Cordova, `ImgCache.init()` must be called in `onDeviceReady`, not before!
+If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called in `onDeviceReady`, not before!
 
 Note that in Chrome, the user will be prompted to give permission to the page for accessing the local filesystem (which will run the error callback if they decline).
 
