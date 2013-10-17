@@ -37,6 +37,9 @@ application's Javascript. You can then load it like so:
 Using with PhoneGap/Cordova:
 * Requires the File API permission in `config.xml`: `<feature name="http://api.phonegap.com/1.0/file"/>`
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
+
+Using with PhoneGap/Cordova (version >= 3.0):
+* You may need additional permissions and settings. Check [Issue #15](https://github.com/chrisben/imgcache.js/issues/15) for more information
     
 Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
