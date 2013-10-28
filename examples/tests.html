@@ -16,15 +16,27 @@
 			$('#log').append($('<li></li>').addClass(levelClass).text(str));
 		};
 		var startTest = function() {
-			// see console output for debug info
+
 			ImgCache.options.debug = true;
-			ImgCache.options.usePersistentCache = true;
 			ImgCache.options.customLogger = logger;
+			var default_options = ImgCache.options;
+
+			var test_suites_options = [
+				{
+					usePersistentCache: true
+				},
+				{
+					usePersistentCache: false
+				},
+				{
+					useDataURI: true
+				},	
+
+			];
 
 			$('#version').text('imgcache.js version ' + ImgCache.version);
 
-			var $test_img = $('#test_img');
-			var $test_div = $('#test_div');
+			var $test_img, $test_div;
 
 			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
 			var tests_list = [
@@ -58,7 +70,9 @@
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
-						ImgCache.isCached($test_img.attr('src'),
+						var regexp = /\((.+)\)/
+				                var img_src = regexp.exec($test_div.css('background-image'))[1];
+						ImgCache.isCached(img_src,
 							function(src, res) { if (res) ok(); else nok();  });
 					}
 				},
@@ -112,9 +126,32 @@
 				}
 			];
 
-			var num_tests = tests_list.length;
-			var item = 0;
+			var cur_test_suite = 0;
+			var num_tests = tests_list.length * test_suites_options.length;
 			var success_count = 0;
+			var item = 0;
+
+			var run_next_test_suite = function()
+			{
+				if (cur_test_suite == test_suites_options.length)
+				{
+					logger('END OF TESTS', 1);
+					return;
+				}
+
+				$test_img = $('#test_img').clone();
+				$test_div = $('#test_div').clone();
+
+				// see console output for debug info
+				var cur_options = test_suites_options[cur_test_suite];
+				ImgCache.options = $.extend({}, default_options, cur_options);
+				logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), 1);
+
+				item = 0;
+				test_method();
+
+				cur_test_suite ++;
+			};
 
 			var test_method = function(result) {
 				if (result !== undefined) { 
@@ -125,8 +162,11 @@
 					else
 						logger('> Result: FAILURE', 3);
 				}
-				if (item >= num_tests) {
+				if (item >= tests_list.length) {
 					$('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
+					logger('--------------------------------------------', 1);
+					// launch second set of tests with different options
+					run_next_test_suite();
 					return;
 				}
 
@@ -138,7 +178,7 @@
 				cur_test.test(function() { test_method(true) }, function() {test_method(false)});
 			};
 
-			test_method();
+			run_next_test_suite();
 		};
 
 		if (typeof(cordova) !== 'undefined') {
@@ -168,7 +208,7 @@
                 }
 		body { background-color: #eef;  }
 		h1 { text-align: center; }
-		#log { clear: both; }
+		#log { clear: both; list-style-type: none; }
 		#log li.error { background-color: #f99; }
 		#log li.warn { background-color: #ff8c00; }
 		#log li.info { background-color: #87cefa; }
@@ -193,7 +233,7 @@
 <!-- this is the test image, it needs to in a CORS enabled domain -->
 <img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
 <!-- this is the test div, it needs to in a CORS enabled domain -->
-<div id="test_div" style="background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png);"></div>
+<div id="test_div" style="background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);"></div>
 
 <br/>
 

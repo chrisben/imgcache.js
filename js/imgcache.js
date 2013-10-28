@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: '0.5.2',
+	version: '0.6',
 	ready: false
 };
 
@@ -132,7 +132,7 @@ var ImgCache = {
 			logging('Local cache folder opened: ' + dirEntry.fullPath, 1);
 
             //Put .nomedia file in cache directory so Android doesn't index it.
-            if (is_cordova() && device.platform && device.platform.indexOf('Android') == 0) {
+            if (is_cordova() && device && device.platform && device.platform.indexOf('Android') == 0) {
     
                 function androidNoMediaFileCreated(entry) {
                     logging('.nomedia file created.');
@@ -228,7 +228,7 @@ var ImgCache = {
 		} else {
 			//CHROME
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-			window.storageInfo = window.storageInfo || window.webkitStorageInfo;
+			window.storageInfo = window.storageInfo || (ImgCache.options.usePersistentCache ? navigator.webkitPersistentStorage : navigator.webkitTemporaryStorage);
 			if (!window.storageInfo) {
 				logging('Your browser does not support the html5 File API', 2);
 				if (error_callback) error_callback();
@@ -238,7 +238,6 @@ var ImgCache = {
 			var quota_size = ImgCache.options.chromeQuota;
 			var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
 			window.storageInfo.requestQuota(
-				persistence, 
 				quota_size,
 				function() { /* success*/ window.requestFileSystem(persistence, quota_size, _gotFS, _fail);  },
 				function(error) { /* error*/ logging('Failed to request quota: ' + error.code, 3); if (error_callback) error_callback(); }
@@ -298,7 +297,7 @@ var ImgCache = {
 			return;
 
 		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
-		if (is_cordova() && device.platform && device.platform.indexOf('Android') == 0 && path.indexOf('file://') == 0) {
+		if (is_cordova() && device && device.platform && device.platform.indexOf('Android') == 0 && path.indexOf('file://') == 0) {
 			// issue #4 -- android cordova specific
 			path = path.substr(7);
 		}
@@ -325,13 +324,11 @@ var ImgCache = {
 		$img.removeAttr(old_src_attr);
 	};
 
-	// $img: jQuery object of an <img/> element
-	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
+	var _loadCachedFile = function($element, img_src, set_path_callback, success_callback, fail_callback) {
 
-		if (!ImgCache.filesystem || !ImgCache.dirEntry || !$img)
+		if (!ImgCache.filesystem || !ImgCache.dirEntry || !$element)
 			return;
 
-		var img_src = $img.attr('src');
 		var filename = URIGetFileName(img_src);
 		var filePath = _getCachedFilePath(img_src); // we need only a relative path
 
@@ -356,35 +353,42 @@ var ImgCache = {
 						var base64content = e.target.result;
 						if (!base64content) {
 							logging('File in cache ' + filename + ' is empty', 2);
-							if (fail_callback) fail_callback($img);
+							if (fail_callback) fail_callback($element);
 							return;
 						}
-						_setNewImgPath($img, base64content, img_src);
+						set_path_callback($element, base64content, img_src);
 						logging('File ' + filename + ' loaded from cache', 1);
-						if (success_callback) success_callback($img);
+						if (success_callback) success_callback($element);
 					};
 					reader.readAsDataURL(file);
 				};
 				var _fail = function(error) {
 					logging('Failed to read file ' + error.code, 3);
-					if (fail_callback) fail_callback($img);
+					if (fail_callback) fail_callback($element);
 				};
 
 				entry.file(_win, _fail);
 			} else {
 				// using src="filesystem:" kind of url
 				var new_url = _getFileEntryURL(entry);
-				_setNewImgPath($img, new_url, img_src);
+				set_path_callback($element, new_url, img_src);
 				logging('File ' + filename + ' loaded from cache', 1);
-				if (success_callback) success_callback($img);
+				if (success_callback) success_callback($element);
 			}
 		};
 		// if file does not exist in cache, cache it now!
 		var _fail = function(e) {
 			logging('File ' + filename + ' not in cache', 1);
-			if (fail_callback) fail_callback($img);
+			if (fail_callback) fail_callback($element);
 		};
 		ImgCache.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
+	}
+
+
+
+	// $img: jQuery object of an <img/> element
+	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
+		_loadCachedFile($img, $img.attr('src'), _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// clears the cache
@@ -409,62 +413,23 @@ var ImgCache = {
 	};
 
 	ImgCache.cacheBackground = function($div, success_callback, fail_callback) {
-        var regexp = /\((.+)\)/
-        var img_src = regexp.exec($div.css('background-image'))[1];
-        console.log("Found image URL: " + img_src);
-        ImgCache.cacheFile(img_src, success_callback, fail_callback);
-    }
+	        var regexp = /\((.+)\)/
+	        var img_src = regexp.exec($div.css('background-image'))[1];
+	        logging('Background image URL: ' + img_src, 1);
+	        ImgCache.cacheFile(img_src, success_callback, fail_callback);
+	}
 
-        // $img: jQuery object of an <div/> element
-    ImgCache.useCachedBackground = function($div, success_callback, fail_callback) {
+	ImgCache.useCachedBackground = function($div, success_callback, fail_callback) {
+	        var regexp = /\((.+)\)/
+	        var img_src = regexp.exec($div.css('background-image'))[1];
 
-        if (!ImgCache.filesystem || !ImgCache.dirEntry || !$div)
-            return;
+		var _setBackgroundImagePath = function($element, new_src, old_src) {
+			$element.css('background-image', 'url("' + new_src + '")');
+		};
 
-        var regexp = /\((.+)\)/
-        var img_src = regexp.exec($div.css('background-image'))[1];
-        var filename = URIGetFileName(img_src);
-        var filePath = _getCachedFilePath(img_src); // we need only a relative path
+		_loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, fail_callback);
+	}
 
-        var _gotFileEntry = function(entry) {
-            if (ImgCache.options.useDataURI) {
-                var _win = function(file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function(e) {
-                        var base64content = e.target.result;
-                        if (!base64content) {
-                            logging('File in cache ' + filename + ' is empty', 2);
-                            if (fail_callback) fail_callback($div);
-                            return;
-                        }
-                        _setNewImgPath($img, base64content, img_src);
-                        logging('File ' + filename + ' loaded from cache', 1);
-                        if (success_callback) success_callback($div);
-                    };
-                    reader.readAsDataURL(file);
-                };
-                var _fail = function(error) {
-                    logging('Failed to read file ' + error.code, 3);
-                    if (fail_callback) fail_callback($div);
-                };
-
-                entry.file(_win, _fail);
-            } else {
-                // using src="filesystem:" kind of url
-                var new_url = _getFileEntryURL(entry);
-                $div.css('background-image', 'url(' + new_url + ')');
-                //_setNewImgPath($img, new_url, img_src);
-                logging('File ' + filename + ' loaded from cache', 1);
-                if (success_callback) success_callback($div);
-            }
-        };
-        // if file does not exist in cache, cache it now!
-        var _fail = function(e) {
-            logging('File ' + filename + ' not in cache', 1);
-            if (fail_callback) fail_callback($div);
-        };
-        ImgCache.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
-    }
 
 	// returns the URI of the local cache folder (filesystem:)
 	// this function is more useful for the examples than for anything else..

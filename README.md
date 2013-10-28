@@ -12,7 +12,7 @@ Used with imagesloaded as shown in examples/example2.html, you can see that it c
 * replace images with cached version if they fail to load (offline / busy server..)
 This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
 
-This library works with Phonegap/Cordova 1.7 so the supported platforms should be:
+This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms should be:
 * Android [TESTED]
 * iOS [TESTED]
 * BlackBerry WebWorks (OS 5.0 and higher)
@@ -26,10 +26,12 @@ Requirements
 ------------
 * jQuery (any version from 1.6 should do) or Zepto
 * Phonegap/Cordova *optional* : >= v1.7
+NOTE for Phonegap/Cordova versions 3.x and above: you need to declare the Device plugin in your xml configuration file - see [Phonegap Documentation](http://docs.phonegap.com/en/3.1.0/cordova_device_device.md.html#Device)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Release Notes
 -------------
+* v0.6 Updated deprecated Chrome storage API + Refactored code + improved automated test suites + fixes
 * v0.5.2 Fixed isCache for Android  + now works with Zepto + using new Chrome Blob
 * v0.5.1 Fixed behaviour of isCached method
 * v0.5 Added isCached method (thanks to David Novakovic)
@@ -54,8 +56,9 @@ High level API
 * ImgCache.isCached() *checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.useCachedFile() *replaces the img src with the cached version*
 * ImgCache.useOnlineFile() *replaces back the img src with the original (online) version*
-
-* ImgCache.clear() *clears the local cache folder*
+* ImgCache.clearCache() *clears the local cache folder*
+* ImgCache.cacheBackground() *caches the background image of an element*
+* ImgCache.useCachedBackground() *replaces the background image source of the given element with the cached version*
 
 Options
 -------
@@ -73,6 +76,7 @@ Used with Phonegap/Cordova:
 ```
 <feature name="http://api.phonegap.com/1.0/file"/>
 ```
+* For Phonegap/Cordova versions 3.x you also need to add the Device plugin - see [Phonegap Documentation](http://docs.phonegap.com/en/3.1.0/cordova_device_device.md.html#Device)
 * ImgCache.init() to be called onDeviceReady, not before!
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard:
 ```
@@ -86,7 +90,7 @@ Used with Chrome (v > 12 I believe..) or future browsers that support the html5 
 --allow-file-access-from-files --allow-file-access
 ```
 otherwise the local filesystem will not be accessible (security error)
-* To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/
+* To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/ or filesystem:http://*yourSiteDomain*/temporary/
 
 Todo
 ----

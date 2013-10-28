@@ -10,6 +10,7 @@
 	<script src="../cordova.js"></script>
 	<script>
 		var startTest = function() {
+			/* Note: this is using version 2.x of the imagesloaded library, use of current version might differ */
 			$('body').imagesLoaded(function($images, $proper, $broken ) {
 
 				// see console output for debug info
@@ -76,9 +77,12 @@
 <p>3. Reload the page (or re-start the web app)</p>
 <p>4. You should see the images reloaded from the cache</p>
 
+<p>Note: this is using version 2.x of the imagesloaded library, use of current version might differ</p>
+
 <div>
 	<!-- random image on domain with CORS enabled -->
 	<h2>Random test images</h2>
+
 	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
 	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/f/f1/Processing_Tutorial_Finished.png/180px-Processing_Tutorial_Finished.png">
 	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/d/d7/Ec2.png/150px-Ec2.png">
