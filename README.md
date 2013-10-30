@@ -2,14 +2,15 @@ imgcache.js
 ===========
 
 The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using
-PhoneGap/Cordova (version >= 1.7) or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
+PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
 (e.g. Chrome).
 
 This library is especially useful for mobile web applications using Phonegap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.
 
-Used with [imagesloaded](http://desandro.github.com/imagesloaded/) as shown in examples/example2.html, you can see that it can automatically:
+Used with [imagesloaded](http://desandro.github.com/imagesloaded/) as shown in `examples/example2.html`, you can see that it can automatically:
 * store images in cache
 * replace images with cached version if they fail to load (offline / busy server..)
+
 This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
 
 This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms should be:
@@ -26,8 +27,7 @@ Using imgcache.js
 Requirements
 ------------
 * jQuery (any version from 1.6 should do) or Zepto
-* Phonegap/Cordova *optional* : >= v1.7
-NOTE for Phonegap/Cordova versions 3.x and above: you need to declare the Device plugin in your xml configuration file - see [Phonegap Documentation](http://docs.phonegap.com/en/3.1.0/cordova_device_device.md.html#Device)
+* Phonegap/Cordova *optional* (v >= v1.7)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Installation
@@ -44,7 +44,6 @@ Using with PhoneGap/Cordova:
 ```
 <feature name="http://api.phonegap.com/1.0/file"/>
 ```
-* For Phonegap/Cordova versions 3.x you also need to add the Device plugin - see [Phonegap Documentation](http://docs.phonegap.com/en/3.1.0/cordova_device_device.md.html#Device)
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
 
 Using with PhoneGap/Cordova (version >= 3.0):
