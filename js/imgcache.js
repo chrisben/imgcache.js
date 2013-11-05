@@ -387,8 +387,8 @@ var ImgCache = {
 
 
 	// $img: jQuery object of an <img/> element
-	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
-		_loadCachedFile($img, $img.attr('src'), _setNewImgPath, success_callback, fail_callback);
+	ImgCache.useCachedFile = function($img, img_src, success_callback, fail_callback) {
+		_loadCachedFile($img, img_src, _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// clears the cache
