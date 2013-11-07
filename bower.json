@@ -1,0 +1,24 @@
+{
+  "name": "imgcache.js",
+  "version": "0.6.0",
+  "homepage": "https://github.com/chrisben/imgcache.js",
+  "authors": [
+    "(Christophe BENOIT <>)"
+  ],
+  "description": "The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using PhoneGap/Cordova or browsers supporting the new html5 File API",
+  "main": "js/imgcache.js",
+  "keywords": [
+    "cordova",
+    "phonegap",
+    "cache",
+    "imgcache"
+  ],
+  "license": "Apache License v2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
