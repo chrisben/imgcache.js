@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: '0.6',
+	version: '0.6.1',
 	ready: false
 };
 
@@ -389,6 +389,11 @@ var ImgCache = {
 	// $img: jQuery object of an <img/> element
 	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
 		_loadCachedFile($img, $img.attr('src'), _setNewImgPath, success_callback, fail_callback);
+	}
+
+	// When the source url is not the 'src' attribute of the given img element
+	ImgCache.useCachedFileWithSource = function($img, image_url, success_callback, fail_callback) {
+		_loadCachedFile($img, image_url, _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// clears the cache

@@ -152,6 +152,7 @@ High level API
 * ImgCache.cacheFile() *writes a copy of a file into the local cache*
 * ImgCache.isCached() *checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.useCachedFile() *replaces the img src with the cached version*
+* ImgCache.useCachedFileWithSource() *similar to useCachedFile but with the image source url as extra parameter*
 * ImgCache.useOnlineFile() *replaces back the img src with the original (online) version*
 * ImgCache.clearCache() *clears the local cache folder*
 * ImgCache.cacheBackground() *caches the background image of an element*
