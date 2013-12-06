@@ -10,11 +10,12 @@
 	<description>Test application</description>
 
 	<author href="http://www.wobis.fr"
-		email="christophe.benoit@wobis.fr">
+		email="christophe@wobis.fr">
 		Christophe Benoit
 	</author>
 
 	<feature name="http://api.phonegap.com/1.0/file"/>
+	<feature name="http://api.phonegap.com/1.0/device"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
 
 	<preference name="orientation" value="default" />

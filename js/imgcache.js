@@ -1,5 +1,5 @@
 /*! imgcache.js
-   Copyright 2012 Christophe BENOIT
+   Copyright 2012-2013 Christophe BENOIT
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ var ImgCache = {
 		usePersistentCache: true	/* false: use temporary cache storage */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
-	version: '0.6.1',
+	version: '0.6.2',
 	ready: false
 };
 
@@ -96,6 +96,14 @@ var ImgCache = {
 		return ext;
 	};
 
+	var isImgCacheLoaded = function() {
+		if (!ImgCache.filesystem || !ImgCache.dirEntry) {
+                        logging('ImgCache not loaded yet! - Have you called ImgCache.Init() first?', 2);
+                        return false;
+                }
+		return true;
+	}
+
 	/***********************************************
 		tiny-sha1 r4
 		MIT License
@@ -131,24 +139,22 @@ var ImgCache = {
 			ImgCache.dirEntry = dirEntry;
 			logging('Local cache folder opened: ' + dirEntry.fullPath, 1);
 
-            //Put .nomedia file in cache directory so Android doesn't index it.
-            if (is_cordova() && device && device.platform && device.platform.indexOf('Android') == 0) {
-    
-                function androidNoMediaFileCreated(entry) {
-                    logging('.nomedia file created.');
-                    if (callback) callback();
-                }
-    
-                dirEntry.getFile(".nomedia", {create: true, exclusive: false}, androidNoMediaFileCreated, _fail);
-            }
-            else
-            {
-                if (callback) callback();
-            }
+			//Put .nomedia file in cache directory so Android doesn't index it.
+			if (is_cordova() && device && device.platform && device.platform.indexOf('Android') == 0) {
 
-            ImgCache.ready = true;
-            $(document).trigger('ImgCacheReady');            
-			
+				var _androidNoMediaFileCreated = function(entry) {
+				    logging('.nomedia file created.');
+				    if (callback) callback();
+				}
+
+				dirEntry.getFile(".nomedia", {create: true, exclusive: false}, _androidNoMediaFileCreated, _fail);
+			}
+			else {
+				if (callback) callback();
+			}
+
+			ImgCache.ready = true;
+			$(document).trigger('ImgCacheReady');
 		};
 		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
 	};
@@ -248,7 +254,7 @@ var ImgCache = {
 	// this function will not check if image cached or not => will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
 
-		if (!ImgCache.filesystem || !ImgCache.dirEntry || !img_src)
+		if (!isImgCacheLoaded() || !img_src)
 			return;
 
 		var filePath = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
@@ -293,7 +299,7 @@ var ImgCache = {
 	// Answer to the question comes in response_callback as the second argument (first being the path)
 	ImgCache.isCached = function(img_src, response_callback) {
 		// sanity check
-		if (!ImgCache.filesystem || !ImgCache.dirEntry || !response_callback)
+		if (!isImgCacheLoaded() || !response_callback)
 			return;
 
 		var path = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
@@ -315,7 +321,8 @@ var ImgCache = {
 	// $img: jQuery object of an <img/> element
 	// Synchronous method
 	ImgCache.useOnlineFile = function($img) {
-		if (!$img)
+
+		if (!isImgCacheLoaded() || !$img)
 			return;
 
 		var prev_src = $img.attr(old_src_attr);
@@ -388,20 +395,27 @@ var ImgCache = {
 
 	// $img: jQuery object of an <img/> element
 	ImgCache.useCachedFile = function($img, success_callback, fail_callback) {
+
+		if (!isImgCacheLoaded())
+			return;
+
 		_loadCachedFile($img, $img.attr('src'), _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// When the source url is not the 'src' attribute of the given img element
 	ImgCache.useCachedFileWithSource = function($img, image_url, success_callback, fail_callback) {
+
+		if (!isImgCacheLoaded())
+			return;
+	
 		_loadCachedFile($img, image_url, _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// clears the cache
 	ImgCache.clearCache = function(success_callback, error_callback) {
-		if (!ImgCache.filesystem || !ImgCache.dirEntry) {
-			logging('ImgCache not loaded yet!', 2);
+
+		if (!isImgCacheLoaded())
 			return;
-		}
 
 		// delete cache dir completely
 		ImgCache.dirEntry.removeRecursively(
@@ -418,6 +432,10 @@ var ImgCache = {
 	};
 
 	ImgCache.cacheBackground = function($div, success_callback, fail_callback) {
+
+		if (!isImgCacheLoaded())
+			return;
+
 	        var regexp = /\((.+)\)/
 	        var img_src = regexp.exec($div.css('background-image'))[1];
 	        logging('Background image URL: ' + img_src, 1);
@@ -425,6 +443,10 @@ var ImgCache = {
 	}
 
 	ImgCache.useCachedBackground = function($div, success_callback, fail_callback) {
+
+		if (!isImgCacheLoaded())
+			return;
+
 	        var regexp = /\((.+)\)/
 	        var img_src = regexp.exec($div.css('background-image'))[1];
 
@@ -440,10 +462,9 @@ var ImgCache = {
 	// this function is more useful for the examples than for anything else..
 	// Synchronous method
 	ImgCache.getCacheFolderURI = function() {
-		if (!ImgCache.filesystem || !ImgCache.dirEntry) {
-			logging('ImgCache not loaded yet!', 2);
+
+		if (!isImgCacheLoaded())
 			return;
-		}
 
 		return _getFileEntryURL(ImgCache.dirEntry);
 	};
