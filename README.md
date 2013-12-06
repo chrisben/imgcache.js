@@ -40,7 +40,7 @@ application's Javascript. You can then load it like so:
 ```
     
 Using with PhoneGap/Cordova:
-* Requires the [File API](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature) and [Device]((http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature) plugins in `config.xml`
+* Requires the [File API](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature) and [Device](http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature) plugins in `config.xml`
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
 
 Using with PhoneGap/Cordova (v >= 3.0):
