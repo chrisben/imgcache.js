@@ -231,15 +231,15 @@ var ImgCache = {
 			logging('Failed to initialise LocalFileSystem ' + error.code, 3);
 			if (error_callback) error_callback();
 		};
-		var _checkSize = function(){
-			if (ImgCache.options.cacheClearSize > 0){
-				var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
-				if (curSize === null){
-					curSize = 0;
-				}
+		var _checkSize = function(callback){
+			if (ImgCache.options.cacheClearSize >= 0){
+				var curSize = ImgCache.getCurrentSize();
 				if (curSize > (ImgCache.options.cacheClearSize * 1024 * 1024)){
-					ImgCache.clearCache();
+					ImgCache.clearCache(callback, callback);
 				}
+			} else {
+				if (callback)
+					callback();
 			}
 		}
 		if (is_cordova()) {
@@ -265,6 +265,36 @@ var ImgCache = {
 			);
 		}
 	};
+	
+	ImgCache.hasLocalStorage = function(){
+		try {
+			var mod= SHA1('imgcache_test');
+	        	localStorage.setItem(mod, mod);
+	        	localStorage.removeItem(mod);
+	        	return true;
+	      	} catch(e) {
+	        	return false;
+	      	}
+	};
+	
+	ImgCache.getCurrentSize = function(){
+		if (ImgCache.hasLocalStorage()){
+			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
+			if (curSize === null){
+				curSize = 0;
+				ImgCache.setCurrentSize(0);
+			}
+			return parseInt(curSize);
+		} else {
+			return 0;
+		}
+	};
+	
+	ImgCache.setCurrentSize = function(curSize){
+		if (ImgCache.hasLocalStorage()){
+			localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
+		}
+	};
 
 	// this function will not check if image cached or not => will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
@@ -281,12 +311,7 @@ var ImgCache = {
 			function(entry) {
 				if (ImgCache.options.cacheClearSize > 0){
 					entry.getMetadata(function(metadata) {
-						var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
-						if (curSize === null){
-							curSize = 0;
-						}
-						curSize = parseInt(curSize) + parseInt(metadata.size);
-						localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
+						ImgCache.setCurrentSize(0);
 					});
 				}
 						
