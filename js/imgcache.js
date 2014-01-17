@@ -447,6 +447,9 @@ var ImgCache = {
 		ImgCache.dirEntry.removeRecursively(
 			function(parent) {
 				logging('Local cache cleared', 1);
+				if (ImgCache.options.cacheClearSize > 0){
+					localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, 0);
+				}
 				// recreate the cache dir now
 				_createCacheDir(success_callback);
 			},
