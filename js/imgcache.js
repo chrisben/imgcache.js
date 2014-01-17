@@ -284,9 +284,8 @@ var ImgCache = {
 			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
 			if (curSize === null){
 				curSize = 0;
-				ImgCache.setCurrentSize(0);
 			}
-			return parseInt(curSize);
+			return curSize;
 		} else {
 			return 0;
 		}
@@ -313,7 +312,7 @@ var ImgCache = {
 			function(entry) {
 				if (ImgCache.options.cacheClearSize > 0){
 					entry.getMetadata(function(metadata) {
-						ImgCache.setCurrentSize(parseInt( ImgCache.getCurrentSize()) + parseInt(metadata.size));
+						ImgCache.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
 					});
 				}
 						
