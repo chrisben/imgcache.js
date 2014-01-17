@@ -283,9 +283,9 @@ var ImgCache = {
 		if (ImgCache.hasLocalStorage()){
 			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
 			if (curSize === null){
-				curSize = 0;
+				return 0;
 			}
-			return curSize;
+			return parseInt(curSize);
 		} else {
 			return 0;
 		}
