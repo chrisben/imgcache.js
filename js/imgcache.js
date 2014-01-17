@@ -22,6 +22,7 @@ var ImgCache = {
 		useDataURI: false,		/* use src="data:.."? otherwise will use src="filesystem:.." */
 		chromeQuota: 10*1024*1024,	/* allocated cache space : here 10Mb */
 		usePersistentCache: true	/* false: use temporary cache storage */
+		cacheClearSize : 0,             /* size in Mb that trigger cache clear, 0 to desactivate */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
 	version: '0.6.2',
@@ -221,12 +222,28 @@ var ImgCache = {
 			// store filesystem handle
 			ImgCache.filesystem = filesystem;
 
-			_createCacheDir(ImgCache.init_callback);
+			_createCacheDir(function(){
+				_checkSize(ImgCache.init_callback);
+			});
 		};
 		var _fail = function(error) {
 			logging('Failed to initialise LocalFileSystem ' + error.code, 3);
 			if (error_callback) error_callback();
 		};
+		var _checkSize = function(callback){
+			if (ImgCache.options.cacheClearSize >= 0){
+				var curSize = ImgCache.getCurrentSize();
+				if (curSize > (ImgCache.options.cacheClearSize * 1024 * 1024)){
+					ImgCache.clearCache(callback, callback);
+				} else {
+					if (callback)
+						callback();
+				}
+			} else {
+				if (callback)
+					callback();
+			}
+		}
 		if (is_cordova()) {
 			// PHONEGAP
 			var persistence = (ImgCache.options.usePersistentCache ? LocalFileSystem.PERSISTENT : LocalFileSystem.TEMPORARY);
@@ -250,6 +267,35 @@ var ImgCache = {
 			);
 		}
 	};
+	
+	ImgCache.hasLocalStorage = function(){
+		try {
+			var mod= SHA1('imgcache_test');
+	        	localStorage.setItem(mod, mod);
+	        	localStorage.removeItem(mod);
+	        	return true;
+	      	} catch(e) {
+	        	return false;
+	      	}
+	};
+	
+	ImgCache.getCurrentSize = function(){
+		if (ImgCache.hasLocalStorage()){
+			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
+			if (curSize === null){
+				return 0;
+			}
+			return parseInt(curSize);
+		} else {
+			return 0;
+		}
+	};
+	
+	ImgCache.setCurrentSize = function(curSize){
+		if (ImgCache.hasLocalStorage()){
+			localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
+		}
+	};
 
 	// this function will not check if image cached or not => will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
@@ -264,6 +310,12 @@ var ImgCache = {
 			img_src,
 			filePath,
 			function(entry) {
+				if (ImgCache.options.cacheClearSize > 0){
+					entry.getMetadata(function(metadata) {
+						ImgCache.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
+					});
+				}
+						
 				logging('Download complete: ' + entry.fullPath, 1);
 
 				// iOS: the file should not be backed up in iCloud
@@ -421,6 +473,9 @@ var ImgCache = {
 		ImgCache.dirEntry.removeRecursively(
 			function(parent) {
 				logging('Local cache cleared', 1);
+				if (ImgCache.options.cacheClearSize > 0){
+					ImgCache.setCurrentSize(0);
+				}
 				// recreate the cache dir now
 				_createCacheDir(success_callback);
 			},
