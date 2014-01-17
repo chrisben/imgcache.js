@@ -235,6 +235,9 @@ var ImgCache = {
 				var curSize = ImgCache.getCurrentSize();
 				if (curSize > (ImgCache.options.cacheClearSize * 1024 * 1024)){
 					ImgCache.clearCache(callback, callback);
+				} else {
+					if (callback)
+						callback();
 				}
 			} else {
 				if (callback)
