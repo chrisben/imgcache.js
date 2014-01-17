@@ -311,7 +311,7 @@ var ImgCache = {
 			function(entry) {
 				if (ImgCache.options.cacheClearSize > 0){
 					entry.getMetadata(function(metadata) {
-						ImgCache.setCurrentSize(0);
+						ImgCache.setCurrentSize(parseInt( ImgCache.getCurrentSize()) + parseInt(metadata.size));
 					});
 				}
 						
@@ -473,7 +473,7 @@ var ImgCache = {
 			function(parent) {
 				logging('Local cache cleared', 1);
 				if (ImgCache.options.cacheClearSize > 0){
-					localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, 0);
+					ImgCache.setCurrentSize(0);
 				}
 				// recreate the cache dir now
 				_createCacheDir(success_callback);
