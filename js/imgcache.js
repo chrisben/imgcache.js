@@ -223,8 +223,7 @@ var ImgCache = {
 			ImgCache.filesystem = filesystem;
 
 			_createCacheDir(function(){
-				ImgCache.init_callback();
-				_checkSize();
+				_checkSize(ImgCache.init_callback);
 			});
 		};
 		var _fail = function(error) {
