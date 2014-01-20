@@ -21,7 +21,6 @@ var ImgCache = {
 		localCacheFolder: 'imgcache',	/* name of the cache folder */
 		useDataURI: false,		/* use src="data:.."? otherwise will use src="filesystem:.." */
 		chromeQuota: 10*1024*1024,	/* allocated cache space : here 10Mb */
-		usePersistentCache: true	/* false: use temporary cache storage */
 		cacheClearSize : 0,             /* size in Mb that trigger cache clear, 0 to desactivate */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
@@ -29,7 +28,7 @@ var ImgCache = {
 	ready: false
 };
 
-(function($) {
+(function() {
 
 	var old_src_attr = 'data-old-src';
 
@@ -124,9 +123,9 @@ var ImgCache = {
 	};
 
 	var _setNewImgPath = function($img, new_src, old_src) {
-		$img.attr('src', new_src);
+		$img.setAttribute('src', new_src);
 		// store previous url in case we need to reload it
-		$img.attr(old_src_attr, old_src);
+		$img.setAttribute(old_src_attr, old_src);
 	};
 
 	var _createCacheDir = function(callback) {
@@ -155,7 +154,7 @@ var ImgCache = {
 			}
 
 			ImgCache.ready = true;
-			$(document).trigger('ImgCacheReady');
+			document.dispatchEvent(new Event('ImgCacheReady'));
 		};
 		ImgCache.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
 	};
@@ -377,10 +376,10 @@ var ImgCache = {
 		if (!isImgCacheLoaded() || !$img)
 			return;
 
-		var prev_src = $img.attr(old_src_attr);
+		var prev_src = $img.getAttribute(old_src_attr);
 		if (prev_src)
-			$img.attr('src', prev_src);
-		$img.removeAttr(old_src_attr);
+			$img.style.src = prev_src;
+		$img.removeAttribute(old_src_attr);
 	};
 
 	var _loadCachedFile = function($element, img_src, set_path_callback, success_callback, fail_callback) {
@@ -451,7 +450,7 @@ var ImgCache = {
 		if (!isImgCacheLoaded())
 			return;
 
-		_loadCachedFile($img, $img.attr('src'), _setNewImgPath, success_callback, fail_callback);
+		_loadCachedFile($img, $img.getAttribute('src'), _setNewImgPath, success_callback, fail_callback);
 	}
 
 	// When the source url is not the 'src' attribute of the given img element
@@ -492,7 +491,7 @@ var ImgCache = {
 			return;
 
 	        var regexp = /\((.+)\)/
-	        var img_src = regexp.exec($div.css('background-image'))[1];
+	        var img_src = regexp.exec(getComputedStyle($div).backgroundImage)[1];
 	        logging('Background image URL: ' + img_src, 1);
 	        ImgCache.cacheFile(img_src, success_callback, fail_callback);
 	}
@@ -503,10 +502,10 @@ var ImgCache = {
 			return;
 
 	        var regexp = /\((.+)\)/
-	        var img_src = regexp.exec($div.css('background-image'))[1];
+	        var img_src = regexp.exec(getComputedStyle($div).backgroundImage)[1];
 
 		var _setBackgroundImagePath = function($element, new_src, old_src) {
-			$element.css('background-image', 'url("' + new_src + '")');
+			$element.style.backgroundImage = 'url("' + new_src + '")';
 		};
 
 		_loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, fail_callback);
@@ -523,6 +522,6 @@ var ImgCache = {
 
 		return _getFileEntryURL(ImgCache.dirEntry);
 	};
-})(window.jQuery || window.Zepto);
+})();
 
 
