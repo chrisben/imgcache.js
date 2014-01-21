@@ -21,7 +21,7 @@ var ImgCache = {
 		localCacheFolder: 'imgcache',	/* name of the cache folder */
 		useDataURI: false,		/* use src="data:.."? otherwise will use src="filesystem:.." */
 		chromeQuota: 10*1024*1024,	/* allocated cache space : here 10Mb */
-		usePersistentCache: true	/* false: use temporary cache storage */
+		usePersistentCache: true,	/* false: use temporary cache storage */
 		cacheClearSize : 0,             /* size in Mb that trigger cache clear, 0 to desactivate */
 		/* customLogger */		/* if function defined, will use this one to log events */
 	},
