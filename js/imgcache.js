@@ -486,6 +486,24 @@ var ImgCache = {
 		);
 	};
 
+	ImgCache.removeFile = function(img_src, success_callback, error_callback) {
+		var filePath = _getCachedFilePath(img_src, ImgCache.dirEntry.fullPath);
+		var _fail = function(error) {
+			logging('Failed to remove file due to ' + error.code, 3);
+			if (error_callback)
+				error_callback();
+		};
+		ImgCache.filesystem.root.getFile(filePath, { create: false }, function (fileEntry) {
+			fileEntry.remove(
+				function(entry) {
+					if (success_callback)
+						success_callback();
+				},
+				_fail
+			);
+		}, _fail);
+	};
+	
 	ImgCache.cacheBackground = function($div, success_callback, fail_callback) {
 
 		if (!isImgCacheLoaded())
