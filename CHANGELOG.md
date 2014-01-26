@@ -1,5 +1,9 @@
 Release Notes
 -------------
+* 0.7.0
+	Reorganised code to be clearer
+	Added API coverage check in unit test
+	Started to create jQuery agnostic adapter
 * 0.6.2 Added extra checks to make sure ImgCache is properly initialised first (#15) + added note in README about Phonegap plugins (#25)
 * 0.6.1 Added useCachedFileWithSource (#21) + added Bower package definition
 * 0.6   Updated deprecated Chrome storage API + Refactored code + improved automated test suites + fixes

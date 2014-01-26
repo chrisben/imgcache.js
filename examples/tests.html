@@ -8,15 +8,29 @@
 	<!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
 	<script src="../cordova.js"></script>
 	<script>
+		var LOG_LEVEL_INFO = 1;
+		var LOG_LEVEL_WARNING = 2;
+		var LOG_LEVEL_ERROR = 3;
+		
 		var logger = function(str, level) {
 			var levelClass = '';
-			if (level == 1) levelClass='info';
-			if (level == 2) levelClass='warn';
-			if (level == 3) levelClass='error';
+			if (level == LOG_LEVEL_INFO) levelClass='info';
+			if (level == LOG_LEVEL_WARNING) levelClass='warn';
+			if (level == LOG_LEVEL_ERROR) levelClass='error';
 			$('#log').append($('<li></li>').addClass(levelClass).text(str));
 		};
+		
 		var startTest = function() {
 
+			var countTotalMethods = 0;
+			for (var m in ImgCache) {
+				if (typeof ImgCache[m] === "function") {
+					countTotalMethods++;
+				}
+			}
+			var testedMethods = {};
+			
+		
 			ImgCache.options.debug = true;
 			ImgCache.options.customLogger = logger;
 			var default_options = ImgCache.options;
@@ -39,6 +53,8 @@
 			var $test_img, $test_div;
 
 			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
+			// name: exact name of the method to Test
+			// test: code that will get executed - can expect ok or error
 			var tests_list = [
 				{
 					name: 'init',
@@ -46,12 +62,17 @@
 						ImgCache.init(ok, nok);
 					} 
 				},
+				{ 
+					name: 'clearCache',
+					test: function(ok, nok) { 
+						ImgCache.clearCache(ok, nok);
+					}
+				},
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
 						// expected result: failure
-						ImgCache.isCached($test_img.attr('src'),
-							function(src, res) { if (res) nok(); else ok(); });
+						ImgCache.isCached($test_img.attr('src'), function(src, res) { if (res) nok(); else ok(); });
 					}
 				},
 				{
@@ -70,10 +91,17 @@
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
-						var regexp = /\((.+)\)/
-				                var img_src = regexp.exec($test_div.css('background-image'))[1];
-						ImgCache.isCached(img_src,
-							function(src, res) { if (res) ok(); else nok();  });
+						var backgroundImageProperty = $test_div.css('background-image');
+						if (!backgroundImageProperty) {
+							nok();
+							return;
+						}
+						var regexp = /\((.+)\)/;
+						var img_src = regexp.exec(backgroundImageProperty)[1];
+						if (img_src)
+							ImgCache.isCached(img_src, function(src, res) { if (res) ok(); else nok();  });
+						else
+							nok();
 					}
 				},
 				{ 
@@ -117,7 +145,7 @@
 					name: 'getCacheFolderURI',
 					test: function(ok, nok) { 
 						var folder = ImgCache.getCacheFolderURI();
-						logger('Output: ' + folder, 1);
+						logger('Output: ' + folder, LOG_LEVEL_INFO);
 						if (folder && folder.length)
 							ok();
 						else
@@ -135,17 +163,21 @@
 			{
 				if (cur_test_suite == test_suites_options.length)
 				{
-					logger('END OF TESTS', 1);
+					logger('END OF TESTS', LOG_LEVEL_INFO);
 					return;
 				}
 
 				$test_img = $('#test_img').clone();
 				$test_div = $('#test_div').clone();
+				// add those new elements to the dom to get styles
+				$('#sink')
+					.append($test_img)
+					.append($test_div);
 
 				// see console output for debug info
 				var cur_options = test_suites_options[cur_test_suite];
 				ImgCache.options = $.extend({}, default_options, cur_options);
-				logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), 1);
+				logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), LOG_LEVEL_INFO);
 
 				item = 0;
 				test_method();
@@ -156,22 +188,32 @@
 			var test_method = function(result) {
 				if (result !== undefined) { 
 					if (result) {
-						logger('> Result: SUCCESS', 1);
+						logger('> Result: SUCCESS', LOG_LEVEL_INFO);
 						success_count ++;
 					}
 					else
-						logger('> Result: FAILURE', 3);
+						logger('> Result: FAILURE', LOG_LEVEL_ERROR);
 				}
 				if (item >= tests_list.length) {
 					$('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
-					logger('--------------------------------------------', 1);
+
+					var countTestedMethods = 0;
+					for (var key in testedMethods) {
+						if (testedMethods.hasOwnProperty(key)) countTestedMethods++;
+					}					
+					
+					$('#methods').text('API coverage: ' + countTestedMethods + '/' + countTotalMethods);
+					logger('--------------------------------------------', LOG_LEVEL_INFO);
 					// launch second set of tests with different options
 					run_next_test_suite();
 					return;
 				}
 
 				var cur_test = tests_list[item];
-				logger('*** Testing ' + cur_test.name + ' ['+(item+1)+'/'+num_tests+']', 1);
+				logger('*** Testing ' + cur_test.name + ' ['+(item+1)+'/'+num_tests+']', LOG_LEVEL_INFO);
+				
+				testedMethods[cur_test.name] = true;
+				
 				// ready for next one
 				item ++;
 				//starts test now!
@@ -188,6 +230,7 @@
 		} else {
 			// normal browser test
 			$(document).ready(function () {
+				console.log('starting test');
 				startTest();
 			});
 		}
@@ -202,10 +245,10 @@
 			float: right;
 			clear: right;
 		}
-                code { 
-                        display: block;
-                        margin: 0.5em;
-                }
+		code { 
+				display: block;
+				margin: 0.5em;
+		}
 		body { background-color: #eef;  }
 		h1 { text-align: center; }
 		#log { clear: both; list-style-type: none; }
@@ -215,8 +258,10 @@
 		#version { font-size: 1.2em; }
 		#result { font-size: 1.5em; font-weight: bold; }
 		#test_img { display: none; }
+		.bgimg { display: none; background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);  }
 	</style>
 </head>
+
 <body>
 
 <h1>imgcache.js - automated tests</h1>
@@ -233,18 +278,19 @@
 <!-- this is the test image, it needs to in a CORS enabled domain -->
 <img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
 <!-- this is the test div, it needs to in a CORS enabled domain -->
-<div id="test_div" style="background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);"></div>
-
+<div id="test_div" class="bgimg">&nbsp;</div>
 <br/>
 
 <p id="version"></p>
 
-<div id="result">
-</div>
+<div id="result"></div>
+<div id="methods"></div>
 
 <ul id="log">
 	<h2>log</h2>
 </ul>
+
+<div id="sink"></div>
 
 </body>
 </html>

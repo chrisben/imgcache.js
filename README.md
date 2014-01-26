@@ -170,7 +170,7 @@ See `CHANGELOG.md` for recent updates.
 
 License
 -------
-Copyright 2012-2013 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
+Copyright 2012-2014 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
 
 Apache License - see LICENSE.md
 
