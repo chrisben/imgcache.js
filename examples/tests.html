@@ -23,9 +23,11 @@
 		var startTest = function() {
 
 			var countTotalMethods = 0;
+			var testableMethods = [];
 			for (var m in ImgCache) {
 				if (typeof ImgCache[m] === "function") {
 					countTotalMethods++;
+					testableMethods.push(m);
 				}
 			}
 			var testedMethods = {};
@@ -33,6 +35,7 @@
 		
 			ImgCache.options.debug = true;
 			ImgCache.options.customLogger = logger;
+			ImgCache.options.cacheClearSize = 10;
 			var default_options = ImgCache.options;
 
 			var test_suites_options = [
@@ -69,6 +72,16 @@
 					}
 				},
 				{
+					name: 'getCurrentSize',
+					test: function(ok, nok) {
+						if (ImgCache.getCurrentSize() == 0) {
+							ok();
+						} else {
+							nok();
+						}
+					} 
+				},
+				{
 					name: 'isCached',
 					test: function(ok, nok) {
 						// expected result: failure
@@ -87,7 +100,6 @@
 						ImgCache.cacheBackground($test_div, ok, nok);
 					}
 				},
-
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
@@ -116,7 +128,6 @@
 						ImgCache.useCachedBackground($test_div, ok, nok);
 					}
 				},
-
 				{ 
 					name: 'useOnlineFile', 
 					test: function(ok, nok) {
@@ -127,10 +138,20 @@
 							nok();
 					}  
 				},
+				{
+					name: 'getCurrentSize',
+					test: function(ok, nok) {
+						if (ImgCache.getCurrentSize() > 0) {
+							ok();
+						} else {
+							nok();
+						}
+					} 
+				},
 				{ 
-					name: 'clearCache',
+					name: 'removeFile',
 					test: function(ok, nok) { 
-						ImgCache.clearCache(ok, nok);
+						ImgCache.removeFile($test_img.attr('src'), ok, nok);
 					}
 				},
 				{
@@ -142,6 +163,18 @@
 					}
 				},
 				{
+					name: 'cacheFile', 
+					test: function(ok, nok) {
+						ImgCache.cacheFile($test_img.attr('src'), ok, nok);
+					}
+				},
+				{ 
+					name: 'useCachedFileWithSource',
+					test: function(ok, nok) {
+						ImgCache.useCachedFileWithSource($test_img, $test_img.attr('src'), ok, nok);
+					}
+				},
+				{
 					name: 'getCacheFolderURI',
 					test: function(ok, nok) { 
 						var folder = ImgCache.getCacheFolderURI();
@@ -150,6 +183,12 @@
 							ok();
 						else
 							nok();
+					}
+				},
+				{ 
+					name: 'clearCache',
+					test: function(ok, nok) { 
+						ImgCache.clearCache(ok, nok);
 					}
 				}
 			];
@@ -201,8 +240,24 @@
 					for (var key in testedMethods) {
 						if (testedMethods.hasOwnProperty(key)) countTestedMethods++;
 					}					
-					
-					$('#methods').text('API coverage: ' + countTestedMethods + '/' + countTotalMethods);
+
+					var coverage = "";
+					coverage = 'API coverage: ' + countTestedMethods + '/' + countTotalMethods;
+					if (countTestedMethods < countTotalMethods) {
+						var untestedMethods = "";
+						for (var i = 0; i < testableMethods.length; i++) {
+							var method = testableMethods[i];
+							if (!testedMethods.hasOwnProperty(method)) {
+								if (untestedMethods.length > 0)
+									untestedMethods += " / "
+								untestedMethods += method;
+							}
+						}
+						if (untestedMethods.length > 0) {
+							coverage += '<br>Untested methods: ' + untestedMethods;
+						}
+					}
+					$('#methods').html(coverage);
 					logger('--------------------------------------------', LOG_LEVEL_INFO);
 					// launch second set of tests with different options
 					run_next_test_suite();

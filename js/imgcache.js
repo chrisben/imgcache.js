@@ -26,14 +26,14 @@ var ImgCache = {
 		cacheClearSize : 0,             /* size in Mb that triggers cache clear on init, 0 to disable */
 		/* customLogger */				/* if function defined, will use this one to log events */
 	},
-	attributes: {
-		ready: false,
-	}
+	ready: false,
+	attributes: {}
 };
 
 (function($) {
 
 	var OLD_SRC_ATTR = 'data-old-src';
+	var IMGCACHE_READY_TRIGGERED_EVENT = 'ImgCacheReady';
 
 	ImgCache.init = function(success_callback, error_callback) {
 		ImgCache.attributes.init_callback = success_callback;
@@ -93,22 +93,9 @@ var ImgCache = {
 		}
 	};
 	
-	ImgCache.hasLocalStorage = function(){
-		try {
-			var mod = Helpers.SHA1('imgcache_test');
-	        localStorage.setItem(mod, mod);
-	        localStorage.removeItem(mod);
-	        return true;
-			
-		} catch (e) {
-			// this is an info, not an error
-			Helpers.logging('Could not write to local storage: ' + e.message, LOG_LEVEL_INFO);
-	        return false;
-		}
-	};
 	
 	ImgCache.getCurrentSize = function(){
-		if (ImgCache.hasLocalStorage()){
+		if (Private.hasLocalStorage()){
 			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
 			if (curSize === null){
 				return 0;
@@ -118,12 +105,7 @@ var ImgCache = {
 			return 0;
 		}
 	};
-	
-	ImgCache.setCurrentSize = function(curSize){
-		if (ImgCache.hasLocalStorage()){
-			localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
-		}
-	};
+
 
 	// this function will not check if image cached or not => will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
@@ -138,11 +120,9 @@ var ImgCache = {
 			img_src,
 			filePath,
 			function(entry) {
-				if (ImgCache.options.cacheClearSize > 0){
-					entry.getMetadata(function(metadata) {
-						ImgCache.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
-					});
-				}
+				entry.getMetadata(function(metadata) {
+					Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
+				});
 						
 				Helpers.logging('Download complete: ' + entry.fullPath, LOG_LEVEL_INFO);
 
@@ -242,9 +222,7 @@ var ImgCache = {
 		ImgCache.attributes.dirEntry.removeRecursively(
 			function(parent) {
 				Helpers.logging('Local cache cleared', LOG_LEVEL_INFO);
-				if (ImgCache.options.cacheClearSize > 0){
-					ImgCache.setCurrentSize(0);
-				}
+				Private.setCurrentSize(0);
 				// recreate the cache dir now
 				Private.createCacheDir(success_callback);
 			},
@@ -320,8 +298,8 @@ var ImgCache = {
 	
 	
 	/** Private *****************************************************************/
-	var Private = {};
-
+	var Private = { attributes: {} };
+	
 	Private.isCordova = function() {
 		return (typeof(cordova) !== 'undefined' || typeof(phonegap) !== 'undefined');
 	};
@@ -338,6 +316,32 @@ var ImgCache = {
 		return true;
 	}
 
+	Private.attributes.hasLocalStorage = false;
+	Private.hasLocalStorage = function(){
+		// if already tested, avoid doing the check again
+		if (Private.attributes.hasLocalStorage)
+			return Private.attributes.hasLocalStorage;
+			
+		try {
+			var mod = Helpers.SHA1('imgcache_test');
+	        localStorage.setItem(mod, mod);
+	        localStorage.removeItem(mod);
+			Private.attributes.hasLocalStorage = true;
+	        return true;
+			
+		} catch (e) {
+			// this is an info, not an error
+			Helpers.logging('Could not write to local storage: ' + e.message, LOG_LEVEL_INFO);
+	        return false;
+		}
+	};
+	
+	Private.setCurrentSize = function(curSize){
+		if (Private.hasLocalStorage()){
+			localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
+		}
+	};
+	
 	// if no local_root set, set relative path
 	Private.getCachedFilePath = function(img_src, local_root) {
 		if (!img_src) {
@@ -381,8 +385,8 @@ var ImgCache = {
 				if (callback) callback();
 			}
 
-			ImgCache.attributes.ready = true;
-			DomHelpers.trigger(document, 'ImgCacheReady');
+			ImgCache.ready = true;
+			DomHelpers.trigger(document, IMGCACHE_READY_TRIGGERED_EVENT);
 		};
 		ImgCache.attributes.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
 	};
@@ -599,8 +603,7 @@ var ImgCache = {
 	DomHelpers.trigger = function(DomElement, eventName) {
 		if (DomHelpers.options.jquery) {
 			$(DomElement).trigger(eventName);
-		}
-		else {
+		} else {
 			DomElement.dispatchEvent(new Event(eventName));
 		}
 	};
@@ -608,32 +611,28 @@ var ImgCache = {
 	DomHelpers.removeAttribute = function(element, attrName) {
 		if (DomHelpers.options.jquery) {
 			element.removeAttr(attrName);
-		}
-		else {
+		} else {
 			element.removeAttribute(attrName);
 		}
 	};
 	DomHelpers.setAttribute = function(element, attrName, value) {
 		if (DomHelpers.options.jquery) {
 			element.attr(attrName, value);
-		}
-		else {
+		} else {
 			element.setAttribute(attrName, value);
 		}
 	};
 	DomHelpers.getAttribute = function(element, attrName) {
 		if (DomHelpers.options.jquery) {
 			return element.attr(attrName);
-		}
-		else {
+		} else {
 			return element.getAttribute(attrName);
 		}
 	};
 	DomHelpers.getBackgroundImage = function(element) {
 		if (DomHelpers.options.jquery) {
 			return element.css('background-image');
-		}
-		else {
+		} else {
 			var style = window.getComputedStyle(element);
 			if (!style)
 				return;
@@ -643,8 +642,7 @@ var ImgCache = {
 	DomHelpers.setBackgroundImage = function(element, styleValue) {
 		if (DomHelpers.options.jquery) {
 			element.css('background-image', styleValue);
-		}
-		else {
+		} else {
 			element.style.backgroundImage = styleValue;
 		}
 	};

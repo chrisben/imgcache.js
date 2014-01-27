@@ -19,7 +19,7 @@ This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms s
 * BlackBerry WebWorks (OS 5.0 and higher)
 * Windows Phone 7 ( Mango )
 
-All methods are asynchronous : use callbacks if required.
+Most methods are asynchronous : use callbacks if required.
 
 Using imgcache.js
 =================
@@ -45,7 +45,7 @@ Using with PhoneGap/Cordova:
 
 Using with PhoneGap/Cordova (v >= 3.0):
 * Check [Issue #15](https://github.com/chrisben/imgcache.js/issues/15) for more information
-    
+
 Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
 * If the page is opened locally (file:// ..), Chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
@@ -75,7 +75,7 @@ ImgCache.init(function(){
 });
 ````
 
-If the cache successfully initializes, `ImgCache.ready` will be set to `true`.
+If the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.
 
 If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called in `onDeviceReady`, not before!
 
@@ -154,6 +154,8 @@ High level API
 * ImgCache.clearCache() *clears the local cache folder*
 * ImgCache.cacheBackground() *caches the background image of an element*
 * ImgCache.useCachedBackground() *replaces the background image source of the given element with the cached version*
+* ImgCache.removeFile() *removes a given file from the cache*
+* ImgCache.getCurrentSize() *returns the current size of the ImgCache cache in bytes -- this is not an asynchronous method *
 
 Options
 -------
@@ -179,5 +181,6 @@ The copyright for this part belongs to the creator of this work.
 
 Todo
 ----
-* Find a solution for cache invalidation in case an image changes
+* Complete ability to remove jQuery library dependency
+* Find a solution for cache invalidation when online in case an image has changed since last cached version
 * When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)
