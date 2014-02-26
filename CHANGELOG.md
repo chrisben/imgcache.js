@@ -1,12 +1,17 @@
 Release Notes
 -------------
 * 0.7.0
+  FIXED:
+	- Fixed issue for Cordova 3.3 (#35)
+  IMPROVED:
+	- Reorganised code to be clearer + added checks throughout the code where missing
+	- Updated unit tests for 100% API coverage and multiple options configurations
+  NEW:
 	- New method: ImgCache.removeFile (#33)
 	- New method: ImgCache.getCurrentSize + added ability to clear cache on init when used space is higher than a given value (#28)
-	- Reorganised code to be clearer + added checks throughout the code where missing
-	- Started to create adapter for jQuery methods to achieve library agnosticism (#29)
+	- New method: ImgCache.useBackgroundOnlineFile to revert a call to useCachedBackground (#17)
+	- It is now possible to use this library without jQuery, using only the DOM API (#29)
 	- Added API coverage check in unit test
-	- Updated unit tests for 100% API coverage
 * 0.6.2 Added extra checks to make sure ImgCache is properly initialised first (#15) + added note in README about Phonegap plugins (#25)
 * 0.6.1 Added useCachedFileWithSource (#21) + added Bower package definition
 * 0.6   Updated deprecated Chrome storage API + Refactored code + improved automated test suites + fixes

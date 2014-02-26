@@ -1,9 +1,7 @@
 imgcache.js
 ===========
 
-The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using
-PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
-(e.g. Chrome).
+The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem) (e.g. Chrome).
 
 This library is especially useful for mobile web applications using Phonegap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.
 
@@ -19,14 +17,14 @@ This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms s
 * BlackBerry WebWorks (OS 5.0 and higher)
 * Windows Phone 7 ( Mango )
 
-Most methods are asynchronous : use callbacks if required.
+Most methods are *asynchronous* : use callbacks if required.
 
 Using imgcache.js
 =================
 
-Requirements
+Dependencies
 ------------
-* jQuery (any version from 1.6 should do) or Zepto
+* jQuery (any version from 1.6 should do) or Zepto *optional*
 * Phonegap/Cordova *optional* (v >= v1.7)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
@@ -154,6 +152,7 @@ High level API
 * ImgCache.clearCache() *clears the local cache folder*
 * ImgCache.cacheBackground() *caches the background image of an element*
 * ImgCache.useCachedBackground() *replaces the background image source of the given element with the cached version*
+* ImgCache.useBackgroundOnlineFile() *replaces back a background image with the original (online) version*
 * ImgCache.removeFile() *removes a given file from the cache*
 * ImgCache.getCurrentSize() *returns the current size of the ImgCache cache in bytes -- this is not an asynchronous method *
 
@@ -179,8 +178,7 @@ Apache License - see LICENSE.md
 Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
 The copyright for this part belongs to the creator of this work.
 
-Todo
+TODO
 ----
-* Complete ability to remove jQuery library dependency
 * Find a solution for cache invalidation when online in case an image has changed since last cached version
 * When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)

@@ -36,6 +36,7 @@
 			ImgCache.options.debug = true;
 			ImgCache.options.customLogger = logger;
 			ImgCache.options.cacheClearSize = 10;
+			ImgCache.options.jQuery = true;
 			var default_options = ImgCache.options;
 
 			var test_suites_options = [
@@ -48,13 +49,30 @@
 				{
 					useDataURI: true
 				},	
-
+				{
+					jQuery: false
+				},
 			];
 
 			$('#version').text('imgcache.js version ' + ImgCache.version);
 
 			var $test_img, $test_div;
 
+			var getBackgroundImageUrl = function($div) {
+				var backgroundImageProperty = $div.css('background-image');
+				if (!backgroundImageProperty) {
+					return;
+				}
+				var regexp = /\((.+)\)/;
+				return regexp.exec(backgroundImageProperty)[1];
+			};
+			
+			var getAppropriateElement = function(element) {
+				if (ImgCache.options.jQuery)
+					return element;
+				return element[0];
+			};
+			
 			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
 			// name: exact name of the method to Test
 			// test: code that will get executed - can expect ok or error
@@ -97,19 +115,13 @@
 				{
 					name: 'cacheBackground', 
 					test: function(ok, nok) {
-						ImgCache.cacheBackground($test_div, ok, nok);
+						ImgCache.cacheBackground(getAppropriateElement($test_div), ok, nok);
 					}
 				},
 				{
 					name: 'isCached',
 					test: function(ok, nok) {
-						var backgroundImageProperty = $test_div.css('background-image');
-						if (!backgroundImageProperty) {
-							nok();
-							return;
-						}
-						var regexp = /\((.+)\)/;
-						var img_src = regexp.exec(backgroundImageProperty)[1];
+						var img_src = getBackgroundImageUrl($test_div);
 						if (img_src)
 							ImgCache.isCached(img_src, function(src, res) { if (res) ok(); else nok();  });
 						else
@@ -119,20 +131,31 @@
 				{ 
 					name: 'useCachedFile',
 					test: function(ok, nok) {
-						ImgCache.useCachedFile($test_img, ok, nok);
+						ImgCache.useCachedFile(getAppropriateElement($test_img), ok, nok);
 					}
 				},
 				{ 
 					name: 'useCachedBackground',
 					test: function(ok, nok) {
-						ImgCache.useCachedBackground($test_div, ok, nok);
+						ImgCache.useCachedBackground(getAppropriateElement($test_div), ok, nok);
 					}
 				},
 				{ 
 					name: 'useOnlineFile', 
 					test: function(ok, nok) {
-						ImgCache.useOnlineFile($test_img);
+						ImgCache.useOnlineFile(getAppropriateElement($test_img));
 						if ($test_img.attr('src').match('^http') == 'http')
+							ok();
+						else
+							nok();
+					}  
+				},
+				{
+					name: 'useBackgroundOnlineFile', 
+					test: function(ok, nok) {
+						ImgCache.useBackgroundOnlineFile(getAppropriateElement($test_div));
+						var img_src = getBackgroundImageUrl($test_div);
+						if (img_src.match('^http') == 'http')
 							ok();
 						else
 							nok();
@@ -171,7 +194,7 @@
 				{ 
 					name: 'useCachedFileWithSource',
 					test: function(ok, nok) {
-						ImgCache.useCachedFileWithSource($test_img, $test_img.attr('src'), ok, nok);
+						ImgCache.useCachedFileWithSource(getAppropriateElement($test_img), $test_img.attr('src'), ok, nok);
 					}
 				},
 				{

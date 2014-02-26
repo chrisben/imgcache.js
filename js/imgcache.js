@@ -24,6 +24,7 @@ var ImgCache = {
 		chromeQuota: 10*1024*1024,		/* allocated cache space : here 10Mb */
 		usePersistentCache: true,		/* false: use temporary cache storage */
 		cacheClearSize : 0,             /* size in Mb that triggers cache clear on init, 0 to disable */
+		jQuery: true,					/* whether you're using jQuery or the DOM API */
 		/* customLogger */				/* if function defined, will use this one to log events */
 	},
 	ready: false,
@@ -33,6 +34,7 @@ var ImgCache = {
 (function($) {
 
 	var OLD_SRC_ATTR = 'data-old-src';
+	var OLD_BACKGROUND_ATTR = 'data-old-background';
 	var IMGCACHE_READY_TRIGGERED_EVENT = 'ImgCacheReady';
 
 	ImgCache.init = function(success_callback, error_callback) {
@@ -107,13 +109,15 @@ var ImgCache = {
 	};
 
 
-	// this function will not check if image cached or not => will overwrite existing data
+	// this function will not check if the image is already cached or not => it will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
 
 		if (!Private.isImgCacheLoaded() || !img_src)
 			return;
 
-		var filePath = Private.getCachedFilePath(img_src, ImgCache.attributes.dirEntry.fullPath);
+		img_src = Helpers.sanitizeURI(img_src);
+			
+		var filePath = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
 
 		var fileTransfer = new Private.FileTransferWrapper(ImgCache.attributes.filesystem);
 		fileTransfer.download(
@@ -124,7 +128,7 @@ var ImgCache = {
 					Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
 				});
 						
-				Helpers.logging('Download complete: ' + entry.fullPath, LOG_LEVEL_INFO);
+				Helpers.logging('Download complete: ' + Helpers.EntryGetPath(entry), LOG_LEVEL_INFO);
 
 				// iOS: the file should not be backed up in iCloud
 				// new from cordova 1.8 only
@@ -161,11 +165,18 @@ var ImgCache = {
 		// sanity check
 		if (!Private.isImgCacheLoaded() || !response_callback)
 			return;
+
+		img_src = Helpers.sanitizeURI(img_src);
 			
-		var path = Private.getCachedFilePath(img_src, ImgCache.attributes.dirEntry.fullPath);
-		if (Private.isCordovaAndroid() && path.indexOf('file://') == 0) {
-			// issue #4 -- android cordova specific
-			path = path.substr(7);
+		var path = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
+		if (Private.isCordovaAndroid()) {
+			if (path.indexOf('file://') == 0) {
+				// issue #4 -- android cordova specific
+				path = path.substr(7);
+			} else if (path.indexOf('cdvfile://') == 0) {
+				// issue #38 -- android cordova specific
+				path = path.substr(10);
+			}
 		}
 		var ret = function(exists) {
 			response_callback(img_src, exists);
@@ -209,6 +220,8 @@ var ImgCache = {
 		if (!Private.isImgCacheLoaded())
 			return;
 	
+		var img_url = Helpers.sanitizeURI(img_url);
+	
 		Private.loadCachedFile($img, image_url, Private.setNewImgPath, success_callback, fail_callback);
 	}
 
@@ -234,7 +247,10 @@ var ImgCache = {
 	};
 
 	ImgCache.removeFile = function(img_src, success_callback, error_callback) {
-		var filePath = Private.getCachedFilePath(img_src, ImgCache.attributes.dirEntry.fullPath);
+
+		img_src = Helpers.sanitizeURI(img_src);
+	
+		var filePath = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
 		var _fail = function(error) {
 			Helpers.logging('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
 			if (error_callback) error_callback();
@@ -279,12 +295,28 @@ var ImgCache = {
 
 		var _setBackgroundImagePath = function($element, new_src, old_src) {
 			DomHelpers.setBackgroundImage($element, 'url("' + new_src + '")');
+			// store previous url in case we need to reload it
+			DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
 		};
 
 		Private.loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, fail_callback);
 	}
 
 
+	// $div: jQuery object of an element
+	// Synchronous method
+	// Method used to revert call to useCachedBackground
+	ImgCache.useBackgroundOnlineFile = function($div) {
+
+		if (!$div)
+			return;
+
+		var prev_src = DomHelpers.getAttribute($div, OLD_BACKGROUND_ATTR);
+		if (prev_src)
+			DomHelpers.setBackgroundImage($div, 'url("' + prev_src + '")');
+		DomHelpers.removeAttribute($div, OLD_BACKGROUND_ATTR);
+	};
+	
 	// returns the URI of the local cache folder (filesystem:)
 	// this function is more useful for the examples than for anything else..
 	// Synchronous method
@@ -369,7 +401,7 @@ var ImgCache = {
 		};
 		var _getDirSuccess = function(dirEntry) {
 			ImgCache.attributes.dirEntry = dirEntry;
-			Helpers.logging('Local cache folder opened: ' + dirEntry.fullPath, LOG_LEVEL_INFO);
+			Helpers.logging('Local cache folder opened: ' + Helpers.EntryGetPath(dirEntry), LOG_LEVEL_INFO);
 
 			//Put .nomedia file in cache directory so Android doesn't index it.
 			if (Private.isCordovaAndroid()) {
@@ -540,6 +572,18 @@ var ImgCache = {
 		}
 	};
 	
+	// make sure the url does not contain funny characters like spaces that might make the download fail
+	Helpers.sanitizeURI = function(uri) {
+		var encodedURI = encodeURI(uri);
+		/*
+		TODO: The following bit of code will have to be checked first (#30)
+		if (Private.isCordova()) {
+			return encodedURI.replace(/%/g, '%25');
+		}
+		*/
+		return encodedURI;
+	}
+	
 	// with a little help from http://code.google.com/p/js-uri/
 	Helpers.URI = function(str) {
 	    if (!str) str = '';
@@ -582,6 +626,11 @@ var ImgCache = {
 			return '';
 		return ext;
 	};
+	
+	Helpers.EntryGetPath = function(entry) {
+		// From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
+		return (entry.hasOwnProperty('toURL') ? entry.toURL() : entry.fullPath);
+	}
 
 	/***********************************************
 	tiny-sha1 r4
@@ -596,12 +645,8 @@ var ImgCache = {
 	/** DomHelpers **************************************************************/
 	var DomHelpers = {};
 	
-	DomHelpers.options = {
-		jquery: true
-	}
-	
 	DomHelpers.trigger = function(DomElement, eventName) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			$(DomElement).trigger(eventName);
 		} else {
 			DomElement.dispatchEvent(new Event(eventName));
@@ -609,38 +654,38 @@ var ImgCache = {
 	};
 
 	DomHelpers.removeAttribute = function(element, attrName) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			element.removeAttr(attrName);
 		} else {
 			element.removeAttribute(attrName);
 		}
 	};
 	DomHelpers.setAttribute = function(element, attrName, value) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			element.attr(attrName, value);
 		} else {
 			element.setAttribute(attrName, value);
 		}
 	};
 	DomHelpers.getAttribute = function(element, attrName) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			return element.attr(attrName);
 		} else {
 			return element.getAttribute(attrName);
 		}
 	};
 	DomHelpers.getBackgroundImage = function(element) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			return element.css('background-image');
 		} else {
-			var style = window.getComputedStyle(element);
+			var style = window.getComputedStyle(element, null);
 			if (!style)
 				return;
 			return style.backgroundImage;
 		}
 	};
 	DomHelpers.setBackgroundImage = function(element, styleValue) {
-		if (DomHelpers.options.jquery) {
+		if (ImgCache.options.jQuery) {
 			element.css('background-image', styleValue);
 		} else {
 			element.style.backgroundImage = styleValue;
