@@ -117,7 +117,7 @@ var ImgCache = {
 
 		img_src = Helpers.sanitizeURI(img_src);
 			
-		var filePath = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
+		var filePath = Private.getCachedFilePath(img_src);
 
 		var fileTransfer = new Private.FileTransferWrapper(ImgCache.attributes.filesystem);
 		fileTransfer.download(
@@ -168,14 +168,12 @@ var ImgCache = {
 
 		img_src = Helpers.sanitizeURI(img_src);
 			
-		var path = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
+		var path = Private.getCachedFilePath(img_src);
 		if (Private.isCordovaAndroid()) {
+			// This hack is probably only used for older versions of Cordova
 			if (path.indexOf('file://') == 0) {
 				// issue #4 -- android cordova specific
 				path = path.substr(7);
-			} else if (path.indexOf('cdvfile://') == 0) {
-				// issue #38 -- android cordova specific
-				path = path.substr(10);
 			}
 		}
 		var ret = function(exists) {
@@ -250,7 +248,7 @@ var ImgCache = {
 
 		img_src = Helpers.sanitizeURI(img_src);
 	
-		var filePath = Private.getCachedFilePath(img_src, Helpers.EntryGetPath(ImgCache.attributes.dirEntry));
+		var filePath = Private.getCachedFilePath(img_src);
 		var _fail = function(error) {
 			Helpers.logging('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
 			if (error_callback) error_callback();
@@ -339,7 +337,7 @@ var ImgCache = {
 	Private.isCordovaAndroid = function() {
 		return (Private.isCordova() && device && device.platform && device.platform.indexOf('android') >= 0);
 	};
-	
+
 	Private.isImgCacheLoaded = function() {
 		if (!ImgCache.attributes.filesystem || !ImgCache.attributes.dirEntry) {
 			Helpers.logging('ImgCache not loaded yet! - Have you called ImgCache.Init() first?', LOG_LEVEL_WARNING);
@@ -375,15 +373,21 @@ var ImgCache = {
 	};
 	
 	// if no local_root set, set relative path
-	Private.getCachedFilePath = function(img_src, local_root) {
+	Private.getCachedFilePath = function(img_src) {
+		var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
+	//TODO:
+		//return ImgCache.options.localCacheFolder + '/' + Private.getCachedFileName(img_src);
+		return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
+	};
+	
+	Private.getCachedFileName = function(img_src) {
 		if (!img_src) {
-			Helpers.logging('No source given to getCachedFilePath', LOG_LEVEL_WARNING);
+			Helpers.logging('No source given to getCachedFileName', LOG_LEVEL_WARNING);
 			return;
 		}
-		var hash= Helpers.SHA1(img_src);
+		var hash = Helpers.SHA1(img_src);
 		var ext = Helpers.FileGetExtension(Helpers.URIGetFileName(img_src));
-		var filename = hash + (ext ? ('.' + ext) : '');
-		return (local_root ? local_root + '/' : '') + filename;
+		return hash + (ext ? ('.' + ext) : '');
 	};
 
 	Private.setNewImgPath = function($img, new_src, old_src) {
@@ -493,7 +497,7 @@ var ImgCache = {
 			return;
 
 		var filename = Helpers.URIGetFileName(img_src);
-		var filePath = Private.getCachedFilePath(img_src); // we need only a relative path
+		var filePath = Private.getCachedFileName(img_src); // we need only a relative path
 
 		var _gotFileEntry = function(entry) {
 			if (ImgCache.options.useDataURI) {
@@ -544,7 +548,7 @@ var ImgCache = {
 			Helpers.logging('File ' + filename + ' not in cache', LOG_LEVEL_INFO);
 			if (fail_callback) fail_callback($element);
 		};
-		ImgCache.attributes.dirEntry.getFile(filePath, { create: false }, _gotFileEntry, _fail);
+		ImgCache.attributes.filesystem.root.getFile(Private.getCachedFilePath(img_src), {create: false}, _gotFileEntry, _fail);
 	};
 	
 	/****************************************************************************/
