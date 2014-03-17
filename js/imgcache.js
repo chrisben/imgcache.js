@@ -639,10 +639,10 @@ var ImgCache = {
 	Helpers.getCordovaStorageType = function(isPersistent) {
 		// From Cordova 3.1 onward those constants have moved to the window object (#38)
 		if (typeof LocalFileSystem !== 'undefined') {
-			if (isPersistent && LocalFileSystem.hasOwnProperty('PERSISTENT') {
+			if (isPersistent && LocalFileSystem.hasOwnProperty('PERSISTENT')) {
 				return LocalFileSystem.PERSISTENT;
 			}
-			if (!isPersistent && LocalFileSystem.hasOwnProperty('TEMPORARY') {
+			if (!isPersistent && LocalFileSystem.hasOwnProperty('TEMPORARY')) {
 				return LocalFileSystem.TEMPORARY;
 			}
 		}
