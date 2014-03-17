@@ -68,7 +68,7 @@ var ImgCache = {
 		}
 		if (Private.isCordova()) {
 			// PHONEGAP
-			var persistence = (ImgCache.options.usePersistentCache ? LocalFileSystem.PERSISTENT : LocalFileSystem.TEMPORARY);
+			var persistence = (Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache));
 			window.requestFileSystem(persistence, 0, _gotFS, _fail);
 		} else {
 			//CHROME
@@ -586,7 +586,7 @@ var ImgCache = {
 		}
 		*/
 		return encodedURI;
-	}
+	};
 	
 	// with a little help from http://code.google.com/p/js-uri/
 	Helpers.URI = function(str) {
@@ -634,7 +634,20 @@ var ImgCache = {
 	Helpers.EntryGetPath = function(entry) {
 		// From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
 		return (entry.hasOwnProperty('toURL') ? entry.toURL() : entry.fullPath);
-	}
+	};
+
+	Helpers.getCordovaStorageType = function(isPersistent) {
+		// From Cordova 3.1 onward those constants have moved to the window object (#38)
+		if (typeof LocalFileSystem !== 'undefined') {
+			if (isPersistent && LocalFileSystem.hasOwnProperty('PERSISTENT') {
+				return LocalFileSystem.PERSISTENT;
+			}
+			if (!isPersistent && LocalFileSystem.hasOwnProperty('TEMPORARY') {
+				return LocalFileSystem.TEMPORARY;
+			}
+		}
+		return (isPersistent ? window.PERSISTENT : window.TEMPORARY);
+	};
 
 	/***********************************************
 	tiny-sha1 r4
