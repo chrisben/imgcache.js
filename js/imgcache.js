@@ -374,10 +374,10 @@ var ImgCache = {
 	
 	// if no local_root set, set relative path
 	Private.getCachedFilePath = function(img_src) {
-		var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
-	//TODO:
-		//return ImgCache.options.localCacheFolder + '/' + Private.getCachedFileName(img_src);
-		return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
+		return ImgCache.options.localCacheFolder + '/' + Private.getCachedFileName(img_src);
+	//TODO: previously was:
+		//var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
+		//return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
 	};
 	
 	Private.getCachedFileName = function(img_src) {
