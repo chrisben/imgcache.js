@@ -95,7 +95,6 @@ var ImgCache = {
 		}
 	};
 	
-	
 	ImgCache.getCurrentSize = function(){
 		if (Private.hasLocalStorage()){
 			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
@@ -108,7 +107,6 @@ var ImgCache = {
 		}
 	};
 
-
 	// this function will not check if the image is already cached or not => it will overwrite existing data
 	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
 
@@ -117,7 +115,7 @@ var ImgCache = {
 
 		img_src = Helpers.sanitizeURI(img_src);
 			
-		var filePath = Private.getCachedFilePath(img_src);
+		var filePath = Private.getCachedFileFullPath(img_src);
 
 		var fileTransfer = new Private.FileTransferWrapper(ImgCache.attributes.filesystem);
 		fileTransfer.download(
@@ -125,9 +123,13 @@ var ImgCache = {
 			filePath,
 			function(entry) {
 				entry.getMetadata(function(metadata) {
-					Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
+					if (metadata && metadata.hasOwnProperty('size')) {
+						Helpers.logging('Cached file size: ' + metadata.size, LOG_LEVEL_INFO);
+						Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size));
+					} else {
+						Helpers.logging('No metadata size property available', LOG_LEVEL_INFO);
+					}
 				});
-						
 				Helpers.logging('Download complete: ' + Helpers.EntryGetPath(entry), LOG_LEVEL_INFO);
 
 				// iOS: the file should not be backed up in iCloud
@@ -367,17 +369,20 @@ var ImgCache = {
 	};
 	
 	Private.setCurrentSize = function(curSize){
+		Helpers.logging('current size: ' + curSize, LOG_LEVEL_INFO);
 		if (Private.hasLocalStorage()){
 			localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
 		}
 	};
 	
-	// if no local_root set, set relative path
 	Private.getCachedFilePath = function(img_src) {
 		return ImgCache.options.localCacheFolder + '/' + Private.getCachedFileName(img_src);
-	//TODO: previously was:
-		//var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
-		//return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
+	}
+
+	// used for FileTransfer.download only
+	Private.getCachedFileFullPath = function(img_src) {
+		var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
+		return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
 	};
 	
 	Private.getCachedFileName = function(img_src) {

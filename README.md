@@ -14,29 +14,27 @@ This is the best solution I have found so far to provide easy caching of images 
 This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms should be:
 * Android [TESTED]
 * iOS [TESTED]
-* BlackBerry WebWorks (OS 5.0 and higher)
-* Windows Phone 7 ( Mango )
+* Windows 8
 
 Most methods are *asynchronous* : use callbacks if required.
 
 Using imgcache.js
 =================
 
-Dependencies
-------------
+Optional Dependencies
+---------------------
 * jQuery (any version from 1.6 should do) or Zepto *optional*
 * Phonegap/Cordova *optional* (v >= v1.7)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Installation
 ------------
-To use `imgcache.js`, you need to copy `js/imgcache.js` and add it to your
-application's Javascript. You can then load it like so:
+To use this library, you need to copy `js/imgcache.js` into your project and import that script within your html file:
 
 ```html
-<script src="imgcache.js" type="application/javascript"></script>
+<script src="js/imgcache.js"></script>
 ```
-    
+
 Using with PhoneGap/Cordova:
 * Requires the [File API](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature) , [Device](http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature) and FileTransfer plugins in `config.xml`
 * Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
@@ -161,6 +159,10 @@ Options
 See ImgCache.options at the top of the source file for the list of options.
 Options can be overriden from your own script, no need to modify the library!
 
+Unit tests
+----------
+Open index.html and click 'Start unit tests' to launch unit tests.
+
 Code samples
 ------------
 See html files in the `examples/` folder.
@@ -168,6 +170,10 @@ See html files in the `examples/` folder.
 Release Notes
 -------------
 See `CHANGELOG.md` for recent updates.
+
+Known issues
+------------
+See `KNOWNISSUES.md` for a list of known issues.
 
 License
 -------
