@@ -637,8 +637,12 @@ var ImgCache = {
 	};
 	
 	Helpers.EntryGetPath = function(entry) {
-		// From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-		return (entry.hasOwnProperty('toURL') ? entry.toURL() : entry.fullPath);
+		if (Private.isCordova()) {
+			// From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
+			return (typeof entry.toURL == 'function' ? entry.toURL() : entry.fullPath);
+		} else {
+			return entry.fullPath;
+		}
 	};
 
 	Helpers.getCordovaStorageType = function(isPersistent) {
