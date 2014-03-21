@@ -55,7 +55,7 @@ var ImgCache = {
 			if (error_callback) error_callback();
 		};
 		var _checkSize = function(callback){
-			if (ImgCache.options.cacheClearSize >= 0){
+			if (ImgCache.options.cacheClearSize > 0){
 				var curSize = ImgCache.getCurrentSize();
 				if (curSize > (ImgCache.options.cacheClearSize * 1024 * 1024)){
 					ImgCache.clearCache(callback, callback);
