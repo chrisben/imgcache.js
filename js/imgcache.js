@@ -26,7 +26,7 @@ var ImgCache = {
 		cacheClearSize : 0,             			/* size in Mb that triggers cache clear on init, 0 to disable */
 		/* customLogger */							/* if function defined, will use this one to log events */
 	},
-	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
+	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
 	ready: false,
 	attributes: {}
 };
@@ -720,4 +720,4 @@ var ImgCache = {
 
 	/****************************************************************************/
 	
-})(window.jQuery || window.Zepto || function() { throw "jQuery is not available"; } );
+})(window.jQuery || window.Zepto || function() { throw "jQuery is not available"; } );
