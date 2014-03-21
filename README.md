@@ -1,6 +1,8 @@
 imgcache.js
 ===========
 
+***Note: this version has known issues with newer Cordova libraries, in the meantime please use the 0.7-dev branch that fixes those issues and should be merged to master soon.*** 
+
 The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using
 PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
 (e.g. Chrome).
