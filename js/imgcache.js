@@ -18,15 +18,15 @@ var ImgCache = {
 	version: '0.7.0',
 	// options to override before using the library (but after loading this script!)
 	options: {
-		debug: false,					/* write log (to console)? */
-		localCacheFolder: 'imgcache',	/* name of the cache folder */
-		useDataURI: false,				/* use src="data:.."? otherwise will use src="filesystem:.." */
-		chromeQuota: 10*1024*1024,		/* allocated cache space : here 10Mb */
-		usePersistentCache: true,		/* false: use temporary cache storage */
-		cacheClearSize : 0,             /* size in Mb that triggers cache clear on init, 0 to disable */
-		jQuery: true,					/* whether you're using jQuery or the DOM API */
-		/* customLogger */				/* if function defined, will use this one to log events */
+		debug: false,								/* write log (to console)? */
+		localCacheFolder: 'imgcache',				/* name of the cache folder */
+		useDataURI: false,							/* use src="data:.."? otherwise will use src="filesystem:.." */
+		chromeQuota: 10*1024*1024,					/* allocated cache space : here 10Mb */
+		usePersistentCache: true,					/* false: use temporary cache storage */
+		cacheClearSize : 0,             			/* size in Mb that triggers cache clear on init, 0 to disable */
+		/* customLogger */							/* if function defined, will use this one to log events */
 	},
+	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
 	ready: false,
 	attributes: {}
 };
@@ -672,7 +672,7 @@ var ImgCache = {
 	var DomHelpers = {};
 	
 	DomHelpers.trigger = function(DomElement, eventName) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			$(DomElement).trigger(eventName);
 		} else {
 			DomElement.dispatchEvent(new Event(eventName));
@@ -680,28 +680,28 @@ var ImgCache = {
 	};
 
 	DomHelpers.removeAttribute = function(element, attrName) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			element.removeAttr(attrName);
 		} else {
 			element.removeAttribute(attrName);
 		}
 	};
 	DomHelpers.setAttribute = function(element, attrName, value) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			element.attr(attrName, value);
 		} else {
 			element.setAttribute(attrName, value);
 		}
 	};
 	DomHelpers.getAttribute = function(element, attrName) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			return element.attr(attrName);
 		} else {
 			return element.getAttribute(attrName);
 		}
 	};
 	DomHelpers.getBackgroundImage = function(element) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			return element.css('background-image');
 		} else {
 			var style = window.getComputedStyle(element, null);
@@ -711,7 +711,7 @@ var ImgCache = {
 		}
 	};
 	DomHelpers.setBackgroundImage = function(element, styleValue) {
-		if (ImgCache.options.jQuery) {
+		if (ImgCache.jQuery) {
 			element.css('background-image', styleValue);
 		} else {
 			element.style.backgroundImage = styleValue;
@@ -720,6 +720,4 @@ var ImgCache = {
 
 	/****************************************************************************/
 	
-})(window.jQuery || window.Zepto);
-
-
+})(window.jQuery || window.Zepto || function() { throw "jQuery is not available"; } );

@@ -6,7 +6,7 @@ Release Notes
 	- New method: ImgCache.removeFile (#33)
 	- New method: ImgCache.getCurrentSize + added ability to clear cache on init when used space is higher than a given value (#28)
 	- New method: ImgCache.useBackgroundOnlineFile to revert a call to useCachedBackground (#17)
-	- It is now possible to use this library without jQuery, using only the DOM API (#29)
+	- jQuery/Zepto is not a required dependency anymore, if not available it will be using only the DOM API (#29)
 	- Added API coverage check in unit test
   IMPROVED:
 	- Unit tests are moved to index.html

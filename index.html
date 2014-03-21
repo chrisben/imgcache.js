@@ -38,7 +38,6 @@
 			ImgCache.options.debug = true;
 			ImgCache.options.customLogger = logger;
 			ImgCache.options.cacheClearSize = 10;
-			ImgCache.options.jQuery = true;
 			var default_options = ImgCache.options;
 
 			var test_suites_options = [
@@ -50,9 +49,6 @@
 				},
 				{
 					useDataURI: true
-				},	
-				{
-					jQuery: false
 				},
 			];
 
@@ -70,7 +66,7 @@
 			};
 			
 			var getAppropriateElement = function(element) {
-				if (ImgCache.options.jQuery)
+				if (ImgCache.jQuery)
 					return element;
 				return element[0];
 			};
@@ -219,18 +215,19 @@
 			];
 
 			var cur_test_suite = 0;
-			var num_tests = tests_list.length * test_suites_options.length;
+			var num_tests = tests_list.length * (test_suites_options.length + 1);
 			var success_count = 0;
 			var item = 0;
 
 			var run_next_test_suite = function()
 			{
-				if (cur_test_suite == test_suites_options.length)
+				if (cur_test_suite == test_suites_options.length + 1)
 				{
+					// reset non-option
+					ImgCache.jQuery = window.jQuery;
 					logger('END OF TESTS', LOG_LEVEL_INFO);
 					return;
 				}
-
 				$test_img = $('#test_img').clone();
 				$test_div = $('#test_div').clone();
 				// add those new elements to the dom to get styles
@@ -238,10 +235,15 @@
 					.append($test_img)
 					.append($test_div);
 
-				// see console output for debug info
-				var cur_options = test_suites_options[cur_test_suite];
-				ImgCache.options = $.extend({}, default_options, cur_options);
-				logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), LOG_LEVEL_INFO);
+				if (cur_test_suite == test_suites_options.length) {
+					ImgCache.jQuery = false;
+					logger('Running tests without jQuery', LOG_LEVEL_INFO);
+				} else {
+					// see console output for debug info
+					var cur_options = test_suites_options[cur_test_suite];
+					ImgCache.options = $.extend({}, default_options, cur_options);
+					logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), LOG_LEVEL_INFO);
+				}
 
 				item = 0;
 				test_method();

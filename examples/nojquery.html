@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Examples</title>
+	<script src="../js/imgcache.js"></script>
+	<!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
+	<script src="../cordova.js"></script>
+	<script>
+		var startTest = function() {
+			// see console output for debug info
+			ImgCache.options.debug = true;
+
+			ImgCache.init(function() {
+				console.log('ImgCache initialised');
+			});
+		};
+
+		if (typeof(cordova) !== 'undefined') {
+			// cordova test
+			document.addEventListener('deviceready', startTest, false);
+		} else {
+			// normal browser test
+			window.onload = startTest;
+		}
+	</script>
+	<style>
+		/* just to make the page look a little nicer.. no use for the example in itself.. */
+		.note {
+			background-color: #bbb;
+			margin: 1em;
+			padding: 1em;
+			display: inline-block;
+			float: right;
+			clear: right;
+		}
+		code {
+			display: block;
+			margin: 0.5em;
+		}
+		ul#actions li {
+			margin: 0.8em;
+		}
+		body { background-color: #eef;  }
+		h1 { text-align: center; }
+	</style>
+</head>
+<body>
+
+<h1>imgcache.js - examples</h1>
+
+<div class="note">
+<p>Don't forget to accept your browser request to store data on the local computer!</p>
+</div>
+
+<div class="note">
+<p>If seen in Chrome run chrome with the following flags: <code>--allow-file-access-from-files --allow-file-access</code> in order to <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">avoid a security error</a>.</p>
+</div>
+
+<p>1. Open page locally (file:// in Chrome) or in Phonegap/Cordova</p>
+<p>2. Work offline</p>
+<p>3. Reload the page (or re-start the web app)</p>
+<p>4. You should see the images reloaded from the cache</p>
+
+<div>
+	<h2>This page runs ImgCache without jQuery</h2>
+	<p>See console to check for any error.</p>
+</div>
+
+</body>
+</html>
