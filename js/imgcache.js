@@ -325,7 +325,7 @@ var ImgCache = {
 		if (!Private.isImgCacheLoaded())
 			return;
 
-		return Private.getFileEntryURL(ImgCache.attributes.dirEntry);
+		return Helpers.EntryGetURL(ImgCache.attributes.dirEntry);
 	};
 	
 	
@@ -340,6 +340,11 @@ var ImgCache = {
 		return (Private.isCordova() && device && device.platform && device.platform.indexOf('android') >= 0);
 	};
 
+	// special case for #47
+	Private.isCordovaAndroidOlderThan4 = function() {
+		return (Private.isCordovaAndroid() && device.version && (device.version.indexOf('2.') == 0 || device.version.indexOf('3.') == 0));
+	};
+	
 	Private.isImgCacheLoaded = function() {
 		if (!ImgCache.attributes.filesystem || !ImgCache.attributes.dirEntry) {
 			Helpers.logging('ImgCache not loaded yet! - Have you called ImgCache.Init() first?', LOG_LEVEL_WARNING);
@@ -479,11 +484,6 @@ var ImgCache = {
 		};
 		xhr.send();
 	};
-
-	// toURL for html5, toURI for cordova...
-	Private.getFileEntryURL = function(entry) {
-		return entry.toURL ? entry.toURL() : entry.toURI();
-	}
 	
 	Private.getBackgroundImageURL = function($div) {
 		var backgroundImageProperty = DomHelpers.getBackgroundImage($div);
@@ -542,7 +542,7 @@ var ImgCache = {
 				entry.file(_win, _fail);
 			} else {
 				// using src="filesystem:" kind of url
-				var new_url = Private.getFileEntryURL(entry);
+				var new_url = Helpers.EntryGetURL(entry);
 				set_path_callback($element, new_url, img_src);
 				Helpers.logging('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
 				if (success_callback) success_callback($element);
@@ -636,10 +636,25 @@ var ImgCache = {
 		return ext;
 	};
 	
+	// Fix for #42 (Cordova versions < 4.0)
+	Helpers.EntryToURL = function(entry) {
+		if (Private.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL == 'function')
+			return entry.toNativeURL();
+		else
+			return entry.toURL();
+	};
+	
+	// Return a URL that can be used to locate a file
+	Helpers.EntryGetURL = function(entry) {
+		// toURL for html5, toURI for cordova 1.x
+		return (typeof entry.toURL == 'function' ? Helpers.EntryToURL(entry) : entry.toURI());
+	};
+
+	// Returns the full absolute path from the root to the FileEntry
 	Helpers.EntryGetPath = function(entry) {
 		if (Private.isCordova()) {
 			// From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-			return (typeof entry.toURL == 'function' ? entry.toURL() : entry.fullPath);
+			return (typeof entry.toURL == 'function' ? Helpers.EntryToURL(entry) : entry.fullPath);
 		} else {
 			return entry.fullPath;
 		}
