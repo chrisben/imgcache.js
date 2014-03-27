@@ -1,11 +1,6 @@
-imgcache.js
-===========
+# imgcache.js
 
-***Note: this version has known issues with newer Cordova libraries, in the meantime please use the 0.7-dev branch that fixes those issues and should be merged to master soon.*** 
-
-The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using
-PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem)
-(e.g. Chrome).
+The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem) (e.g. Chrome).
 
 This library is especially useful for mobile web applications using Phonegap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.
 
@@ -18,36 +13,29 @@ This is the best solution I have found so far to provide easy caching of images 
 This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms should be:
 * Android [TESTED]
 * iOS [TESTED]
-* BlackBerry WebWorks (OS 5.0 and higher)
-* Windows Phone 7 ( Mango )
+* Windows 8
 
-All methods are asynchronous : use callbacks if required.
+Most methods are *asynchronous* : use callbacks if required.
 
 Using imgcache.js
 =================
 
-Requirements
-------------
-* jQuery (any version from 1.6 should do) or Zepto
+Optional Dependencies
+---------------------
+* jQuery (any version from 1.6 should do) or Zepto *optional*
 * Phonegap/Cordova *optional* (v >= v1.7)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Installation
 ------------
-To use `imgcache.js`, you need to copy `js/imgcache.js` and add it to your
-application's Javascript. You can then load it like so:
+To use this library, you need to copy `js/imgcache.js` into your project and import that script within your html file:
 
 ```html
-<script src="imgcache.js" type="application/javascript"></script>
+<script src="js/imgcache.js"></script>
 ```
-    
-Using with PhoneGap/Cordova:
-* Requires the [File API](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature) and [Device](http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature) plugins in `config.xml`
-* Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
 
-Using with PhoneGap/Cordova (v >= 3.0):
-* Check [Issue #15](https://github.com/chrisben/imgcache.js/issues/15) for more information
-    
+Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
+
 Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
 * If the page is opened locally (file:// ..), Chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
@@ -77,7 +65,7 @@ ImgCache.init(function(){
 });
 ````
 
-If the cache successfully initializes, `ImgCache.ready` will be set to `true`.
+If the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.
 
 If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called in `onDeviceReady`, not before!
 
@@ -156,11 +144,18 @@ High level API
 * ImgCache.clearCache() *clears the local cache folder*
 * ImgCache.cacheBackground() *caches the background image of an element*
 * ImgCache.useCachedBackground() *replaces the background image source of the given element with the cached version*
+* ImgCache.useBackgroundOnlineFile() *replaces back a background image with the original (online) version*
+* ImgCache.removeFile() *removes a given file from the cache*
+* ImgCache.getCurrentSize() *returns the current size of the ImgCache cache in bytes -- this is not an asynchronous method *
 
 Options
 -------
 See ImgCache.options at the top of the source file for the list of options.
 Options can be overriden from your own script, no need to modify the library!
+
+Unit tests
+----------
+Open index.html and click 'Start unit tests' to launch unit tests.
 
 Code samples
 ------------
@@ -168,18 +163,17 @@ See html files in the `examples/` folder.
 
 Release Notes
 -------------
-See `CHANGELOG.md` for recent updates.
+See [CHANGELOG](CHANGELOG.md) for the complete release notes.
+
+Known issues
+------------
+See [KNOWN_ISSUES](KNOWN_ISSUES.md) for a list of known issues.
 
 License
 -------
-Copyright 2012-2013 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
+Copyright 2012-2014 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
 
 Apache License - see LICENSE.md
 
 Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
 The copyright for this part belongs to the creator of this work.
-
-Todo
-----
-* Find a solution for cache invalidation in case an image changes
-* When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)
