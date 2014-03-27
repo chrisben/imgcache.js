@@ -34,7 +34,7 @@ To use this library, you need to copy `js/imgcache.js` into your project and imp
 <script src="js/imgcache.js"></script>
 ```
 
-Using with PhoneGap/Cordova: see (CORDOVA.md)[CORDOVA.md].
+Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
 
 Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
