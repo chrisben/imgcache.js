@@ -1,5 +1,4 @@
-Apache License
-==============
+# Apache License
 
 Copyright 2012-2014 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
 

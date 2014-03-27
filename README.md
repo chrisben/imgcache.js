@@ -1,5 +1,4 @@
-imgcache.js
-===========
+# imgcache.js
 
 The purpose of this JS library is to provide a nice interface for locally storing images for offline apps using PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem) (e.g. Chrome).
 
@@ -35,12 +34,7 @@ To use this library, you need to copy `js/imgcache.js` into your project and imp
 <script src="js/imgcache.js"></script>
 ```
 
-Using with PhoneGap/Cordova:
-* Requires the [File API](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature) , [Device](http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature) and FileTransfer plugins in `config.xml`
-* Remember to allow access to remote files by adding your domain in config.xml - or all domains using a wildcard: `<access origin="*" />`
-
-Using with PhoneGap/Cordova (v >= 3.0):
-* Check [Issue #15](https://github.com/chrisben/imgcache.js/issues/15) for more information
+Using with PhoneGap/Cordova: see (CORDOVA.md)[CORDOVA.md].
 
 Using with Chrome or other browsers that support the [html5 filesystem API]:
 * Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...
@@ -169,11 +163,11 @@ See html files in the `examples/` folder.
 
 Release Notes
 -------------
-See `CHANGELOG.md` for recent updates.
+See [CHANGELOG](CHANGELOG.md) for the complete release notes.
 
 Known issues
 ------------
-See `KNOWNISSUES.md` for a list of known issues.
+See [KNOWN_ISSUES](KNOWN_ISSUES.md) for a list of known issues.
 
 License
 -------
@@ -183,8 +177,3 @@ Apache License - see LICENSE.md
 
 Code from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.
 The copyright for this part belongs to the creator of this work.
-
-TODO
-----
-* Find a solution for cache invalidation when online in case an image has changed since last cached version
-* When Chrome finally supports canvas.toBlob(), possibly replace download method with new one that draws an Image into a canvas and then retrieves its content using the toBlob() method -- or use [canvas-toBlob.js] (https://github.com/eligrey/canvas-toBlob.js)
