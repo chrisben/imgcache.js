@@ -675,7 +675,7 @@ var ImgCache = {
 		if (ImgCache.jQuery) {
 			$(DomElement).trigger(eventName);
 		} else {
-			DomElement.dispatchEvent(new Event(eventName));
+			DomElement.dispatchEvent(new CustomEvent(eventName));
 		}
 	};
 
