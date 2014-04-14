@@ -24,6 +24,7 @@ var ImgCache = {
 		chromeQuota: 10*1024*1024,					/* allocated cache space : here 10Mb */
 		usePersistentCache: true,					/* false: use temporary cache storage */
 		cacheClearSize : 0,             			/* size in Mb that triggers cache clear on init, 0 to disable */
+		headers: {}
 		/* customLogger */							/* if function defined, will use this one to log events */
 	},
 	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
@@ -442,8 +443,15 @@ var ImgCache = {
 		this.filesystem = filesystem;	// only useful for CHROME
 	};
 	Private.FileTransferWrapper.prototype.download = function(uri, localPath, success_callback, error_callback) {
+
+		var headers = ImgCache.options.headers;
+
 		// PHONEGAP
-		if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback);
+		downloadOptions = {
+			'headers': headers
+		}
+
+		if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, downloadOptions);
 
 		var filesystem = this.filesystem;
 
@@ -459,6 +467,9 @@ var ImgCache = {
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', uri, true);
 		xhr.responseType = 'blob';
+		for (key in headers) {
+			xhr.setRequestHeader(key, headers[key])
+		}
 		xhr.onload = function(event){
 			if (xhr.response && (xhr.status == 200 || xhr.status == 0)) {
 				filesystem.root.getFile(localPath, { create:true }, function(fileEntry) {
