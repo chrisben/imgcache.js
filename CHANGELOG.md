@@ -1,5 +1,10 @@
 # Release Notes #
 
+## 0.7.1 ##
+
+### NEW ###
+* Added option for custom download HTTP headers, can be used for request authentication purposes (#52)
+
 ## 0.7.0 ##
 
 ### NEW ###

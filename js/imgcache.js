@@ -15,7 +15,7 @@
 */
 
 var ImgCache = {
-	version: '0.7.0',
+	version: '0.7.1',
 	// options to override before using the library (but after loading this script!)
 	options: {
 		debug: false,								/* write log (to console)? */
@@ -24,7 +24,7 @@ var ImgCache = {
 		chromeQuota: 10*1024*1024,					/* allocated cache space : here 10Mb */
 		usePersistentCache: true,					/* false: use temporary cache storage */
 		cacheClearSize : 0,             			/* size in Mb that triggers cache clear on init, 0 to disable */
-		headers: {}
+		headers: {}									/* HTTP headers for the download requests - e.g: headers: { 'Accept': 'application/jpg' } */
 		/* customLogger */							/* if function defined, will use this one to log events */
 	},
 	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
@@ -444,14 +444,9 @@ var ImgCache = {
 	};
 	Private.FileTransferWrapper.prototype.download = function(uri, localPath, success_callback, error_callback) {
 
-		var headers = ImgCache.options.headers;
+		var headers = ImgCache.options.headers || {};
 
-		// PHONEGAP
-		downloadOptions = {
-			'headers': headers
-		}
-
-		if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, downloadOptions);
+		if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
 
 		var filesystem = this.filesystem;
 
@@ -468,7 +463,7 @@ var ImgCache = {
 		xhr.open('GET', uri, true);
 		xhr.responseType = 'blob';
 		for (key in headers) {
-			xhr.setRequestHeader(key, headers[key])
+			xhr.setRequestHeader(key, headers[key]);
 		}
 		xhr.onload = function(event){
 			if (xhr.response && (xhr.status == 200 || xhr.status == 0)) {
