@@ -99,7 +99,7 @@ ImgCache.cacheFile(target.attr('src'), function(){
 To check if a file is stored locally:
 
 ```javascript
-ImgCache.isCached(target.attr('src'), function(path, success){
+ImgCache.isCached(target.attr('src'), function(path, success, fileEntry){
   if(success){
     // already cached
     ImgCache.useCachedFile(target);
