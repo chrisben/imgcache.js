@@ -92,6 +92,11 @@ ImgCache.cacheFile(target.attr('src'), function(){
     alert('now using local copy');
   }, function(){
     alert('could not load from cache');
+  }, function(progressEvent){
+    if(progressEvent.lengthComputable) {
+      progressBar.max = progressEvent.total;
+      progressBar.value = progressEvent.loaded;
+    }
   })
 });
 ```
