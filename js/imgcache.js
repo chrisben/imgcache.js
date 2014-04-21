@@ -448,7 +448,9 @@ var ImgCache = {
 		var headers = ImgCache.options.headers || {};
 
 		if (this.fileTransfer) {
-			this.fileTransfer.onprogress = on_progress;
+			if (Helpers.isFunction(on_progress)) {
+				this.fileTransfer.onprogress = on_progress;	
+			}
 			return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
 		}
 
@@ -464,7 +466,9 @@ var ImgCache = {
 			}
 		}
 		var xhr = new XMLHttpRequest();
-		xhr.onprogress = on_progress;
+		if (Helpers.isFunction(on_progress)) {
+			xhr.onprogress = on_progress;	
+		}
 		xhr.open('GET', uri, true);
 		xhr.responseType = 'blob';
 		for (key in headers) {
@@ -667,6 +671,10 @@ var ImgCache = {
 			}
 		}
 		return (isPersistent ? window.PERSISTENT : window.TEMPORARY);
+	};
+
+	Helpers.isFunction = function(obj) {
+		return typeof(obj) == 'function';
 	};
 
 	/***********************************************
