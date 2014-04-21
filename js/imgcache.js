@@ -179,15 +179,15 @@ var ImgCache = {
 				path = path.substr(7);
 			}
 		}
-		var ret = function(exists) {
-			response_callback(img_src, exists);
+		var ret = function(exists, file_entry) {
+			response_callback(img_src, exists, file_entry);
 		};
 		
 		// try to get the file entry: if it fails, there's no such file in the cache
 		ImgCache.attributes.filesystem.root.getFile(
 			path,
 			{ create: false },
-			function() { ret(true); },
+			function(file_entry) { ret(true, file_entry); },
 			function() { ret(false); });
 	};
 
