@@ -109,7 +109,7 @@ var ImgCache = {
 	};
 
 	// this function will not check if the image is already cached or not => it will overwrite existing data
-	ImgCache.cacheFile = function(img_src, success_callback, fail_callback) {
+	ImgCache.cacheFile = function(img_src, success_callback, fail_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded() || !img_src)
 			return;
@@ -157,7 +157,8 @@ var ImgCache = {
 				if (error.target) Helpers.logging('Download error target: ' + error.target, LOG_LEVEL_ERROR);
 				Helpers.logging('Download error code: ' + error.code, LOG_LEVEL_ERROR);
 				if (fail_callback) fail_callback();
-			}
+			},
+			on_progress
 		);
 	};
 
@@ -266,7 +267,7 @@ var ImgCache = {
 		}, _fail);
 	};
 	
-	ImgCache.cacheBackground = function($div, success_callback, fail_callback) {
+	ImgCache.cacheBackground = function($div, success_callback, fail_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded())
 			return;
@@ -279,7 +280,7 @@ var ImgCache = {
 		}
 		
 		Helpers.logging('Background image URL: ' + img_src, LOG_LEVEL_INFO);
-		ImgCache.cacheFile(img_src, success_callback, fail_callback);
+		ImgCache.cacheFile(img_src, success_callback, fail_callback, on_progress);
 	}
 
 	ImgCache.useCachedBackground = function($div, success_callback, fail_callback) {
@@ -442,11 +443,14 @@ var ImgCache = {
 		}
 		this.filesystem = filesystem;	// only useful for CHROME
 	};
-	Private.FileTransferWrapper.prototype.download = function(uri, localPath, success_callback, error_callback) {
+	Private.FileTransferWrapper.prototype.download = function(uri, localPath, success_callback, error_callback, on_progress) {
 
 		var headers = ImgCache.options.headers || {};
 
-		if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
+		if (this.fileTransfer) {
+			this.fileTransfer.onprogress = on_progress;
+			return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
+		}
 
 		var filesystem = this.filesystem;
 
@@ -460,6 +464,7 @@ var ImgCache = {
 			}
 		}
 		var xhr = new XMLHttpRequest();
+		xhr.onprogress = on_progress;
 		xhr.open('GET', uri, true);
 		xhr.responseType = 'blob';
 		for (key in headers) {
