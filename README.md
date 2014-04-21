@@ -111,6 +111,21 @@ ImgCache.isCached(target.attr('src'), function(path, success){
   }
 });
 ```
+
+To return the locally stored file:
+
+```javascript
+ImgCache.getCachedFile(target.attr('src'), function(path, fileEntry){
+  if(fileEntry){
+    // already cached, do something with FileEntry object
+  } else {
+    // not there, need to cache the image
+    ImgCache.cacheFile(target.attr('src'), function(){
+      ImgCache.useCachedFile(target);
+    });
+  }
+});
+```
     
 When you no longer want to use the locally cached file:
 
