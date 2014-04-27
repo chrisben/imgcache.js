@@ -725,5 +725,19 @@ var ImgCache = {
 	};
 
 	/****************************************************************************/
+
+
+	// Expose the class either via AMD, CommonJS or the global object
+	if (typeof define === 'function' && define.amd) {
+		define('imgcache',[],function () {
+			return ImgCache;
+		});
+	}
+	else if (typeof module === 'object' && module.exports){
+		module.exports = ImgCache;
+	}
+	else {
+		this.ImgCache = ImgCache;
+	}
 	
 })(window.jQuery || window.Zepto || function() { throw "jQuery is not available"; } );
