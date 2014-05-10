@@ -796,7 +796,7 @@ var ImgCache = {
 
 
     // Expose the class either via AMD, CommonJS or the global object
-    if (Helpers.isFunction(define) && define.amd) {
+    if (typeof define === 'function' && define.amd) {
         define('imgcache', [], function () {
             return ImgCache;
         });
