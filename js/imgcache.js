@@ -26,7 +26,8 @@ var ImgCache = {
 		chromeQuota: 10 * 1024 * 1024,				/* allocated cache space : here 10Mb */
 		usePersistentCache: true,					/* false: use temporary cache storage */
         cacheClearSize: 0,							/* size in Mb that triggers cache clear on init, 0 to disable */
-		headers: {}									/* HTTP headers for the download requests - e.g: headers: { 'Accept': 'application/jpg' } */
+		headers: {},								/* HTTP headers for the download requests - e.g: headers: { 'Accept': 'application/jpg' } */
+        skipURIencoding: false						/* enable if URIs are already encoded (skips call to sanitizeURI) */
 		/* customLogger */							/* if function defined, will use this one to log events */
 	},
 	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
@@ -60,14 +61,18 @@ var ImgCache = {
 
     // make sure the url does not contain funny characters like spaces that might make the download fail
     Helpers.sanitizeURI = function (uri) {
-        var encodedURI = encodeURI(uri);
-        /*
-		TODO: The following bit of code will have to be checked first (#30)
-		if (Helpers.isCordova()) {
-			return encodedURI.replace(/%/g, '%25');
-		}
-		*/
-        return encodedURI;
+        if (ImgCache.options.skipURIencoding) {
+            return uri;
+        } else {
+            var encodedURI = encodeURI(uri);
+            /*
+            TODO: The following bit of code will have to be checked first (#30)
+            if (Helpers.isCordova()) {
+                return encodedURI.replace(/%/g, '%25');
+            }
+            */
+            return encodedURI;
+        }
     };
 
     // with a little help from http://code.google.com/p/js-uri/
@@ -765,5 +770,22 @@ var ImgCache = {
 
 		return Private.getFileEntryURL(ImgCache.attributes.dirEntry);
 	};
-	
+
+
+    /****************************************************************************/
+
+
+    // Expose the class either via AMD, CommonJS or the global object
+    if (typeof define === 'function' && define.amd) {
+        define('imgcache', [], function () {
+            return ImgCache;
+        });
+    }
+    else if (typeof module === 'object' && module.exports){
+        module.exports = ImgCache;
+    }
+    else {
+        this.ImgCache = ImgCache;
+    }
+    
 })(window.jQuery || window.Zepto || function () { throw "jQuery is not available"; } );
