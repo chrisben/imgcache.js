@@ -5,6 +5,7 @@
 ### NEW ###
 * Added option for custom download HTTP headers, can be used for request authentication purposes (#52 - thanks sjbecque)
 * Added optional callback to cacheFile and cacheBackgroundFile methods to get download progress (#54 - thanks vincentjames501)
+* Added getCachedFile method (#55 - thanks vincentjames501) + added unit tests
 * Added option to skip URI encoding to avoid double encoding (#58 - thanks ryreitsma)
 * Added compatibility with AMD/CommonJS (#59 - thanks activars)
 

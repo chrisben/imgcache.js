@@ -606,38 +606,44 @@ var ImgCache = {
             on_progress
 		);
 	};
-
-	// checks if a copy of the file has already been cached
-	// Reminder: this is an asynchronous method!
-	// Answer to the question comes in response_callback as the second argument (first being the path)
-	ImgCache.isCached = function (img_src, response_callback) {
-		// sanity check
-		if (!Private.isImgCacheLoaded() || !response_callback) {
-			return;
+    
+    // Returns the file already available in the cached
+    // Reminder: this is an asynchronous method!
+    // Answer to the question comes in response_callback as the second argument (first being the path)
+    ImgCache.getCachedFile = function (img_src, response_callback) {
+        // sanity check
+        if (!Private.isImgCacheLoaded() || !response_callback) {
+            return;
         }
 
-		img_src = Helpers.sanitizeURI(img_src);
-			
-		var path = Private.getCachedFilePath(img_src);
-		if (Helpers.isCordovaAndroid()) {
-			// This hack is probably only used for older versions of Cordova
-			if (path.indexOf('file://') === 0) {
-				// issue #4 -- android cordova specific
-				path = path.substr(7);
-			}
-		}
-		var ret = function (exists) {
-			response_callback(img_src, exists);
-		};
-		
-		// try to get the file entry: if it fails, there's no such file in the cache
-		ImgCache.attributes.filesystem.root.getFile(
-			path,
-			{ create: false },
-			function () { ret(true); },
-			function () { ret(false); }
+        img_src = Helpers.sanitizeURI(img_src);
+
+        var path = Private.getCachedFilePath(img_src);
+        if (Helpers.isCordovaAndroid()) {
+            // This hack is probably only used for older versions of Cordova
+            if (path.indexOf('file://') === 0) {
+                // issue #4 -- android cordova specific
+                path = path.substr(7);
+            }
+        }
+
+        // try to get the file entry: if it fails, there's no such file in the cache
+        ImgCache.attributes.filesystem.root.getFile(
+            path,
+            { create: false },
+            function (file_entry) { response_callback(img_src, file_entry); },
+            function () { response_callback(img_src, null); }
         );
-	};
+    };
+    
+    // checks if a copy of the file has already been cached
+    // Reminder: this is an asynchronous method!
+    // Answer to the question comes in response_callback as the second argument (first being the path)
+    ImgCache.isCached = function(img_src, response_callback) {
+        ImgCache.getCachedFile(img_src, function(src, file_entry) {
+            response_callback(src, file_entry !== null);
+        });
+    };
 
 	// $img: jQuery object of an <img/> element
 	// Synchronous method

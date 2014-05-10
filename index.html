@@ -103,7 +103,14 @@
 						// expected result: failure
 						ImgCache.isCached($test_img.attr('src'), function(src, res) { if (res) nok(); else ok(); });
 					}
-				},
+                },
+                {
+                    name: 'getCachedFile',
+                    test: function(ok, nok) {
+                        // expected result: failure
+                        ImgCache.getCachedFile($test_img.attr('src'), function(src, file_entry) { if (file_entry) nok(); else ok(); });
+                    }
+                },
 				{
 					name: 'cacheFile', 
 					test: function(ok, nok) {
@@ -125,7 +132,24 @@
 						else
 							nok();
 					}
-				},
+                },
+                {
+                    name: 'getCachedFile',
+                    test: function(ok, nok) {
+                        var img_src = getBackgroundImageUrl($test_div);
+                        if (img_src)
+                            ImgCache.getCachedFile(img_src, function(src, file_entry) {
+                                if (file_entry) {
+                                    logger('Cached File Name: ' + file_entry.name, LOG_LEVEL_INFO);
+                                    ok();
+                                } else {
+                                    nok();
+                                }
+                            });
+                        else
+                            nok();
+                    }
+                },
 				{ 
 					name: 'useCachedFile',
 					test: function(ok, nok) {
