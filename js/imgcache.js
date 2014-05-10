@@ -805,7 +805,7 @@ var ImgCache = {
         module.exports = ImgCache;
     }
     else {
-        this.ImgCache = ImgCache;
+        window.ImgCache = ImgCache;
     }
     
 })(window.jQuery || window.Zepto || function () { throw "jQuery is not available"; } );
