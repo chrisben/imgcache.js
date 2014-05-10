@@ -41,6 +41,19 @@ Using with Chrome or other browsers that support the [html5 filesystem API]:
 * If the page is opened locally (file:// ..), Chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)
 * To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/ or filesystem:http://*yourSiteDomain*/temporary/
 
+Using as AMD / CommonJS modules
+-------------------------------
+* To use this library with AMD:
+```javascript
+define(function (require) {
+    var ImgCache = require("imgcache");
+});
+```
+* To use this library with CommonJS:
+```javascript
+var cache = require("imgcache");
+```
+
 Setup your cache
 ----------------
 Before initializing the cache, you must specify any default options you wish to configure:
@@ -63,7 +76,7 @@ ImgCache.init(function(){
 }, function(){
   alert('check the log for errors');
 });
-````
+```
 
 If the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.
 

@@ -3,7 +3,16 @@
 ## 0.7.1 ##
 
 ### NEW ###
-* Added option for custom download HTTP headers, can be used for request authentication purposes (#52)
+* Added option for custom download HTTP headers, can be used for request authentication purposes (#52 - thanks sjbecque)
+* Added optional callback to cacheFile and cacheBackgroundFile methods to get download progress (#54 - thanks vincentjames501)
+* Added option to skip URI encoding to avoid double encoding (#58 - thanks ryreitsma)
+* Added compatibility with AMD/CommonJS (#59 - thanks activars)
+
+### IMPROVED ###
+* Reviewed code to remove JSLint warnings
+
+### FIXED ###
+* Added CustomEvent polyfill when Event is not defined (DOM API adapter) (#51)
 
 ## 0.7.0 ##
 

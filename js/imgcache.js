@@ -108,6 +108,10 @@ var ImgCache = {
         var uri = Helpers.URI(str);
         return uri.path.toLowerCase();
     };
+    
+    Helpers.isFunction = function(obj) {
+        return typeof (obj) === 'function';
+    };
 
     // returns extension from filename (without leading '.')
     Helpers.FileGetExtension = function (filename) {
@@ -126,7 +130,7 @@ var ImgCache = {
     Helpers.EntryGetPath = function (entry) {
         if (Helpers.isCordova()) {
             // From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-            return (typeof entry.toURL === 'function' ? entry.toURL() : entry.fullPath);
+            return (Helpers.isFunction(entry.toURL) ? entry.toURL() : entry.fullPath);
         } else {
             return entry.fullPath;
         }
@@ -340,12 +344,17 @@ var ImgCache = {
         }
         this.filesystem = filesystem;	// only useful for CHROME
     };
-    Private.FileTransferWrapper.prototype.download = function (uri, localPath, success_callback, error_callback) {
+    Private.FileTransferWrapper.prototype.download = function (uri, localPath, success_callback, error_callback, on_progress) {
 
         var headers = ImgCache.options.headers || {};
 
-        if (this.fileTransfer) return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
-
+        if (this.fileTransfer) {
+            if (Helpers.isFunction(on_progress)) {
+                this.fileTransfer.onprogress = on_progress;
+            }
+            return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
+        }
+        
         var filesystem = this.filesystem;
 
         // CHROME - browsers
@@ -359,6 +368,9 @@ var ImgCache = {
         };
         var xhr = new XMLHttpRequest();
         xhr.open('GET', uri, true);
+        if (Helpers.isFunction(on_progress)) {
+            xhr.onprogress = on_progress;
+        }
         xhr.responseType = 'blob';
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);
@@ -540,7 +552,8 @@ var ImgCache = {
 	};
 
 	// this function will not check if the image is already cached or not => it will overwrite existing data
-	ImgCache.cacheFile = function (img_src, success_callback, fail_callback) {
+    // on_progress callback follows this spec: http://www.w3.org/TR/2014/REC-progress-events-20140211/ -- see #54
+	ImgCache.cacheFile = function (img_src, success_callback, fail_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded() || !img_src) {
 			return;
@@ -589,7 +602,8 @@ var ImgCache = {
 				if (error.target) { Helpers.logging('Download error target: ' + error.target, LOG_LEVEL_ERROR); }
 				Helpers.logging('Download error code: ' + error.code, LOG_LEVEL_ERROR);
 				if (fail_callback) { fail_callback(); }
-			}
+			},
+            on_progress
 		);
 	};
 
@@ -705,7 +719,7 @@ var ImgCache = {
 		}, _fail);
 	};
 	
-	ImgCache.cacheBackground = function ($div, success_callback, fail_callback) {
+    ImgCache.cacheBackground = function ($div, success_callback, fail_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded())
 			return;
@@ -718,7 +732,7 @@ var ImgCache = {
 		}
 		
 		Helpers.logging('Background image URL: ' + img_src, LOG_LEVEL_INFO);
-		ImgCache.cacheFile(img_src, success_callback, fail_callback);
+		ImgCache.cacheFile(img_src, success_callback, fail_callback, on_progress);
 	};
 
 	ImgCache.useCachedBackground = function ($div, success_callback, fail_callback) {
@@ -776,7 +790,7 @@ var ImgCache = {
 
 
     // Expose the class either via AMD, CommonJS or the global object
-    if (typeof define === 'function' && define.amd) {
+    if (Helpers.isFunction(define) && define.amd) {
         define('imgcache', [], function () {
             return ImgCache;
         });
