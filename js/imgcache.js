@@ -167,7 +167,25 @@ var ImgCache = {
         if (ImgCache.jQuery) {
             $(DomElement).trigger(eventName);
         } else {
-            DomElement.dispatchEvent(new Event(eventName));
+            /* CustomEvent polyfill */
+            if (!window.CustomEvent) {
+                // CustomEvent for browsers which don't natively support the Constructor method
+                window.CustomEvent = function CustomEvent(type, params) {
+                    var event;
+                    params = params || {bubbles: false, cancelable: false, detail: undefined};
+                    try {
+                        event = document.createEvent('CustomEvent');
+                        event.initCustomEvent(type, params.bubbles, params.cancelable, params.detail);
+                    } catch (error) {
+                        // for browsers that don't support CustomEvent at all, we use a regular event instead
+                        event = document.createEvent('Event');
+                        event.initEvent(type, params.bubbles, params.cancelable);
+                        event.detail = params.detail;
+                    }
+                    return event;
+                };
+            }
+            DomElement.dispatchEvent(new CustomEvent(eventName));
         }
     };
 
