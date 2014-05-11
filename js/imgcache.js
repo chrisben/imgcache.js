@@ -15,9 +15,10 @@
 */
 
 /*jslint browser:true*/
+/*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-	version: '0.7.1',
+	version: '0.7.2',
 	// options to override before using the library (but after loading this script!)
 	options: {
 		debug: false,								/* write log (to console)? */
@@ -109,10 +110,6 @@ var ImgCache = {
         return uri.path.toLowerCase();
     };
     
-    Helpers.isFunction = function(obj) {
-        return typeof (obj) === 'function';
-    };
-
     // returns extension from filename (without leading '.')
     Helpers.FileGetExtension = function (filename) {
         if (!filename) {
@@ -127,10 +124,39 @@ var ImgCache = {
         return ext;
     };
 
+    Helpers.isCordova = function () {
+        return (typeof cordova !== 'undefined' || typeof phonegap !== 'undefined');
+    };
+
+    Helpers.isCordovaAndroid = function () {
+        return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase().indexOf('android') >= 0);
+    };
+
+    // special case for #47
+    Helpers.isCordovaAndroidOlderThan4 = function () {
+        return (Helpers.isCordovaAndroid() && device.version && (device.version.indexOf('2.') === 0 || device.version.indexOf('3.') === 0));
+    };
+
+    // Fix for #42 (Cordova versions < 4.0)
+    Helpers.EntryToURL = function (entry) {
+        if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
+            return entry.toNativeURL();
+        } else {
+            return entry.toURL();
+        }
+    };
+
+    // Returns a URL that can be used to locate a file
+    Helpers.EntryGetURL = function (entry) {
+        // toURL for html5, toURI for cordova 1.x
+        return (typeof entry.toURL === 'function' ? Helpers.EntryToURL(entry) : entry.toURI());
+    };
+
+    // Returns the full absolute path from the root to the FileEntry
     Helpers.EntryGetPath = function (entry) {
         if (Helpers.isCordova()) {
             // From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-            return (Helpers.isFunction(entry.toURL) ? entry.toURL() : entry.fullPath);
+            return (typeof entry.toURL === 'function' ? Helpers.EntryToURL(entry) : entry.fullPath);
         } else {
             return entry.fullPath;
         }
@@ -149,14 +175,6 @@ var ImgCache = {
         return (isPersistent ? window.PERSISTENT : window.TEMPORARY);
     };
 
-    Helpers.isCordova = function () {
-        return (typeof cordova !== 'undefined' || typeof phonegap !== 'undefined');
-    };
-
-    Helpers.isCordovaAndroid = function () {
-        return (Helpers.isCordova() && device && device.platform && device.platform.indexOf('android') >= 0);
-    };
-    
     /***********************************************
 	tiny-sha1 r4
 	MIT License
@@ -244,7 +262,7 @@ var ImgCache = {
 
     Private.isImgCacheLoaded = function () {
         if (!ImgCache.attributes.filesystem || !ImgCache.attributes.dirEntry) {
-            Helpers.logging('ImgCache not loaded yet! - Have you called ImgCache.Init() first?', LOG_LEVEL_WARNING);
+            Helpers.logging('ImgCache not loaded yet! - Have you called ImgCache.init() first?', LOG_LEVEL_WARNING);
             return false;
         }
         return true;
@@ -347,9 +365,10 @@ var ImgCache = {
     Private.FileTransferWrapper.prototype.download = function (uri, localPath, success_callback, error_callback, on_progress) {
 
         var headers = ImgCache.options.headers || {};
-
+        var isOnProgressAvailable = (typeof on_progress === 'function');
+        
         if (this.fileTransfer) {
-            if (Helpers.isFunction(on_progress)) {
+            if (isOnProgressAvailable) {
                 this.fileTransfer.onprogress = on_progress;
             }
             return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
@@ -368,14 +387,14 @@ var ImgCache = {
         };
         var xhr = new XMLHttpRequest();
         xhr.open('GET', uri, true);
-        if (Helpers.isFunction(on_progress)) {
+        if (isOnProgressAvailable) {
             xhr.onprogress = on_progress;
         }
         xhr.responseType = 'blob';
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);
         }
-        xhr.onload = function(event){
+        xhr.onload = function (event){
             if (xhr.response && (xhr.status === 200 || xhr.status === 0)) {
                 filesystem.root.getFile(localPath, { create:true }, function (fileEntry) {
                     fileEntry.createWriter(function (writer) {
@@ -392,11 +411,6 @@ var ImgCache = {
             _fail('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3, error_callback);
         };
         xhr.send();
-    };
-
-    // toURL for html5, toURI for cordova...
-    Private.getFileEntryURL = function (entry) {
-        return entry.toURL ? entry.toURL() : entry.toURI();
     };
 
     Private.getBackgroundImageURL = function ($div) {
@@ -459,7 +473,7 @@ var ImgCache = {
                 entry.file(_win, _fail);
             } else {
                 // using src="filesystem:" kind of url
-                var new_url = Private.getFileEntryURL(entry);
+                var new_url = Helpers.EntryGetURL(entry);
                 set_path_callback($element, new_url, img_src);
                 Helpers.logging('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
                 if (success_callback) { success_callback($element); }
@@ -639,8 +653,8 @@ var ImgCache = {
     // checks if a copy of the file has already been cached
     // Reminder: this is an asynchronous method!
     // Answer to the question comes in response_callback as the second argument (first being the path)
-    ImgCache.isCached = function(img_src, response_callback) {
-        ImgCache.getCachedFile(img_src, function(src, file_entry) {
+    ImgCache.isCached = function (img_src, response_callback) {
+        ImgCache.getCachedFile(img_src, function (src, file_entry) {
             response_callback(src, file_entry !== null);
         });
     };
@@ -788,7 +802,7 @@ var ImgCache = {
 			return;
         }
 
-		return Private.getFileEntryURL(ImgCache.attributes.dirEntry);
+		return Helpers.EntryGetURL(ImgCache.attributes.dirEntry);
 	};
 
 
@@ -796,7 +810,7 @@ var ImgCache = {
 
 
     // Expose the class either via AMD, CommonJS or the global object
-    if (Helpers.isFunction(define) && define.amd) {
+    if (typeof define === 'function' && define.amd) {
         define('imgcache', [], function () {
             return ImgCache;
         });
@@ -805,7 +819,7 @@ var ImgCache = {
         module.exports = ImgCache;
     }
     else {
-        this.ImgCache = ImgCache;
+        window.ImgCache = ImgCache;
     }
     
 })(window.jQuery || window.Zepto || function () { throw "jQuery is not available"; } );

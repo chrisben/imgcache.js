@@ -1,5 +1,15 @@
 # Release Notes #
 
+## 0.7.2 ##
+
+### IMPROVED ###
+* Removed last JSHint warnings
+* Improved documentation: emphasized on the asynchronous behaviour of this library + removed TODO
+
+### FIXED ###
+* Fixed bugs in 0.7.1 (#61 - thanks activars)
+* Fixed issue with newest Cordova and Android versions earlier than 4.x (#47 - thanks martinellimarco)
+
 ## 0.7.1 ##
 
 ### NEW ###
