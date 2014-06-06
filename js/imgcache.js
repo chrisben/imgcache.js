@@ -714,28 +714,28 @@ var ImgCache = {
 	};
 
 	DomHelpers.removeAttribute = function(element, attrName) {
-		if (ImgCache.jQuery) {
+		if (ImgCache.jQuery || angular && angular.element) {
 			element.removeAttr(attrName);
 		} else {
 			element.removeAttribute(attrName);
 		}
 	};
 	DomHelpers.setAttribute = function(element, attrName, value) {
-		if (ImgCache.jQuery) {
+		if (ImgCache.jQuery || angular && angular.element) {
 			element.attr(attrName, value);
 		} else {
 			element.setAttribute(attrName, value);
 		}
 	};
 	DomHelpers.getAttribute = function(element, attrName) {
-		if (ImgCache.jQuery) {
+		if (ImgCache.jQuery || angular && angular.element) {
 			return element.attr(attrName);
 		} else {
 			return element.getAttribute(attrName);
 		}
 	};
 	DomHelpers.getBackgroundImage = function(element) {
-		if (ImgCache.jQuery) {
+		if (ImgCache.jQuery || angular && angular.element) {
 			return element.css('background-image');
 		} else {
 			var style = window.getComputedStyle(element, null);
@@ -745,7 +745,7 @@ var ImgCache = {
 		}
 	};
 	DomHelpers.setBackgroundImage = function(element, styleValue) {
-		if (ImgCache.jQuery) {
+		if (ImgCache.jQuery || angular && angular.element) {
 			element.css('background-image', styleValue);
 		} else {
 			element.style.backgroundImage = styleValue;
