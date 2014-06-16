@@ -1,5 +1,10 @@
 # Release Notes #
 
+## 0.7.3 ##
+
+### NEW ###
+* Added support for AngularJS (#64 - thanks antonshevchenko)
+
 ## 0.7.2 ##
 
 ### IMPROVED ###

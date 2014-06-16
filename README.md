@@ -24,7 +24,7 @@ Using imgcache.js
 
 Optional Dependencies
 ---------------------
-* jQuery (any version from 1.6 should do) or Zepto *optional*
+* jQuery (any version from 1.6 should do), Zepto or AngularJS (jQueryLite) *optional*
 * Phonegap/Cordova *optional* (v >= v1.7)
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 

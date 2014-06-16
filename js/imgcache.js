@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-	version: '0.7.2',
+	version: '0.7.3',
 	// options to override before using the library (but after loading this script!)
 	options: {
 		debug: false,								/* write log (to console)? */
@@ -32,6 +32,7 @@ var ImgCache = {
 		/* customLogger */							/* if function defined, will use this one to log events */
 	},
 	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
+    jQueryLite: (typeof angular !== 'undefined' && angular.element) ? true : false,    /* is AngularJS jQueryLite available */
 	ready: false,
 	attributes: {}
 };
@@ -217,28 +218,28 @@ var ImgCache = {
     };
 
     DomHelpers.removeAttribute = function (element, attrName) {
-        if (ImgCache.jQuery) {
+        if (ImgCache.jQuery || ImgCache.jQueryLite) {
             element.removeAttr(attrName);
         } else {
             element.removeAttribute(attrName);
         }
     };
     DomHelpers.setAttribute = function (element, attrName, value) {
-        if (ImgCache.jQuery) {
+        if (ImgCache.jQuery || ImgCache.jQueryLite) {
             element.attr(attrName, value);
         } else {
             element.setAttribute(attrName, value);
         }
     };
     DomHelpers.getAttribute = function (element, attrName) {
-        if (ImgCache.jQuery) {
+        if (ImgCache.jQuery || ImgCache.jQueryLite) {
             return element.attr(attrName);
         } else {
             return element.getAttribute(attrName);
         }
     };
     DomHelpers.getBackgroundImage = function (element) {
-        if (ImgCache.jQuery) {
+        if (ImgCache.jQuery || ImgCache.jQueryLite) {
             return element.css('background-image');
         } else {
             var style = window.getComputedStyle(element, null);
@@ -248,7 +249,7 @@ var ImgCache = {
         }
     };
     DomHelpers.setBackgroundImage = function (element, styleValue) {
-        if (ImgCache.jQuery) {
+        if (ImgCache.jQuery || ImgCache.jQueryLite) {
             element.css('background-image', styleValue);
         } else {
             element.style.backgroundImage = styleValue;
