@@ -621,6 +621,22 @@ var ImgCache = {
             on_progress
 		);
 	};
+
+	// Returns the local url of a file already available in the cache
+	ImgCache.getCachedFileURL = function (img_src, success_callback, fail_callback) {
+
+	  var _getURL = function (img_src, entry) {
+	    if (!entry) {
+	      fail_callback(img_src, entry);
+	    } else {
+	      success_callback(img_src, Helpers.EntryGetURL(entry));
+	    }
+	  }
+
+	  ImgCache.getCachedFile(img_src, _getURL);
+
+	};
+
     
     // Returns the file already available in the cached
     // Reminder: this is an asynchronous method!
