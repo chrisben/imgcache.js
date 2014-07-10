@@ -126,7 +126,7 @@ var ImgCache = {
     };
 
     Helpers.isCordova = function () {
-        return (typeof cordova !== 'undefined' || typeof phonegap !== 'undefined');
+        return ((typeof cordova !== 'undefined' && !cordova.IS_MOCK) || typeof phonegap !== 'undefined');
     };
 
     Helpers.isCordovaAndroid = function () {
