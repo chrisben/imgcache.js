@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-	version: '0.7.3',
+	version: '0.7.4',
 	// options to override before using the library (but after loading this script!)
 	options: {
 		debug: false,								/* write log (to console)? */
@@ -322,13 +322,16 @@ var ImgCache = {
         DomHelpers.setAttribute($img, OLD_SRC_ATTR, old_src);
     };
 
-    Private.createCacheDir = function (callback) {
+    Private.createCacheDir = function (success_callback, error_callback) {
         if (!ImgCache.attributes.filesystem) {
+            Helpers.logging('Filesystem instance was not initialised', LOG_LEVEL_ERROR);
+            if (error_callback) { error_callback(); }
             return;
         }
 
         var _fail = function (error) {
             Helpers.logging('Failed to get/create local cache directory: ' + error.code, LOG_LEVEL_ERROR);
+            if (error_callback) { error_callback(); }
         };
         var _getDirSuccess = function (dirEntry) {
             ImgCache.attributes.dirEntry = dirEntry;
@@ -339,13 +342,13 @@ var ImgCache = {
 
                 var _androidNoMediaFileCreated = function (entry) {
                     Helpers.logging('.nomedia file created.', LOG_LEVEL_INFO);
-                    if (callback) { callback(); }
+                    if (success_callback) { success_callback(); }
                 };
 
                 dirEntry.getFile('.nomedia', {create: true, exclusive: false}, _androidNoMediaFileCreated, _fail);
             }
             else {
-                if (callback) { callback(); }
+                if (success_callback) { success_callback(); }
             }
 
             ImgCache.ready = true;
@@ -424,7 +427,7 @@ var ImgCache = {
         return img_src;
     };
 
-    Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, fail_callback) {
+    Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, error_callback) {
         if (!Private.isImgCacheLoaded()) {
             return;
         }
@@ -457,7 +460,7 @@ var ImgCache = {
                         var base64content = e.target.result;
                         if (!base64content) {
                             Helpers.logging('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
-                            if (fail_callback) { fail_callback($element); }
+                            if (error_callback) { error_callback($element); }
                             return;
                         }
                         set_path_callback($element, base64content, img_src);
@@ -468,7 +471,7 @@ var ImgCache = {
                 };
                 var _fail = function (error) {
                     Helpers.logging('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
-                    if (fail_callback) { fail_callback($element); }
+                    if (error_callback) { error_callback($element); }
                 };
 
                 entry.file(_win, _fail);
@@ -483,7 +486,7 @@ var ImgCache = {
         // if file does not exist in cache, cache it now!
         var _fail = function (e) {
             Helpers.logging('File ' + filename + ' not in cache', LOG_LEVEL_INFO);
-            if (fail_callback) { fail_callback($element); }
+            if (error_callback) { error_callback($element); }
         };
         ImgCache.attributes.filesystem.root.getFile(Private.getCachedFilePath(img_src), {create: false}, _gotFileEntry, _fail);
     };
@@ -518,7 +521,7 @@ var ImgCache = {
 
 			Private.createCacheDir(function () {
 				_checkSize(ImgCache.attributes.init_callback);
-			});
+			}, error_callback);
 		};
 		var _fail = function (error) {
 			Helpers.logging('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
@@ -568,7 +571,7 @@ var ImgCache = {
 
 	// this function will not check if the image is already cached or not => it will overwrite existing data
     // on_progress callback follows this spec: http://www.w3.org/TR/2014/REC-progress-events-20140211/ -- see #54
-	ImgCache.cacheFile = function (img_src, success_callback, fail_callback, on_progress) {
+	ImgCache.cacheFile = function (img_src, success_callback, error_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded() || !img_src) {
 			return;
@@ -616,7 +619,7 @@ var ImgCache = {
 				if (error.source) { Helpers.logging('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
 				if (error.target) { Helpers.logging('Download error target: ' + error.target, LOG_LEVEL_ERROR); }
 				Helpers.logging('Download error code: ' + error.code, LOG_LEVEL_ERROR);
-				if (fail_callback) { fail_callback(); }
+				if (error_callback) { error_callback(); }
 			},
             on_progress
 		);
@@ -651,6 +654,20 @@ var ImgCache = {
         );
     };
     
+	// Returns the local url of a file already available in the cache
+	ImgCache.getCachedFileURL = function (img_src, success_callback, error_callback) {
+        var _getURL = function (img_src, entry) {
+            if (!entry) {
+                error_callback(img_src);
+            } else {
+                success_callback(img_src, Helpers.EntryGetURL(entry));
+            }
+        };
+
+        ImgCache.getCachedFile(img_src, _getURL);
+	};
+
+
     // checks if a copy of the file has already been cached
     // Reminder: this is an asynchronous method!
     // Answer to the question comes in response_callback as the second argument (first being the path)
@@ -678,17 +695,17 @@ var ImgCache = {
 
 
 	// $img: jQuery object of an <img/> element
-	ImgCache.useCachedFile = function ($img, success_callback, fail_callback) {
+	ImgCache.useCachedFile = function ($img, success_callback, error_callback) {
 
 		if (!Private.isImgCacheLoaded()) {
 			return;
         }
 
-		Private.loadCachedFile($img, DomHelpers.getAttribute($img, 'src'), Private.setNewImgPath, success_callback, fail_callback);
+		Private.loadCachedFile($img, DomHelpers.getAttribute($img, 'src'), Private.setNewImgPath, success_callback, error_callback);
 	};
 
 	// When the source url is not the 'src' attribute of the given img element
-	ImgCache.useCachedFileWithSource = function ($img, image_url, success_callback, fail_callback) {
+	ImgCache.useCachedFileWithSource = function ($img, image_url, success_callback, error_callback) {
 
 		if (!Private.isImgCacheLoaded()) {
 			return;
@@ -696,7 +713,7 @@ var ImgCache = {
 	
         var img_url = Helpers.sanitizeURI(image_url);
 	
-        Private.loadCachedFile($img, img_url, Private.setNewImgPath, success_callback, fail_callback);
+        Private.loadCachedFile($img, img_url, Private.setNewImgPath, success_callback, error_callback);
 	};
 
 	// clears the cache
@@ -712,7 +729,7 @@ var ImgCache = {
 				Helpers.logging('Local cache cleared', LOG_LEVEL_INFO);
 				Private.setCurrentSize(0);
 				// recreate the cache dir now
-				Private.createCacheDir(success_callback);
+				Private.createCacheDir(success_callback, error_callback);
 			},
 			function (error) {
 				Helpers.logging('Failed to remove directory or its contents: ' + error.code, LOG_LEVEL_ERROR);
@@ -740,7 +757,7 @@ var ImgCache = {
 		}, _fail);
 	};
 	
-    ImgCache.cacheBackground = function ($div, success_callback, fail_callback, on_progress) {
+    ImgCache.cacheBackground = function ($div, success_callback, error_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded())
 			return;
@@ -748,15 +765,15 @@ var ImgCache = {
 		var img_src = Private.getBackgroundImageURL($div);
 		if (!img_src) {
 			Helpers.logging('No background to cache', LOG_LEVEL_WARNING);
-			if (fail_callback) { fail_callback(); }
+			if (error_callback) { error_callback(); }
 			return;
 		}
 		
 		Helpers.logging('Background image URL: ' + img_src, LOG_LEVEL_INFO);
-		ImgCache.cacheFile(img_src, success_callback, fail_callback, on_progress);
+		ImgCache.cacheFile(img_src, success_callback, error_callback, on_progress);
 	};
 
-	ImgCache.useCachedBackground = function ($div, success_callback, fail_callback) {
+	ImgCache.useCachedBackground = function ($div, success_callback, error_callback) {
 
 		if (!Private.isImgCacheLoaded())
 			return;
@@ -764,7 +781,7 @@ var ImgCache = {
 		var img_src = Private.getBackgroundImageURL($div);
 		if (!img_src) {
 			Helpers.logging('No background to cache', LOG_LEVEL_WARNING);
-			if (fail_callback) { fail_callback(); }
+			if (error_callback) { error_callback(); }
 			return;
 		}
 
@@ -774,7 +791,7 @@ var ImgCache = {
 			DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
 		};
 
-		Private.loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, fail_callback);
+		Private.loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, error_callback);
 	};
 
 

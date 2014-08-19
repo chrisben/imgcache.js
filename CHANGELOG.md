@@ -1,5 +1,13 @@
 # Release Notes #
 
+## 0.7.4 ##
+
+### NEW ###
+* Added ImgCache.getCachedFileURL helper function (#50, #67 thanks schuyler1d)
+
+### FIXED ###
+* Added missing error_callback call within ImgCache.init when root cache directory creation fails (#70)
+
 ## 0.7.3 ##
 
 ### NEW ###
