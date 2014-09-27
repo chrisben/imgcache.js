@@ -115,7 +115,7 @@ ImgCache.cacheFile(target.attr('src'), function(){
   })
 });
 ```
-    
+
 To check if a file is stored locally:
 
 ```javascript
@@ -131,7 +131,7 @@ ImgCache.isCached(target.attr('src'), function(path, success){
   }
 });
 ```
-    
+
 When you no longer want to use the locally cached file:
 
 ```javascript
@@ -150,7 +150,7 @@ ImgCache.clearCache(function(){
   // something went wrong
 });
 ```
-    
+
 There is currently no way to invalidate single images from the cache.
 
 High level API
@@ -159,7 +159,7 @@ High level API
 * ImgCache.cacheFile() *writes a copy of a file into the local cache*
 * ImgCache.isCached() *checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.getCachedFile() *returns the cached file*
-* ImgCache.getCachedFileUrl() *returns the URL of the cached version of a file*
+* ImgCache.getCachedFileURL() *returns the URL of the cached version of a file*
 * ImgCache.useCachedFile() *replaces the img src with the cached version*
 * ImgCache.useCachedFileWithSource() *similar to useCachedFile but with the image source url as extra parameter*
 * ImgCache.useOnlineFile() *replaces back the img src with the original (online) version*
