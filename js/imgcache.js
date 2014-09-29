@@ -40,7 +40,7 @@ var ImgCache = {
 (function ($) {
 
     'use strict';
-    
+
     /** Helpers *****************************************************************/
     var Helpers = {},
         LOG_LEVEL_INFO = 1,
@@ -110,7 +110,7 @@ var ImgCache = {
         var uri = Helpers.URI(str);
         return uri.path.toLowerCase();
     };
-    
+
     // returns extension from filename (without leading '.')
     Helpers.FileGetExtension = function (filename) {
         if (!filename) {
@@ -257,7 +257,7 @@ var ImgCache = {
     };
 
     /****************************************************************************/
-    
+
     /** Private *****************************************************************/
     var Private = { attributes: {} };
 
@@ -303,7 +303,7 @@ var ImgCache = {
     // used for FileTransfer.download only
     Private.getCachedFileFullPath = function (img_src) {
         var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
-        return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);	
+        return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);
     };
 
     Private.getCachedFileName = function (img_src) {
@@ -354,7 +354,7 @@ var ImgCache = {
             ImgCache.ready = true;
             DomHelpers.trigger(document, IMGCACHE_READY_TRIGGERED_EVENT);
         };
-        ImgCache.attributes.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);	
+        ImgCache.attributes.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);
     };
 
     // This is a wrapper for phonegap's FileTransfer object in order to implement the same feature
@@ -370,14 +370,14 @@ var ImgCache = {
 
         var headers = ImgCache.options.headers || {};
         var isOnProgressAvailable = (typeof on_progress === 'function');
-        
+
         if (this.fileTransfer) {
             if (isOnProgressAvailable) {
                 this.fileTransfer.onprogress = on_progress;
             }
             return this.fileTransfer.download(uri, localPath, success_callback, error_callback, false, { 'headers': headers });
         }
-        
+
         var filesystem = this.filesystem;
 
         // CHROME - browsers
@@ -385,7 +385,7 @@ var ImgCache = {
             Helpers.logging(str, level);
             // mock up FileTransferError, so at least caller knows there was a problem.
             // Normally, the error.code in the callback is a FileWriter error, we return 0 if the error was an XHR error
-            if (error_callback) { 
+            if (error_callback) {
                 error_callback({code: 0, source: uri, target: localPath});
             }
         };
@@ -492,8 +492,8 @@ var ImgCache = {
     };
 
     /****************************************************************************/
-    
-    
+
+
 	var OLD_SRC_ATTR = 'data-old-src',
         OLD_BACKGROUND_ATTR = 'data-old-background',
         IMGCACHE_READY_TRIGGERED_EVENT = 'ImgCacheReady';
@@ -556,7 +556,7 @@ var ImgCache = {
 			);
 		}
 	};
-	
+
 	ImgCache.getCurrentSize = function () {
 		if (Private.hasLocalStorage()) {
 			var curSize = localStorage.getItem('imgcache:' + ImgCache.options.localCacheFolder);
@@ -578,7 +578,7 @@ var ImgCache = {
         }
 
 		img_src = Helpers.sanitizeURI(img_src);
-			
+
 		var filePath = Private.getCachedFileFullPath(img_src);
 
 		var fileTransfer = new Private.FileTransferWrapper(ImgCache.attributes.filesystem);
@@ -624,7 +624,7 @@ var ImgCache = {
             on_progress
 		);
 	};
-    
+
     // Returns the file already available in the cached
     // Reminder: this is an asynchronous method!
     // Answer to the question comes in response_callback as the second argument (first being the path)
@@ -653,12 +653,12 @@ var ImgCache = {
             function () { response_callback(img_src, null); }
         );
     };
-    
+
 	// Returns the local url of a file already available in the cache
 	ImgCache.getCachedFileURL = function (img_src, success_callback, error_callback) {
         var _getURL = function (img_src, entry) {
             if (!entry) {
-                error_callback(img_src);
+                if(error_callback) error_callback(img_src);
             } else {
                 success_callback(img_src, Helpers.EntryGetURL(entry));
             }
@@ -710,9 +710,9 @@ var ImgCache = {
 		if (!Private.isImgCacheLoaded()) {
 			return;
         }
-	
+
         var img_url = Helpers.sanitizeURI(image_url);
-	
+
         Private.loadCachedFile($img, img_url, Private.setNewImgPath, success_callback, error_callback);
 	};
 
@@ -741,7 +741,7 @@ var ImgCache = {
 	ImgCache.removeFile = function (img_src, success_callback, error_callback) {
 
 		img_src = Helpers.sanitizeURI(img_src);
-	
+
 		var filePath = Private.getCachedFilePath(img_src);
 		var _fail = function (error) {
 			Helpers.logging('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
@@ -756,7 +756,7 @@ var ImgCache = {
 			);
 		}, _fail);
 	};
-	
+
     ImgCache.cacheBackground = function ($div, success_callback, error_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded())
@@ -768,7 +768,7 @@ var ImgCache = {
 			if (error_callback) { error_callback(); }
 			return;
 		}
-		
+
 		Helpers.logging('Background image URL: ' + img_src, LOG_LEVEL_INFO);
 		ImgCache.cacheFile(img_src, success_callback, error_callback, on_progress);
 	};
@@ -810,7 +810,7 @@ var ImgCache = {
         }
 		DomHelpers.removeAttribute($div, OLD_BACKGROUND_ATTR);
 	};
-	
+
 	// returns the URI of the local cache folder (filesystem:)
 	// this function is more useful for the examples than for anything else..
 	// Synchronous method
@@ -839,5 +839,5 @@ var ImgCache = {
     else {
         window.ImgCache = ImgCache;
     }
-    
+
 })(window.jQuery || window.Zepto || function () { throw "jQuery is not available"; } );
