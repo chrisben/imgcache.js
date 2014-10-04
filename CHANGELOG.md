@@ -1,5 +1,11 @@
 # Release Notes #
 
+## 0.7.5 ##
+
+### IMPROVED ###
+* ImgCache.getCachedFileURL: error callback is now optional (#79)
+* Cache directory is no more backed up in iCloud (iOS) (#73)
+
 ## 0.7.4 ##
 
 ### NEW ###
