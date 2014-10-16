@@ -175,6 +175,11 @@ Options
 See ImgCache.options at the top of the source file for the list of options.
 Options can be overridden from your own script, no need to modify the library!
 
+Overridable methods
+-------------------
+* The hash method used by default in ImgCache is SHA-1. It was chosen for its near absence of collision. Though it might slow things down if you have a large number of files to cache (see #81). You can plug-in your own method by overriding ImgCache.overridables.hash.
+* If logging is enabled, ImgCache output some log entries in the console by default. You can override ImgCache.overridables.log in order to change this behaviour.
+
 Unit tests
 ----------
 Open index.html and click 'Start unit tests' to launch unit tests.

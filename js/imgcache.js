@@ -18,48 +18,48 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-	version: '0.7.5-pre',
-	// options to override before using the library (but after loading this script!)
-	options: {
-		debug: false,								/* write log (to console)? */
-		localCacheFolder: 'imgcache',				/* name of the cache folder */
-		useDataURI: false,							/* use src="data:.."? otherwise will use src="filesystem:.." */
-		chromeQuota: 10 * 1024 * 1024,				/* allocated cache space : here 10Mb */
-		usePersistentCache: true,					/* false: use temporary cache storage */
-        cacheClearSize: 0,							/* size in Mb that triggers cache clear on init, 0 to disable */
-		headers: {},								/* HTTP headers for the download requests - e.g: headers: { 'Accept': 'application/jpg' } */
-        skipURIencoding: false						/* enable if URIs are already encoded (skips call to sanitizeURI) */
-		/* customLogger */							/* if function defined, will use this one to log events */
-	},
-	jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
-    jQueryLite: (typeof angular !== 'undefined' && angular.element) ? true : false,    /* is AngularJS jQueryLite available */
-	ready: false,
-	attributes: {}
-};
+        version: '0.7.5',
+        // options to override before using the library (but after loading this script!)
+        options: {
+            debug: false,							/* call the log method ? */
+            localCacheFolder: 'imgcache',			/* name of the cache folder */
+            useDataURI: false,						/* use src="data:.."? otherwise will use src="filesystem:.." */
+            chromeQuota: 10 * 1024 * 1024,			/* allocated cache space : here 10MB */
+            usePersistentCache: true,				/* false = use temporary cache storage */
+            cacheClearSize: 0,						/* size in MB that triggers cache clear on init, 0 to disable */
+            headers: {},							/* HTTP headers for the download requests -- e.g: headers: { 'Accept': 'application/jpg' } */
+            skipURIencoding: false					/* enable if URIs are already encoded (skips call to sanitizeURI) */
+        },
+        overridables: {
+            hash: function (s) {
+                /* tiny-sha1 r4 (11/2011) - MIT License - http://code.google.com/p/tiny-sha1/ */
+                function U(a,b,c){while(0<c--)a.push(b)}function L(a,b){return(a<<b)|(a>>>(32-b))}function P(a,b,c){return a^b^c}function A(a,b){var c=(b&0xFFFF)+(a&0xFFFF),d=(b>>>16)+(a>>>16)+(c>>>16);return((d&0xFFFF)<<16)|(c&0xFFFF)}var B="0123456789abcdef";return(function(a){var c=[],d=a.length*4,e;for(var i=0;i<d;i++){e=a[i>>2]>>((3-(i%4))*8);c.push(B.charAt((e>>4)&0xF)+B.charAt(e&0xF))}return c.join('')}((function(a,b){var c,d,e,f,g,h=a.length,v=0x67452301,w=0xefcdab89,x=0x98badcfe,y=0x10325476,z=0xc3d2e1f0,M=[];U(M,0x5a827999,20);U(M,0x6ed9eba1,20);U(M,0x8f1bbcdc,20);U(M,0xca62c1d6,20);a[b>>5]|=0x80<<(24-(b%32));a[(((b+65)>>9)<<4)+15]=b;for(var i=0;i<h;i+=16){c=v;d=w;e=x;f=y;g=z;for(var j=0,O=[];j<80;j++){O[j]=j<16?a[j+i]:L(O[j-3]^O[j-8]^O[j-14]^O[j-16],1);var k=(function(a,b,c,d,e){var f=(e&0xFFFF)+(a&0xFFFF)+(b&0xFFFF)+(c&0xFFFF)+(d&0xFFFF),g=(e>>>16)+(a>>>16)+(b>>>16)+(c>>>16)+(d>>>16)+(f>>>16);return((g&0xFFFF)<<16)|(f&0xFFFF)})(j<20?(function(t,a,b){return(t&a)^(~t&b)}(d,e,f)):j<40?P(d,e,f):j<60?(function(t,a,b){return(t&a)^(t&b)^(a&b)}(d,e,f)):P(d,e,f),g,M[j],O[j],L(c,5));g=f;f=e;e=L(d,30);d=c;c=k}v=A(v,c);w=A(w,d);x=A(x,e);y=A(y,f);z=A(z,g)}return[v,w,x,y,z]}((function(t){var a=[],b=255,c=t.length*8;for(var i=0;i<c;i+=8){a[i>>5]|=(t.charCodeAt(i/8)&b)<<(24-(i%32))}return a}(s)).slice(),s.length*8))));
+            },
+            log: function (str, level) {
+                    'use strict';
+                    if (ImgCache.options.debug) {
+                        if (level === LOG_LEVEL_INFO) { str = 'INFO: ' + str; }
+                        if (level === LOG_LEVEL_WARNING) { str = 'WARN: ' + str; }
+                        if (level === LOG_LEVEL_ERROR) { str = 'ERROR: ' + str; }
+                        console.log(str);
+                    }
+            }
+        },
+        jQuery: (window.jQuery || window.Zepto) ? true : false,		/* using jQuery if it's available otherwise the DOM API */
+        jQueryLite: (typeof window.angular !== 'undefined' && window.angular.element) ? true : false,    /* is AngularJS jQueryLite available */
+        ready: false,
+        attributes: {}
+    },
+    LOG_LEVEL_INFO = 1,
+    LOG_LEVEL_WARNING = 2,
+    LOG_LEVEL_ERROR = 3;
 
 (function ($) {
 
     'use strict';
 
     /** Helpers *****************************************************************/
-    var Helpers = {},
-        LOG_LEVEL_INFO = 1,
-        LOG_LEVEL_WARNING = 2,
-        LOG_LEVEL_ERROR = 3;
-
-    // level: 1=INFO, 2=WARNING, 3=ERROR
-    Helpers.logging = function (str, level) {
-        if (ImgCache.options.debug) {
-            if (ImgCache.options.customLogger) {
-                ImgCache.options.customLogger(str, level);
-            } else {
-                if (level === LOG_LEVEL_INFO) { str = 'INFO: ' + str; }
-                if (level === LOG_LEVEL_WARNING) { str = 'WARN: ' + str; }
-                if (level === LOG_LEVEL_ERROR) { str = 'ERROR: ' + str; }
-                console.log(str);
-            }
-        }
-    };
+    var Helpers = {};
 
     // make sure the url does not contain funny characters like spaces that might make the download fail
     Helpers.sanitizeURI = function (uri) {
@@ -176,16 +176,6 @@ var ImgCache = {
         return (isPersistent ? window.PERSISTENT : window.TEMPORARY);
     };
 
-    /***********************************************
-	tiny-sha1 r4
-	MIT License
-	http://code.google.com/p/tiny-sha1/
-	***********************************************/
-    /* jshint ignore:start */
-    Helpers.SHA1 = function(s){function U(a,b,c){while(0<c--)a.push(b)}function L(a,b){return(a<<b)|(a>>>(32-b))}function P(a,b,c){return a^b^c}function A(a,b){var c=(b&0xFFFF)+(a&0xFFFF),d=(b>>>16)+(a>>>16)+(c>>>16);return((d&0xFFFF)<<16)|(c&0xFFFF)}var B="0123456789abcdef";return(function(a){var c=[],d=a.length*4,e;for(var i=0;i<d;i++){e=a[i>>2]>>((3-(i%4))*8);c.push(B.charAt((e>>4)&0xF)+B.charAt(e&0xF))}return c.join('')}((function(a,b){var c,d,e,f,g,h=a.length,v=0x67452301,w=0xefcdab89,x=0x98badcfe,y=0x10325476,z=0xc3d2e1f0,M=[];U(M,0x5a827999,20);U(M,0x6ed9eba1,20);U(M,0x8f1bbcdc,20);U(M,0xca62c1d6,20);a[b>>5]|=0x80<<(24-(b%32));a[(((b+65)>>9)<<4)+15]=b;for(var i=0;i<h;i+=16){c=v;d=w;e=x;f=y;g=z;for(var j=0,O=[];j<80;j++){O[j]=j<16?a[j+i]:L(O[j-3]^O[j-8]^O[j-14]^O[j-16],1);var k=(function(a,b,c,d,e){var f=(e&0xFFFF)+(a&0xFFFF)+(b&0xFFFF)+(c&0xFFFF)+(d&0xFFFF),g=(e>>>16)+(a>>>16)+(b>>>16)+(c>>>16)+(d>>>16)+(f>>>16);return((g&0xFFFF)<<16)|(f&0xFFFF)})(j<20?(function(t,a,b){return(t&a)^(~t&b)}(d,e,f)):j<40?P(d,e,f):j<60?(function(t,a,b){return(t&a)^(t&b)^(a&b)}(d,e,f)):P(d,e,f),g,M[j],O[j],L(c,5));g=f;f=e;e=L(d,30);d=c;c=k}v=A(v,c);w=A(w,d);x=A(x,e);y=A(y,f);z=A(z,g)}return[v,w,x,y,z]}((function(t){var a=[],b=255,c=t.length*8;for(var i=0;i<c;i+=8){a[i>>5]|=(t.charCodeAt(i/8)&b)<<(24-(i%32))}return a}(s)).slice(),s.length*8))))};
-    /* jshint ignore:end */
-    /***********************************************/
-
     /****************************************************************************/
 
     /** DomHelpers **************************************************************/
@@ -243,8 +233,9 @@ var ImgCache = {
             return element.css('background-image');
         } else {
             var style = window.getComputedStyle(element, null);
-            if (!style)
+            if (!style) {
                 return;
+            }
             return style.backgroundImage;
         }
     };
@@ -263,7 +254,7 @@ var ImgCache = {
 
     Private.isImgCacheLoaded = function () {
         if (!ImgCache.attributes.filesystem || !ImgCache.attributes.dirEntry) {
-            Helpers.logging('ImgCache not loaded yet! - Have you called ImgCache.init() first?', LOG_LEVEL_WARNING);
+            ImgCache.overridables.log('ImgCache not loaded yet! - Have you called ImgCache.init() first?', LOG_LEVEL_WARNING);
             return false;
         }
         return true;
@@ -272,11 +263,11 @@ var ImgCache = {
     Private.attributes.hasLocalStorage = false;
     Private.hasLocalStorage = function () {
         // if already tested, avoid doing the check again
-        if (Private.attributes.hasLocalStorage)
+        if (Private.attributes.hasLocalStorage) {
             return Private.attributes.hasLocalStorage;
-
+        }
         try {
-            var mod = Helpers.SHA1('imgcache_test');
+            var mod = ImgCache.overridables.hash('imgcache_test');
             localStorage.setItem(mod, mod);
             localStorage.removeItem(mod);
             Private.attributes.hasLocalStorage = true;
@@ -284,13 +275,13 @@ var ImgCache = {
 
         } catch (e) {
             // this is an info, not an error
-            Helpers.logging('Could not write to local storage: ' + e.message, LOG_LEVEL_INFO);
+            ImgCache.overridables.log('Could not write to local storage: ' + e.message, LOG_LEVEL_INFO);
             return false;
         }
     };
 
     Private.setCurrentSize = function (curSize) {
-        Helpers.logging('current size: ' + curSize, LOG_LEVEL_INFO);
+        ImgCache.overridables.log('current size: ' + curSize, LOG_LEVEL_INFO);
         if (Private.hasLocalStorage()){
             localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
         }
@@ -308,10 +299,10 @@ var ImgCache = {
 
     Private.getCachedFileName = function (img_src) {
         if (!img_src) {
-            Helpers.logging('No source given to getCachedFileName', LOG_LEVEL_WARNING);
+            ImgCache.overridables.log('No source given to getCachedFileName', LOG_LEVEL_WARNING);
             return;
         }
-        var hash = Helpers.SHA1(img_src);
+        var hash = ImgCache.overridables.hash(img_src);
         var ext = Helpers.FileGetExtension(Helpers.URIGetFileName(img_src));
         return hash + (ext ? ('.' + ext) : '');
     };
@@ -324,24 +315,24 @@ var ImgCache = {
 
     Private.createCacheDir = function (success_callback, error_callback) {
         if (!ImgCache.attributes.filesystem) {
-            Helpers.logging('Filesystem instance was not initialised', LOG_LEVEL_ERROR);
+            ImgCache.overridables.log('Filesystem instance was not initialised', LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
             return;
         }
 
         var _fail = function (error) {
-            Helpers.logging('Failed to get/create local cache directory: ' + error.code, LOG_LEVEL_ERROR);
+            ImgCache.overridables.log('Failed to get/create local cache directory: ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
         var _getDirSuccess = function (dirEntry) {
             ImgCache.attributes.dirEntry = dirEntry;
-            Helpers.logging('Local cache folder opened: ' + Helpers.EntryGetPath(dirEntry), LOG_LEVEL_INFO);
+            ImgCache.overridables.log('Local cache folder opened: ' + Helpers.EntryGetPath(dirEntry), LOG_LEVEL_INFO);
 
             //Put .nomedia file in cache directory so Android doesn't index it.
             if (Helpers.isCordovaAndroid()) {
 
-                var _androidNoMediaFileCreated = function (entry) {
-                    Helpers.logging('.nomedia file created.', LOG_LEVEL_INFO);
+                var _androidNoMediaFileCreated = function () {
+                    ImgCache.overridables.log('.nomedia file created.', LOG_LEVEL_INFO);
                     if (success_callback) { success_callback(); }
                 };
 
@@ -351,10 +342,10 @@ var ImgCache = {
                 if (dirEntry.setMetadata) {
                     dirEntry.setMetadata(function () {
                             /* success*/
-                            Helpers.logging('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
+                            ImgCache.overridables.log('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
                         }, function () {
                             /* failure */
-                            Helpers.logging('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
+                            ImgCache.overridables.log('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
                         }, { 'com.apple.MobileBackup': 1 }
                         // 1=NO backup oddly enough..
                     );
@@ -394,7 +385,7 @@ var ImgCache = {
 
         // CHROME - browsers
         var _fail = function (str, level, error_callback) {
-            Helpers.logging(str, level);
+            ImgCache.overridables.log(str, level);
             // mock up FileTransferError, so at least caller knows there was a problem.
             // Normally, the error.code in the callback is a FileWriter error, we return 0 if the error was an XHR error
             if (error_callback) {
@@ -410,7 +401,7 @@ var ImgCache = {
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);
         }
-        xhr.onload = function (event){
+        xhr.onload = function () {
             if (xhr.response && (xhr.status === 200 || xhr.status === 0)) {
                 filesystem.root.getFile(localPath, { create:true }, function (fileEntry) {
                     fileEntry.createWriter(function (writer) {
@@ -449,7 +440,6 @@ var ImgCache = {
         }
 
         var filename = Helpers.URIGetFileName(img_src);
-        var filePath = Private.getCachedFileName(img_src); // we need only a relative path
 
         var _gotFileEntry = function (entry) {
             if (ImgCache.options.useDataURI) {
@@ -471,18 +461,18 @@ var ImgCache = {
 						} */
                         var base64content = e.target.result;
                         if (!base64content) {
-                            Helpers.logging('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
+                            ImgCache.overridables.log('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
                             if (error_callback) { error_callback($element); }
                             return;
                         }
                         set_path_callback($element, base64content, img_src);
-                        Helpers.logging('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
+                        ImgCache.overridables.log('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
                         if (success_callback) { success_callback($element); }
                     };
                     reader.readAsDataURL(file);
                 };
                 var _fail = function (error) {
-                    Helpers.logging('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
+                    ImgCache.overridables.log('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
                     if (error_callback) { error_callback($element); }
                 };
 
@@ -491,13 +481,13 @@ var ImgCache = {
                 // using src="filesystem:" kind of url
                 var new_url = Helpers.EntryGetURL(entry);
                 set_path_callback($element, new_url, img_src);
-                Helpers.logging('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
+                ImgCache.overridables.log('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
                 if (success_callback) { success_callback($element); }
             }
         };
         // if file does not exist in cache, cache it now!
-        var _fail = function (e) {
-            Helpers.logging('File ' + filename + ' not in cache', LOG_LEVEL_INFO);
+        var _fail = function () {
+            ImgCache.overridables.log('File ' + filename + ' not in cache', LOG_LEVEL_INFO);
             if (error_callback) { error_callback($element); }
         };
         ImgCache.attributes.filesystem.root.getFile(Private.getCachedFilePath(img_src), {create: false}, _gotFileEntry, _fail);
@@ -526,7 +516,7 @@ var ImgCache = {
             }
         };
         var _gotFS = function (filesystem) {
-			Helpers.logging('LocalFileSystem opened', LOG_LEVEL_INFO);
+			ImgCache.overridables.log('LocalFileSystem opened', LOG_LEVEL_INFO);
 
 			// store filesystem handle
 			ImgCache.attributes.filesystem = filesystem;
@@ -536,7 +526,7 @@ var ImgCache = {
 			}, error_callback);
 		};
 		var _fail = function (error) {
-			Helpers.logging('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
+			ImgCache.overridables.log('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
 			if (error_callback) { error_callback(); }
 		};
 		if (Helpers.isCordova()) {
@@ -547,7 +537,7 @@ var ImgCache = {
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 			window.storageInfo = window.storageInfo || (ImgCache.options.usePersistentCache ? navigator.webkitPersistentStorage : navigator.webkitTemporaryStorage);
 			if (!window.storageInfo) {
-				Helpers.logging('Your browser does not support the html5 File API', LOG_LEVEL_WARNING);
+				ImgCache.overridables.log('Your browser does not support the html5 File API', LOG_LEVEL_WARNING);
 				if (error_callback) { error_callback(); }
 				return;
 			}
@@ -562,7 +552,7 @@ var ImgCache = {
 				},
 				function (error) {
                     /* error*/
-					Helpers.logging('Failed to request quota: ' + error.message, LOG_LEVEL_ERROR);
+					ImgCache.overridables.log('Failed to request quota: ' + error.message, LOG_LEVEL_ERROR);
 					if (error_callback) { error_callback(); }
 				}
 			);
@@ -600,13 +590,13 @@ var ImgCache = {
 			function (entry) {
 				entry.getMetadata(function (metadata) {
 					if (metadata && metadata.hasOwnProperty('size')) {
-						Helpers.logging('Cached file size: ' + metadata.size, LOG_LEVEL_INFO);
+						ImgCache.overridables.log('Cached file size: ' + metadata.size, LOG_LEVEL_INFO);
 						Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size, 10));
 					} else {
-						Helpers.logging('No metadata size property available', LOG_LEVEL_INFO);
+						ImgCache.overridables.log('No metadata size property available', LOG_LEVEL_INFO);
 					}
 				});
-				Helpers.logging('Download complete: ' + Helpers.EntryGetPath(entry), LOG_LEVEL_INFO);
+				ImgCache.overridables.log('Download complete: ' + Helpers.EntryGetPath(entry), LOG_LEVEL_INFO);
 
 				// iOS: the file should not be backed up in iCloud
 				// new from cordova 1.8 only
@@ -614,11 +604,11 @@ var ImgCache = {
                     entry.setMetadata(
                         function () {
                         /* success*/
-                            Helpers.logging('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
+                            ImgCache.overridables.log('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
                         },
                         function () {
                         /* failure */
-                            Helpers.logging('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
+                            ImgCache.overridables.log('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
                         },
                         { 'com.apple.MobileBackup': 1 }
                         // 1=NO backup oddly enough..
@@ -628,9 +618,9 @@ var ImgCache = {
 				if (success_callback) { success_callback(); }
 			},
 			function (error) {
-				if (error.source) { Helpers.logging('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
-				if (error.target) { Helpers.logging('Download error target: ' + error.target, LOG_LEVEL_ERROR); }
-				Helpers.logging('Download error code: ' + error.code, LOG_LEVEL_ERROR);
+				if (error.source) { ImgCache.overridables.log('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
+				if (error.target) { ImgCache.overridables.log('Download error target: ' + error.target, LOG_LEVEL_ERROR); }
+				ImgCache.overridables.log('Download error code: ' + error.code, LOG_LEVEL_ERROR);
 				if (error_callback) { error_callback(); }
 			},
             on_progress
@@ -737,14 +727,14 @@ var ImgCache = {
 
 		// delete cache dir completely
 		ImgCache.attributes.dirEntry.removeRecursively(
-			function (parent) {
-				Helpers.logging('Local cache cleared', LOG_LEVEL_INFO);
+			function () {
+				ImgCache.overridables.log('Local cache cleared', LOG_LEVEL_INFO);
 				Private.setCurrentSize(0);
 				// recreate the cache dir now
 				Private.createCacheDir(success_callback, error_callback);
 			},
 			function (error) {
-				Helpers.logging('Failed to remove directory or its contents: ' + error.code, LOG_LEVEL_ERROR);
+				ImgCache.overridables.log('Failed to remove directory or its contents: ' + error.code, LOG_LEVEL_ERROR);
 				if (error_callback) { error_callback(); }
 			}
 		);
@@ -756,12 +746,12 @@ var ImgCache = {
 
 		var filePath = Private.getCachedFilePath(img_src);
 		var _fail = function (error) {
-			Helpers.logging('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
+			ImgCache.overridables.log('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
 			if (error_callback) { error_callback(); }
 		};
 		ImgCache.attributes.filesystem.root.getFile(filePath, { create: false }, function (fileEntry) {
 			fileEntry.remove(
-				function (entry) {
+				function () {
 					if (success_callback) { success_callback(); }
 				},
 				_fail
@@ -771,28 +761,30 @@ var ImgCache = {
 
     ImgCache.cacheBackground = function ($div, success_callback, error_callback, on_progress) {
 
-		if (!Private.isImgCacheLoaded())
+		if (!Private.isImgCacheLoaded()) {
 			return;
+        }
 
 		var img_src = Private.getBackgroundImageURL($div);
 		if (!img_src) {
-			Helpers.logging('No background to cache', LOG_LEVEL_WARNING);
+			ImgCache.overridables.log('No background to cache', LOG_LEVEL_WARNING);
 			if (error_callback) { error_callback(); }
 			return;
 		}
 
-		Helpers.logging('Background image URL: ' + img_src, LOG_LEVEL_INFO);
+		ImgCache.overridables.log('Background image URL: ' + img_src, LOG_LEVEL_INFO);
 		ImgCache.cacheFile(img_src, success_callback, error_callback, on_progress);
 	};
 
 	ImgCache.useCachedBackground = function ($div, success_callback, error_callback) {
 
-		if (!Private.isImgCacheLoaded())
+		if (!Private.isImgCacheLoaded()) {
 			return;
+        }
 
 		var img_src = Private.getBackgroundImageURL($div);
 		if (!img_src) {
-			Helpers.logging('No background to cache', LOG_LEVEL_WARNING);
+			ImgCache.overridables.log('No background to cache', LOG_LEVEL_WARNING);
 			if (error_callback) { error_callback(); }
 			return;
 		}

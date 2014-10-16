@@ -14,9 +14,9 @@
 		
 		var logger = function (str, level) {
 			var levelClass = '';
-			if (level == LOG_LEVEL_INFO) { levelClass = 'info' } ;
-			if (level == LOG_LEVEL_WARNING) { levelClass = 'warn' };
-			if (level == LOG_LEVEL_ERROR) { levelClass = 'error' };
+			if (level == LOG_LEVEL_INFO) { levelClass = 'info' } ;
+			if (level == LOG_LEVEL_WARNING) { levelClass = 'warn' };
+			if (level == LOG_LEVEL_ERROR) { levelClass = 'error' };
 			$('#log').append($('<li></li>').addClass(levelClass).text(str));
 		};
 		
@@ -35,7 +35,7 @@
 			var testedMethods = {};
 		
 			ImgCache.options.debug = true;
-			ImgCache.options.customLogger = logger;
+			ImgCache.overridables.log = logger;
 			ImgCache.options.cacheClearSize = 10;
 			var default_options = ImgCache.options;
 
@@ -108,7 +108,7 @@
                     name: 'getCachedFile',
                     test: function (ok, nok) {
                         // expected result: failure
-                        ImgCache.getCachedFile($test_img.attr('src'), function (src, file_entry) { if (file_entry) { nok(); } else { ok(); } });
+                        ImgCache.getCachedFile($test_img.attr('src'), function (src, file_entry) { if (file_entry) { nok(); } else { ok(); } });
                     }
                 },
 				{
@@ -128,7 +128,7 @@
 					test: function (ok, nok) {
 						var img_src = getBackgroundImageUrl($test_div);
 						if (img_src) {
-							ImgCache.isCached(img_src, function (src, res) { if (res) { ok(); } else { nok(); }  });
+							ImgCache.isCached(img_src, function (src, res) { if (res) { ok(); } else { nok(); }  });
                         } else {
 							nok();
                         }
@@ -147,7 +147,7 @@
                                     nok();
                                 }
                             });
-                        } else {
+                        } else {
                             nok();
                         }
                     }
@@ -314,7 +314,7 @@
 
 					var countTestedMethods = 0;
 					for (var key in testedMethods) {
-						if (testedMethods.hasOwnProperty(key)) { countTestedMethods++ };
+						if (testedMethods.hasOwnProperty(key)) { countTestedMethods++ };
 					}					
 
 					var coverage = 'API coverage: ' + countTestedMethods + '/' + countTotalMethods;
@@ -323,7 +323,7 @@
 						for (var i = 0; i < testableMethods.length; i++) {
 							var method = testableMethods[i];
 							if (!testedMethods.hasOwnProperty(method)) {
-								if (untestedMethods.length > 0) {
+								if (untestedMethods.length > 0) {
 									untestedMethods += ' / ';
                                 }
 								untestedMethods += method;

@@ -5,6 +5,12 @@
 ### IMPROVED ###
 * ImgCache.getCachedFileURL: error callback is now optional (#79)
 * Cache directory is no more backed up in iCloud (iOS) (#73)
+* Added ability to override the hash method through ImgCache.overridables.hash, SHA-1 currently being the default. It's possible to plug in a faster alternative but be careful of possible collisions (#81)
+* The log method used throughout ImgCache is now defined as an overridable option: ImgCache.overridables.log -- this replaces the previous 'customLogger' optional method (read Backward Compability Warning below)
+* Fixed some JSLint issues
+
+### BC WARNING ###
+* ImgCache.options.customLogger has been changed to ImgCache.overridables.log
 
 ## 0.7.4 ##
 
