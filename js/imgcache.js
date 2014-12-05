@@ -531,7 +531,9 @@ var ImgCache = {
 		};
 		if (Helpers.isCordova()) {
 			// PHONEGAP
-            window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+			document.addEventListener("deviceready", function() {
+                                window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+                        }, false);
 		} else {
 			//CHROME
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
