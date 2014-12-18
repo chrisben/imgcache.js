@@ -759,6 +759,13 @@ var ImgCache = {
 		}, _fail);
 	};
 
+    ImgCache.isBackgroundCached = function ($div, response_callback) {
+        var img_src = Private.getBackgroundImageURL($div);
+        ImgCache.getCachedFile(img_src, function (src, file_entry) {
+            response_callback(src, file_entry !== null);
+        });
+    };
+
     ImgCache.cacheBackground = function ($div, success_callback, error_callback, on_progress) {
 
 		if (!Private.isImgCacheLoaded()) {
