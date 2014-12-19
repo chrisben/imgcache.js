@@ -30,8 +30,38 @@
 		var show_img_src = function() {
 			$('img[data-desc]').each(function() {
 				$img = $(this);
-				$desc = $('#' + $img.attr('data-desc') );
+				var $desc = $('#' + $img.attr('data-desc') );
 				$desc.html('src="' + $img.attr('src') + '"');
+			});
+			$('div[data-desc]').each(function() {
+				$div = $(this);
+				var $desc = $('#' + $div.attr('data-desc') );
+				$desc.html('background-image="' + $div.css('background-image') + '"');
+			});
+		};
+
+		var show_img_is_cached = function() {
+			$('img[data-is-cached]').each(function() {
+				$img = $(this);
+				var $desc = $('#' + $img.attr('data-is-cached') );
+				ImgCache.isCached($img.attr('src'), function(path, success){
+					if(success){
+						$desc.html('Image is cached');
+					} else {
+						$desc.html('Image is not cached');
+					}
+				})
+			});
+			$('div[data-is-cached]').each(function() {
+				$div = $(this);
+				var $desc = $('#' + $div.attr('data-is-cached') );
+				ImgCache.isBackgroundCached($div, function(path, success){
+					if(success) {
+						$desc.html('Image is cached');
+					} else {
+						$desc.html('Image is not cached');
+					}
+				})
 			});
 		};
 
@@ -45,10 +75,21 @@
 			show_img_src();
 		});
 
+		$('#show_is_cached').click(function(e) {
+			e.preventDefault();
+			show_img_is_cached();
+		});
+
 		$('#cache_images').click(function(e) {
 			e.preventDefault();
 			$('img').each(function() {
 				ImgCache.cacheFile($(this).attr('src'));
+			});
+			$('div').each(function() {
+				var backgroundImageProperty = $(this).css('background-image');
+				if(backgroundImageProperty !== "none") {
+					ImgCache.cacheBackground($(this));
+				}
 			});
 		});
 
@@ -57,12 +98,24 @@
 			$('img').each(function() {
 				ImgCache.useCachedFile($(this));
 			});
+			$('div').each(function() {
+				var backgroundImageProperty = $(this).css('background-image');
+				if(backgroundImageProperty !== "none") {
+					ImgCache.useCachedBackground($(this));
+				}
+			});
 		});
 
 		$('#use_online').click(function(e) {
 			e.preventDefault();
 			$('img').each(function() {
 				ImgCache.useOnlineFile($(this));
+			});
+			$('div').each(function() {
+				var backgroundImageProperty = $(this).css('background-image');
+				if(backgroundImageProperty !== "none") {
+					ImgCache.useBackgroundOnlineFile($(this));
+				}
 			});
 		});
 
@@ -112,19 +165,29 @@
 	<li><a href="#" id="use_cache">Replace images with cached files</a></li>
 	<li><a href="#" id="use_online">Revert to original online images</a></li>
 	<li><a href="#" id="show_src">Show/update img src text</a></li>
+	<li><a href="#" id="show_is_cached">Show/update cache status</a></li>
 	<li><a href="#" id="cache_folder" target="new">Navigate into local cache folder</a></li>
 </ul>
 <div>
 	<h3>Local image</h3>
-	<img src="kitty.jpg" width="150" height="157" id="local" data-desc="local_desc">
+	<img src="kitty.jpg" width="150" height="157" id="local" data-desc="local_desc" data-is-cached="local_cached" >
 	<p id="local_desc"></p>
+	<p id="local_cached"></p>
 </div>
 <hr>
 <div>
 	<h3>Remote image</h3>
 	<!-- random image on domain with CORS enabled -->
-	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png" width="120" height="82" id="remote_cors" data-desc="remote_cors_desc">
+	<img src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png" width="120" height="82" id="remote_cors" data-desc="remote_cors_desc" data-is-cached="remote_cors_cached">
 	<p id="remote_cors_desc"></p>
+	<p id="remote_cors_cached"></p>
+</div>
+<hr>
+<div>
+	<h3>Background image</h3>
+	<div style="background-image:url(diamond.jpg); height: 266px; width: 214px;" id="background_img" data-desc="background_img_desc" data-is-cached="background_img_cached"></div>
+	<p id="background_img_desc"></p>
+	<p id="background_img_cached"></p>
 </div>
 
 </body>
