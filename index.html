@@ -187,6 +187,18 @@
 					}
 				},
 				{ 
+					name: 'isBackgroundCached',
+					test: function (ok, nok) {
+						ImgCache.isBackgroundCached(getAppropriateElement($test_div), function(path, success){
+							if(success){
+								ok();
+							} else {
+								nok();
+							}
+						});
+					}
+				},
+				{ 
 					name: 'useOnlineFile', 
 					test: function (ok, nok) {
 						ImgCache.useOnlineFile(getAppropriateElement($test_img));

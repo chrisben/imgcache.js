@@ -44,7 +44,8 @@
 			$('img[data-is-cached]').each(function() {
 				$img = $(this);
 				var $desc = $('#' + $img.attr('data-is-cached') );
-				ImgCache.isCached($img.attr('src'), function(path, success){
+				var imgSrc = $img.attr('data-old-src') || $img.attr('src');
+				ImgCache.isCached(imgSrc, function(path, success){
 					if(success){
 						$desc.html('Image is cached');
 					} else {
@@ -55,6 +56,7 @@
 			$('div[data-is-cached]').each(function() {
 				$div = $(this);
 				var $desc = $('#' + $div.attr('data-is-cached') );
+				var imgSrc = $div.attr('data-old-background') || $div.attr('src');
 				ImgCache.isBackgroundCached($div, function(path, success){
 					if(success) {
 						$desc.html('Image is cached');
