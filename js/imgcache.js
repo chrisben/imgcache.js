@@ -230,13 +230,13 @@ var ImgCache = {
     };
     DomHelpers.getBackgroundImage = function (element) {
         if (ImgCache.jQuery || ImgCache.jQueryLite) {
-            return element.css('background-image');
+            return element.attr('data-old-background') ? "url(" + element.attr('data-old-background') + ")" : element.css('background-image');
         } else {
             var style = window.getComputedStyle(element, null);
             if (!style) {
                 return;
             }
-            return style.backgroundImage;
+            return element.getAttribute("data-old-background") ? "url(" + element.getAttribute("data-old-background") + ")" : style.backgroundImage;
         }
     };
     DomHelpers.setBackgroundImage = function (element, styleValue) {
