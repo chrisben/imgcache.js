@@ -133,6 +133,10 @@ var ImgCache = {
         return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase().indexOf('android') >= 0);
     };
 
+    Helpers.isCordovaWindowsPhone = function () {
+        return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase().indexOf('win32nt') >= 0);
+    };
+
     // special case for #47
     Helpers.isCordovaAndroidOlderThan4 = function () {
         return (Helpers.isCordovaAndroid() && device.version && (device.version.indexOf('2.') === 0 || device.version.indexOf('3.') === 0));
@@ -186,7 +190,7 @@ var ImgCache = {
             $(DomElement).trigger(eventName);
         } else {
             /* CustomEvent polyfill */
-            if (!window.CustomEvent) {
+            if (Helpers.isCordovaWindowsPhone() || !window.CustomEvent) {
                 // CustomEvent for browsers which don't natively support the Constructor method
                 window.CustomEvent = function CustomEvent(type, params) {
                     var event;
@@ -337,7 +341,7 @@ var ImgCache = {
                 };
 
                 dirEntry.getFile('.nomedia', {create: true, exclusive: false}, _androidNoMediaFileCreated, _fail);
-            } else {
+            } else if (!Helpers.isCordovaWindowsPhone()) {
                 // #73 - iOS: the directory should not be backed up in iCloud
                 if (dirEntry.setMetadata) {
                     dirEntry.setMetadata(function () {
@@ -351,6 +355,8 @@ var ImgCache = {
                     );
                 }
 
+                if (success_callback) { success_callback(); }
+            } else {
                 if (success_callback) { success_callback(); }
             }
 
@@ -427,7 +433,8 @@ var ImgCache = {
         }
         var regexp = /\((.+)\)/;
         var img_src = regexp.exec(backgroundImageProperty)[1];
-        return img_src;
+
+        return img_src.replace(/(['"])/g, "");
     };
 
     Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, error_callback) {
