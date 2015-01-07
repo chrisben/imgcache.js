@@ -1,5 +1,14 @@
 # Release Notes #
 
+## master ##
+
+### NEW ###
+* Added support for Windows Phone 8.1 (IE11) (#92 thanks PhilippCh)
+* Added isBackgroundCached method (#89, #90 thanks mattezell)
+
+### FIXED ###
+* Cache files path are now correct for iOS (#93 thanks mo3taz-abdallh)
+
 ## 0.7.5 ##
 
 ### IMPROVED ###
