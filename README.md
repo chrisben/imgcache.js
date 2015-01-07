@@ -11,11 +11,11 @@ Used with [imagesloaded](http://desandro.github.com/imagesloaded/) as shown in `
 
 This is the best solution I have found so far to provide easy caching of images within a phonegap web app.
 
-This library works with Phonegap/Cordova (v >= 1.7) so the supported platforms should be:
+This library works with Phonegap/Cordova (v >= 1.7), the supported platforms being:
 
-* Android [TESTED]
-* iOS [TESTED]
-* Windows 8
+* Android
+* iOS
+* Windows Phone 8.1
 
 Most methods are **ASYNCHRONOUS** : use callbacks if required.
 
@@ -25,7 +25,7 @@ Using imgcache.js
 Optional Dependencies
 ---------------------
 * jQuery (any version from 1.6 should do), Zepto or AngularJS (jQueryLite) *optional*
-* Phonegap/Cordova *optional* (v >= v1.7)
+* Phonegap/Cordova (v >= v1.7) *optional*
 * [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*
 
 Installation
@@ -199,7 +199,7 @@ See [KNOWN_ISSUES](KNOWN_ISSUES.md) for a list of known issues.
 
 License
 -------
-Copyright 2012-2014 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
+Copyright 2012-2015 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
 
 Apache License - see LICENSE.md
 
