@@ -148,10 +148,8 @@ var ImgCache = {
             return entry.toNativeURL();
         } else {
 
-            // FIX: Path not working correctly with AppGyver Steroids
+            // FIX: Path not working correctly with Cordova
             return 'cdvfile://localhost/' + (ImgCache.options.usePersistentCache ? 'persistent' : 'temporary') + '/' +  ImgCache.options.localCacheFolder + '/' + entry.name;
-
-            //return entry.toURL();
         }
     };
 
@@ -165,11 +163,9 @@ var ImgCache = {
     Helpers.EntryGetPath = function (entry) {
         if (Helpers.isCordova()) {
 
-            // FIX: Path not working correctly with AppGyver Steroids
+            // FIX: Path not working correctly with Cordova
             return 'cdvfile://localhost/' + (ImgCache.options.usePersistentCache ? 'persistent' : 'temporary') + '/' +  ImgCache.options.localCacheFolder;
 
-            // From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-            //return (typeof entry.toURL === 'function' ? Helpers.EntryToURL(entry) : entry.fullPath);
         } else {
             return entry.fullPath;
         }
