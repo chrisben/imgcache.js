@@ -147,9 +147,7 @@ var ImgCache = {
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
             return entry.toNativeURL();
         } else {
-
-            // FIX: Path not working correctly with Cordova
-            return 'cdvfile://localhost/' + (ImgCache.options.usePersistentCache ? 'persistent' : 'temporary') + '/' +  ImgCache.options.localCacheFolder + '/' + entry.name;
+            return entry.toURL();
         }
     };
 
