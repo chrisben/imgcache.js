@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '0.7.5',
+        version: '0.7.6',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,							/* call the log method ? */
