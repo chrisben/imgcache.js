@@ -532,6 +532,8 @@ var ImgCache = {
     ImgCache.init = function (success_callback, error_callback) {
         ImgCache.attributes.init_callback = success_callback;
 
+        ImgCache.overridables.log('ImgCache initialising', LOG_LEVEL_INFO);
+
         var _checkSize = function (callback) {
             if (ImgCache.options.cacheClearSize > 0) {
                 var curSize = ImgCache.getCurrentSize();
