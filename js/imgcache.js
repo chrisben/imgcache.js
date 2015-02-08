@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '0.7.6',
+        version: '1.0rc1',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,                           /* call the log method ? */
@@ -865,6 +865,10 @@ var ImgCache = {
         return Helpers.EntryGetURL(ImgCache.attributes.dirEntry);
     };
 
+    // private methods can now be used publicly
+    ImgCache.helpers = Helpers;
+    ImgCache.domHelpers = DomHelpers;
+    ImgCache.private = Private;
 
     /****************************************************************************/
 

@@ -1,0 +1,28 @@
+body {
+    background-color: #eef;
+}
+.note {
+    background-color: #bbb;
+    margin: 1em;
+    padding: 1em;
+    display: inline-block;
+    float: right;
+    clear: right;
+}
+code {
+    display: block;
+    margin: 0.5em;
+}
+#actions {
+    float: left;
+}
+#actions li {
+    margin: 0.8em;
+}
+.clearfix {
+    overflow: auto;
+    zoom: 1;
+}
+h1 {
+    text-align: center;
+}

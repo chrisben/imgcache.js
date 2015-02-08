@@ -2,6 +2,20 @@
 
 ## master ##
 
+## 1.0rc1 ##
+
+### NEW ###
+* Added a wrapper for imgcache that supports Promises (qimgcache.js)
+* Helpers, DomHelpers and Private classes are now available publicly via ImgCache.helpers, ImgCache.domHelpers and ImgCache.private respectively. Those are not just plain public because you generally shouldn't need them, though they're now accessible.
+
+### FIXED ###
+* Fixed issue on iOS devices (#93)
+
+### IMPROVED ###
+* Replaced tabs with whitespaces throughout the code and examples
+* Readme: added a Troubleshooting section to help you solve the most common issues
+* Readme: added links to angular wrappers for imgcache
+* Reviewed examples
 
 ## 0.7.6 ##
 

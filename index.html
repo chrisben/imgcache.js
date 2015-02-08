@@ -1,108 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>imgcache.js - Tests</title>
-	<script src="examples/jquery-1.6.4.min.js"></script>
-	<script src="js/imgcache.js"></script>
-	<!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
-	<script src="cordova.js"></script>	
-	<script>
-		var LOG_LEVEL_INFO = 1;
-		var LOG_LEVEL_WARNING = 2;
-		var LOG_LEVEL_ERROR = 3;
-		
-		var logger = function (str, level) {
-			var levelClass = '';
-			if (level == LOG_LEVEL_INFO) { levelClass = 'info' } ;
-			if (level == LOG_LEVEL_WARNING) { levelClass = 'warn' };
-			if (level == LOG_LEVEL_ERROR) { levelClass = 'error' };
-			$('#log').append($('<li></li>').addClass(levelClass).text(str));
-		};
-		
-		var startTest = function () {
-		
-			console.log('starting test');
-		
-			var countTotalMethods = 0;
-			var testableMethods = [];
-			for (var m in ImgCache) {
-				if (typeof ImgCache[m] === 'function') {
-					countTotalMethods++;
-					testableMethods.push(m);
-				}
-			}
-			var testedMethods = {};
-		
-			ImgCache.options.debug = true;
-			ImgCache.overridables.log = logger;
-			ImgCache.options.cacheClearSize = 10;
-			var default_options = ImgCache.options;
+    <meta charset="utf-8">
+    <title>imgcache.js - Tests</title>
+    <script src="examples/jquery-1.6.4.min.js"></script>
+    <script src="js/imgcache.js"></script>
+    <!-- only for cordova (replace by phonegap.js for phonegap) - ignore on desktop browser -->
+    <script src="cordova.js"></script>
+    <script>
+        var LOG_LEVEL_INFO = 1,
+            LOG_LEVEL_WARNING = 2,
+            LOG_LEVEL_ERROR = 3,
+            logger = function (str, level) {
+                var levelClass = '';
+                if (level == LOG_LEVEL_INFO) { levelClass = 'info' } ;
+                if (level == LOG_LEVEL_WARNING) { levelClass = 'warn' };
+                if (level == LOG_LEVEL_ERROR) { levelClass = 'error' };
+                $('#log').append($('<li></li>').addClass(levelClass).text(str));
+            };
 
-			var test_suites_options = [
-				{
-					usePersistentCache: true
-				},
-				{
-					usePersistentCache: false
-				},
-				{
-					useDataURI: true
-				},
-			];
+        var startTest = function () {
 
-			$('#version').text('imgcache.js version ' + ImgCache.version);
+            console.log('starting test');
 
-			var $test_img, $test_div;
-
-			var getBackgroundImageUrl = function ($div) {
-				var backgroundImageProperty = $div.css('background-image');
-				if (!backgroundImageProperty) {
-					return;
-				}
-				var regexp = /\((.+)\)/;
-				return regexp.exec(backgroundImageProperty)[1];
-			};
-			
-			var getAppropriateElement = function (element) {
-				if (ImgCache.jQuery) {
-					return element;
+            var countTotalMethods = 0;
+            var testableMethods = [];
+            for (var m in ImgCache) {
+                if (typeof ImgCache[m] === 'function') {
+                    countTotalMethods++;
+                    testableMethods.push(m);
                 }
-				return element[0];
-			};
-			
-			// simple test bench : test function should call ok/nok callbacks then it carries on with next test
-			// name: exact name of the method to Test
-			// test: code that will get executed - can expect ok or error
-			var tests_list = [
-				{
-					name: 'init',
-					test: function (ok, nok) {
-						ImgCache.init(ok, nok);
-					} 
-				},
-				{ 
-					name: 'clearCache',
-					test: function (ok, nok) {
-						ImgCache.clearCache(ok, nok);
-					}
-				},
-				{
-					name: 'getCurrentSize',
-					test: function (ok, nok) {
-						if (ImgCache.getCurrentSize() === 0) {
-							ok();
-						} else {
-							nok();
-						}
-					} 
-				},
-				{
-					name: 'isCached',
-					test: function (ok, nok) {
-						// expected result: failure
-						ImgCache.isCached($test_img.attr('src'), function (src, res) { if (res) { nok(); } else { ok(); } });
-					}
+            }
+            var testedMethods = {};
+
+            ImgCache.options.debug = true;
+            ImgCache.overridables.log = logger;
+            ImgCache.options.cacheClearSize = 10;
+
+            var default_options = ImgCache.options;
+
+            var test_suites_options = [
+                {
+                    usePersistentCache: true
+                },
+                {
+                    usePersistentCache: false
+                },
+                {
+                    useDataURI: true
+                }
+            ];
+
+            $('#version').text('imgcache.js version ' + ImgCache.version);
+
+            var $test_img, $test_div;
+
+            var getBackgroundImageUrl = function ($div) {
+                var backgroundImageProperty = $div.css('background-image');
+                if (!backgroundImageProperty) {
+                    return;
+                }
+                var regexp = /\((.+)\)/;
+                return regexp.exec(backgroundImageProperty)[1];
+            };
+
+            var getAppropriateElement = function (element) {
+                if (ImgCache.jQuery) {
+                    return element;
+                }
+                return element[0];
+            };
+
+            // simple test bench : test function should call ok/nok callbacks then it carries on with next test
+            // name: exact name of the method to Test
+            // test: code that will get executed - can expect ok or error
+            var tests_list = [
+                {
+                    name: 'init',
+                    test: function (ok, nok) {
+                        ImgCache.init(ok, nok);
+                    }
+                },
+                {
+                    name: 'clearCache',
+                    test: function (ok, nok) {
+                        ImgCache.clearCache(ok, nok);
+                    }
+                },
+                {
+                    name: 'getCurrentSize',
+                    test: function (ok, nok) {
+                        if (ImgCache.getCurrentSize() === 0) {
+                            ok();
+                        } else {
+                            nok();
+                        }
+                    }
+                },
+                {
+                    name: 'isCached',
+                    test: function (ok, nok) {
+                        // expected result: failure
+                        ImgCache.isCached($test_img.attr('src'), function (src, res) { if (res) { nok(); } else { ok(); } });
+                    }
                 },
                 {
                     name: 'getCachedFile',
@@ -111,28 +111,28 @@
                         ImgCache.getCachedFile($test_img.attr('src'), function (src, file_entry) { if (file_entry) { nok(); } else { ok(); } });
                     }
                 },
-				{
-					name: 'cacheFile', 
-					test: function (ok, nok) {
-						ImgCache.cacheFile($test_img.attr('src'), ok, nok);
-					}
-				},
-				{
-					name: 'cacheBackground', 
-					test: function (ok, nok) {
-						ImgCache.cacheBackground(getAppropriateElement($test_div), ok, nok);
-					}
-				},
-				{
-					name: 'isCached',
-					test: function (ok, nok) {
-						var img_src = getBackgroundImageUrl($test_div);
-						if (img_src) {
-							ImgCache.isCached(img_src, function (src, res) { if (res) { ok(); } else { nok(); }  });
+                {
+                    name: 'cacheFile',
+                    test: function (ok, nok) {
+                        ImgCache.cacheFile($test_img.attr('src'), ok, nok);
+                    }
+                },
+                {
+                    name: 'cacheBackground',
+                    test: function (ok, nok) {
+                        ImgCache.cacheBackground(getAppropriateElement($test_div), ok, nok);
+                    }
+                },
+                {
+                    name: 'isCached',
+                    test: function (ok, nok) {
+                        var img_src = getBackgroundImageUrl($test_div);
+                        if (img_src) {
+                            ImgCache.isCached(img_src, function (src, res) { if (res) { ok(); } else { nok(); }  });
                         } else {
-							nok();
+                            nok();
                         }
-					}
+                    }
                 },
                 {
                     name: 'getCachedFile',
@@ -174,278 +174,256 @@
                         }
                     }
                 },
-				{ 
-					name: 'useCachedFile',
-					test: function (ok, nok) {
-						ImgCache.useCachedFile(getAppropriateElement($test_img), ok, nok);
-					}
-				},
-				{ 
-					name: 'useCachedBackground',
-					test: function (ok, nok) {
-						ImgCache.useCachedBackground(getAppropriateElement($test_div), ok, nok);
-					}
-				},
-				{ 
-					name: 'isBackgroundCached',
-					test: function (ok, nok) {
-						ImgCache.isBackgroundCached(getAppropriateElement($test_div), function(path, success){
-							if(success){
-								ok();
-							} else {
-								nok();
-							}
-						});
-					}
-				},
-				{ 
-					name: 'useOnlineFile', 
-					test: function (ok, nok) {
-						ImgCache.useOnlineFile(getAppropriateElement($test_img));
-						if ($test_img.attr('src').match('^http') == 'http') {
-							ok();
-                        } else {
-							nok();
-                        }
-					}  
-				},
-				{
-					name: 'useBackgroundOnlineFile', 
-					test: function (ok, nok) {
-						ImgCache.useBackgroundOnlineFile(getAppropriateElement($test_div));
-						var img_src = getBackgroundImageUrl($test_div);
-						if (img_src.match('^http') == 'http') {
-							ok();
+                {
+                    name: 'useCachedFile',
+                    test: function (ok, nok) {
+                        ImgCache.useCachedFile(getAppropriateElement($test_img), ok, nok);
+                    }
+                },
+                {
+                    name: 'useCachedBackground',
+                    test: function (ok, nok) {
+                        ImgCache.useCachedBackground(getAppropriateElement($test_div), ok, nok);
+                    }
+                },
+                {
+                    name: 'isBackgroundCached',
+                    test: function (ok, nok) {
+                        ImgCache.isBackgroundCached(getAppropriateElement($test_div), function(path, success){
+                            if(success){
+                                ok();
+                            } else {
+                                nok();
+                            }
+                        });
+                    }
+                },
+                {
+                    name: 'useOnlineFile',
+                    test: function (ok, nok) {
+                        ImgCache.useOnlineFile(getAppropriateElement($test_img));
+                        if ($test_img.attr('src').match('^http') == 'http') {
+                            ok();
                         } else {
                             nok();
                         }
-					}  
-				},
-				{
-					name: 'getCurrentSize',
-					test: function (ok, nok) {
-						if (ImgCache.getCurrentSize() > 0) {
-							ok();
-						} else {
-							nok();
-						}
-					} 
-				},
-				{ 
-					name: 'removeFile',
-					test: function (ok, nok) {
-						ImgCache.removeFile($test_img.attr('src'), ok, nok);
-					}
-				},
-				{
-					name: 'isCached',
-					test: function (ok, nok) {
-						// expected result: failure
-						ImgCache.isCached($test_img.attr('src'),
-							function (src, res) { if (res) { nok(); } else { ok(); }  });
-					}
-				},
-				{
-					name: 'cacheFile', 
-					test: function (ok, nok) {
-						ImgCache.cacheFile($test_img.attr('src'), ok, nok);
-					}
-				},
-				{ 
-					name: 'useCachedFileWithSource',
-					test: function (ok, nok) {
-						ImgCache.useCachedFileWithSource(getAppropriateElement($test_img), $test_img.attr('src'), ok, nok);
-					}
-				},
-				{
-					name: 'getCacheFolderURI',
-					test: function (ok, nok) {
-						var folder = ImgCache.getCacheFolderURI();
-						logger('Output: ' + folder, LOG_LEVEL_INFO);
-						if (folder && folder.length) {
-							ok();
+                    }
+                },
+                {
+                    name: 'useBackgroundOnlineFile',
+                    test: function (ok, nok) {
+                        ImgCache.useBackgroundOnlineFile(getAppropriateElement($test_div));
+                        var img_src = getBackgroundImageUrl($test_div);
+                        if (img_src.match('^http') == 'http') {
+                            ok();
                         } else {
-							nok();
+                            nok();
                         }
-					}
-				},
-				{ 
-					name: 'clearCache',
-					test: function (ok, nok) {
-						ImgCache.clearCache(ok, nok);
-					}
-				}
-			];
+                    }
+                },
+                {
+                    name: 'getCurrentSize',
+                    test: function (ok, nok) {
+                        if (ImgCache.getCurrentSize() > 0) {
+                            ok();
+                        } else {
+                            nok();
+                        }
+                    }
+                },
+                {
+                    name: 'removeFile',
+                    test: function (ok, nok) {
+                        ImgCache.removeFile($test_img.attr('src'), ok, nok);
+                    }
+                },
+                {
+                    name: 'isCached',
+                    test: function (ok, nok) {
+                        // expected result: failure
+                        ImgCache.isCached($test_img.attr('src'),
+                            function (src, res) { if (res) { nok(); } else { ok(); }  });
+                    }
+                },
+                {
+                    name: 'cacheFile',
+                    test: function (ok, nok) {
+                        ImgCache.cacheFile($test_img.attr('src'), ok, nok);
+                    }
+                },
+                {
+                    name: 'useCachedFileWithSource',
+                    test: function (ok, nok) {
+                        ImgCache.useCachedFileWithSource(getAppropriateElement($test_img), $test_img.attr('src'), ok, nok);
+                    }
+                },
+                {
+                    name: 'getCacheFolderURI',
+                    test: function (ok, nok) {
+                        var folder = ImgCache.getCacheFolderURI();
+                        logger('Output: ' + folder, LOG_LEVEL_INFO);
+                        if (folder && folder.length) {
+                            ok();
+                        } else {
+                            nok();
+                        }
+                    }
+                },
+                {
+                    name: 'clearCache',
+                    test: function (ok, nok) {
+                        ImgCache.clearCache(ok, nok);
+                    }
+                }
+            ];
 
-			var cur_test_suite = 0;
-			var num_tests = tests_list.length * (test_suites_options.length + 1);
-			var success_count = 0;
-			var item = 0;
+            var cur_test_suite = 0;
+            var num_tests = tests_list.length * (test_suites_options.length + 1);
+            var success_count = 0;
+            var item = 0;
 
-			var run_next_test_suite = function () {
-				if (cur_test_suite === test_suites_options.length + 1) {
-					// reset non-option
-					ImgCache.jQuery = window.jQuery;
-					logger('END OF TESTS', LOG_LEVEL_INFO);
-					return;
-				}
-				$test_img = $('#test_img').clone();
-				$test_div = $('#test_div').clone();
-				// add those new elements to the dom to get styles
-				$('#sink')
-					.append($test_img)
-					.append($test_div);
+            var run_next_test_suite = function () {
+                if (cur_test_suite === test_suites_options.length + 1) {
+                    // reset non-option
+                    ImgCache.jQuery = window.jQuery;
+                    logger('END OF TESTS', LOG_LEVEL_INFO);
+                    return;
+                }
+                $test_img = $('#test_img').clone();
+                $test_div = $('#test_div').clone();
+                // add those new elements to the dom to get styles
+                $('#sink')
+                    .append($test_img)
+                    .append($test_div);
 
-				if (cur_test_suite === test_suites_options.length) {
-					ImgCache.jQuery = false;
-					logger('Running tests without jQuery', LOG_LEVEL_INFO);
-				} else {
-					// see console output for debug info
-					var cur_options = test_suites_options[cur_test_suite];
-					ImgCache.options = $.extend({}, default_options, cur_options);
-					logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), LOG_LEVEL_INFO);
-				}
+                if (cur_test_suite === test_suites_options.length) {
+                    ImgCache.jQuery = false;
+                    logger('Running tests without jQuery', LOG_LEVEL_INFO);
+                } else {
+                    // see console output for debug info
+                    var cur_options = test_suites_options[cur_test_suite];
+                    ImgCache.options = $.extend({}, default_options, cur_options);
+                    logger('Running tests with ImgCache options: ' + JSON.stringify(cur_options), LOG_LEVEL_INFO);
+                }
 
-				item = 0;
-				test_method();
+                item = 0;
+                test_method();
 
-				cur_test_suite ++;
-			};
+                cur_test_suite ++;
+            };
 
-			var test_method = function (result) {
-				if (result !== undefined) { 
-					if (result) {
-						logger('> Result: SUCCESS', LOG_LEVEL_INFO);
-						success_count ++;
-					}
-					else
-						logger('> Result: FAILURE', LOG_LEVEL_ERROR);
-				}
-				if (item >= tests_list.length) {
-					$('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
+            var test_method = function (result) {
+                if (result !== undefined) {
+                    if (result) {
+                        logger('> Result: SUCCESS', LOG_LEVEL_INFO);
+                        success_count ++;
+                    }
+                    else
+                        logger('> Result: FAILURE', LOG_LEVEL_ERROR);
+                }
+                if (item >= tests_list.length) {
+                    $('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
 
-					var countTestedMethods = 0;
-					for (var key in testedMethods) {
-						if (testedMethods.hasOwnProperty(key)) { countTestedMethods++ };
-					}					
+                    var countTestedMethods = 0;
+                    for (var key in testedMethods) {
+                        if (testedMethods.hasOwnProperty(key)) { countTestedMethods++ };
+                    }
 
-					var coverage = 'API coverage: ' + countTestedMethods + '/' + countTotalMethods;
-					if (countTestedMethods < countTotalMethods) {
-						var untestedMethods = '';
-						for (var i = 0; i < testableMethods.length; i++) {
-							var method = testableMethods[i];
-							if (!testedMethods.hasOwnProperty(method)) {
-								if (untestedMethods.length > 0) {
-									untestedMethods += ' / ';
+                    var coverage = 'API coverage: ' + countTestedMethods + '/' + countTotalMethods;
+                    if (countTestedMethods < countTotalMethods) {
+                        var untestedMethods = '';
+                        for (var i = 0; i < testableMethods.length; i++) {
+                            var method = testableMethods[i];
+                            if (!testedMethods.hasOwnProperty(method)) {
+                                if (untestedMethods.length > 0) {
+                                    untestedMethods += ' / ';
                                 }
-								untestedMethods += method;
-							}
-						}
-						if (untestedMethods.length > 0) {
-							coverage += '<br>Untested methods: ' + untestedMethods;
-						}
-					}
-					$('#methods').html(coverage);
-					logger('--------------------------------------------', LOG_LEVEL_INFO);
-					// launch second set of tests with different options
-					run_next_test_suite();
-					return;
-				}
+                                untestedMethods += method;
+                            }
+                        }
+                        if (untestedMethods.length > 0) {
+                            coverage += '<br>Untested methods: ' + untestedMethods;
+                        }
+                    }
+                    $('#methods').html(coverage);
+                    logger('--------------------------------------------', LOG_LEVEL_INFO);
+                    // launch second set of tests with different options
+                    run_next_test_suite();
+                    return;
+                }
 
-				var cur_test = tests_list[item];
-				logger('*** Testing ' + cur_test.name + ' ['+(item+1)+'/'+num_tests+']', LOG_LEVEL_INFO);
-				
-				testedMethods[cur_test.name] = true;
-				
-				// ready for next one
-				item ++;
-				//starts test now!
-				cur_test.test(function () { test_method(true); }, function () { test_method(false); });
-			};
+                var cur_test = tests_list[item];
+                logger('*** Testing ' + cur_test.name + ' ['+(item+1)+'/'+num_tests+']', LOG_LEVEL_INFO);
 
-			run_next_test_suite();
-		};
+                testedMethods[cur_test.name] = true;
 
-		/*
-		if (typeof(cordova) !== 'undefined') {
-			// cordova test
-			console.log('cordova start');
-			document.addEventListener('deviceready', startTest, false);
-		} else {
-			// normal browser test
-			$(document).ready(function () {
-				console.log('starting test');
-				startTest();
-			});
-		}
-		*/
-	</script>
-	<style>
-		/* just to make the page look a little nicer.. no use for the example in itself.. */
-		.note {
-			background-color: #bbb;
-			margin: 1em;
-			padding: 1em;
-			display: inline-block;
-			float: right;
-			clear: right;
-		}
-		code { 
-				display: block;
-				margin: 0.5em;
-		}
-		body { background-color: #eef;  }
-		h1 { text-align: center; }
-		#log { clear: both; list-style-type: none; }
-		#log li.error { background-color: #f99; }
-		#log li.warn { background-color: #ff8c00; }
-		#log li.info { background-color: #87cefa; }
-		#version { font-size: 1.2em; }
-		#result { font-size: 1.5em; font-weight: bold; }
-		#test_img { display: none; }
-		.bgimg { display: none; background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);  }
-		#actions li {
-			line-height: 2em;
-		}
-	</style>
+                // ready for next one
+                item ++;
+                //starts test now!
+                cur_test.test(function () { test_method(true); }, function () { test_method(false); });
+            };
+
+            run_next_test_suite();
+        };
+    </script>
+    <link rel="stylesheet" href="examples/examples.css">
+    <style>
+        #log { clear: both; list-style-type: none; }
+        #log li.error { background-color: #f99; }
+        #log li.warn { background-color: #ff8c00; }
+        #log li.info { background-color: #87cefa; }
+        #version { font-size: 1.2em; }
+        #result { font-size: 1.5em; font-weight: bold; }
+        #test_img { display: none; }
+        .bgimg { display: none; background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);  }
+        #actions li {
+            line-height: 2em;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>imgcache.js</h1>
+    <h1>imgcache.js</h1>
 
-<ul id="actions">
-	<li><a href="#" onclick="startTest()">Start unit tests</a></li>
-	<li><a href="examples/example1.html">Example #1</a></li>
-	<li><a href="examples/example2.html">Example #2</a></li>
-</ul>
+    <div class="clearfix">
 
-<div class="note">
-<p>Don't forget to accept your browser request to store data on the local computer!</p>
-</div>
+        <div id="actions">
+            <ul>
+                <li><a href="#" onclick="startTest()">Start unit tests</a></li>
+                <li><a href="examples/example1.html">Example #1</a></li>
+                <li><a href="examples/example2.html">Example #2</a></li>
+                <li><a href="examples/nojquery.html">Example #3 : without jQuery</a></li>
+                <li><a href="examples/promises.html">Example #4 : Promises</a></li>
+            </ul>
+        </div>
 
-<div class="note">
-<p>If seen in Chrome from file://, run chrome with the following flags: <code>--allow-file-access-from-files --allow-file-access</code> in order to <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">avoid a security error</a>.</p>
-<p>Otherwise run the page from a web server.</p>
-<p><a href="http://updates.html5rocks.com/2011/08/Debugging-the-Filesystem-API">More info.</a></p>
-</div>
+        <div class="note">
+            <p>Don't forget to accept your browser request to store data on the local computer!</p>
+        </div>
+        <div class="note">
+            <p>If this file is opened in Chrome from a "file://" url, run Chrome with the following flags: <code>--allow-file-access-from-files --allow-file-access</code> in order to <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">avoid a security error</a>.</p>
+            <p>Otherwise run the page from a web server - <a href="http://updates.html5rocks.com/2011/08/Debugging-the-Filesystem-API">More info</a></p>
+        </div>
 
-<!-- this is the test image, it needs to in a CORS enabled domain -->
-<img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
-<!-- this is the test div, it needs to in a CORS enabled domain -->
-<div id="test_div" class="bgimg">&nbsp;</div>
-<br/>
+    </div>
 
-<p id="version"></p>
+    <!-- this is the test image, it needs to in a CORS enabled domain -->
+    <img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
+    <!-- this is the test div, it needs to in a CORS enabled domain -->
+    <div id="test_div" class="bgimg">&nbsp;</div>
+    <br/>
 
-<div id="result"></div>
-<div id="methods"></div>
+    <p id="version"></p>
 
-<ul id="log">
-	<h2>log</h2>
-</ul>
+    <div id="result"></div>
+    <div id="methods"></div>
 
-<div id="sink"></div>
+    <ul id="log">
+        <h2>log</h2>
+    </ul>
+
+    <div id="sink"></div>
 
 </body>
 </html>

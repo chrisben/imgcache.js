@@ -106,9 +106,9 @@ Using cached images
 Once an image is stored in the cache, you can replace the file displayed in an img element by the cached one:
 
 ```javascript
-target = $('img#profile');
-ImgCache.cacheFile(target.attr('src'), function(){
-  ImgCache.useCachedFile(target, function(){
+var target = $('img#profile');
+ImgCache.cacheFile(target.attr('src'), function () {
+  ImgCache.useCachedFile(target, function () {
     alert('now using local copy');
   }, function(){
     alert('could not load from cache');
@@ -119,13 +119,13 @@ ImgCache.cacheFile(target.attr('src'), function(){
 To check if a file is stored locally:
 
 ```javascript
-ImgCache.isCached(target.attr('src'), function(path, success){
-  if(success){
+ImgCache.isCached(target.attr('src'), function(path, success) {
+  if (success) {
     // already cached
     ImgCache.useCachedFile(target);
   } else {
     // not there, need to cache the image
-    ImgCache.cacheFile(target.attr('src'), function(){
+    ImgCache.cacheFile(target.attr('src'), function () {
       ImgCache.useCachedFile(target);
     });
   }
@@ -135,7 +135,7 @@ ImgCache.isCached(target.attr('src'), function(path, success){
 When you no longer want to use the locally cached file:
 
 ```javascript
-target = $('img#profile');
+var target = $('img#profile');
 ImgCache.useOnlineFile(target);
 ```
 
@@ -146,7 +146,7 @@ To remove all cached files, clear the local cache folder:
 ```javascript
 ImgCache.clearCache(function(){
   // continue cleanup...
-}, function(){
+}, function () {
   // something went wrong
 });
 ```
@@ -155,21 +155,27 @@ There is currently no way to invalidate single images from the cache.
 
 High level API
 --------------
-* ImgCache.init() *initialises the local cache*
-* ImgCache.cacheFile() *writes a copy of a file into the local cache*
-* ImgCache.isCached() *checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
-* ImgCache.getCachedFile() *returns the cached file*
-* ImgCache.getCachedFileURL() *returns the URL of the cached version of a file*
-* ImgCache.useCachedFile() *replaces the img src with the cached version*
-* ImgCache.useCachedFileWithSource() *similar to useCachedFile but with the image source url as extra parameter*
-* ImgCache.useOnlineFile() *replaces back the img src with the original (online) version*
-* ImgCache.clearCache() *clears the local cache folder*
-* ImgCache.isBackgroundCached() *checks if a the given element background image exists in the cache - does not check if the latest version of that file is cached*
-* ImgCache.cacheBackground() *caches the background image of an element*
-* ImgCache.useCachedBackground() *replaces the background image source of the given element with the cached version*
-* ImgCache.useBackgroundOnlineFile() *replaces back a background image with the original (online) version*
-* ImgCache.removeFile() *removes a given file from the cache*
-* ImgCache.getCurrentSize() *returns the current size of the ImgCache cache in bytes -- this is not an asynchronous method *
+* ImgCache.**init**() *-- initialises the local cache*
+* ImgCache.**cacheFile**() *-- writes a copy of a file into the local cache*
+* ImgCache.**isCached**() *-- checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
+* ImgCache.**getCachedFile**() *-- returns the cached file*
+* ImgCache.**getCachedFileURL**() *-- returns the URL of the cached version of a file*
+* ImgCache.**useCachedFile**() *-- replaces the img src with the cached version*
+* ImgCache.**useCachedFileWithSource**() *-- similar to useCachedFile but with the image source url as extra parameter*
+* ImgCache.**useOnlineFile**() *-- replaces back the img src with the original (online) version // synchronous method*
+* ImgCache.**clearCache**() *-- clears the local cache folder*
+* ImgCache.**isBackgroundCached**() *-- checks if a the given element background image exists in the cache - does not check if the latest version of that file is cached*
+* ImgCache.**cacheBackground**() *-- caches the background image of an element*
+* ImgCache.**useCachedBackground**() *-- replaces the background image source of the given element with the cached version*
+* ImgCache.**useBackgroundOnlineFile**() *-- replaces back a background image with the original (online) version*
+* ImgCache.**removeFile**() *-- removes a given file from the cache*
+* ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method *
+
+Private methods are accessible through:
+
+* ImgCache.helpers *-- general helper methods*
+* ImgCache.domHelpers *-- DOM manipulation helper functions*
+* ImgCache.private *-- private methods*
 
 Options
 -------
@@ -181,21 +187,69 @@ Overridable methods
 * The hash method used by default in ImgCache is SHA-1. It was chosen for its near absence of collision. Though it might slow things down if you have a large number of files to cache (see #81). You can plug-in your own method by overriding ImgCache.overridables.hash.
 * If logging is enabled, ImgCache output some log entries in the console by default. You can override ImgCache.overridables.log in order to change this behaviour.
 
+Promises
+--------
+Include also [qimgcache.js](js/qimgcache.js) in your html files to be able to use its [Q Promises](https://github.com/kriskowal/q) interface if you don't like callbacks and prefer to use the simpler then/fail/progress methods.
+
+This wrapper also makes sure the init method is always called first, so you SHOULDN'T call this method yourself when using this wrapper.
+
+Check out the [sample code](examples/promises.html).
+
 Unit tests
 ----------
-Open index.html and click 'Start unit tests' to launch unit tests.
+Open ```index.html``` and click 'Start unit tests' to launch unit tests.
 
 Code samples
 ------------
-See html files in the `examples/` folder.
+Open ```index.html``` to check out several examples.
 
 Release Notes
 -------------
 See [CHANGELOG](CHANGELOG.md) for the complete release notes.
 
+Troubleshooting
+---------------
+
+Make sure you first read carefully this documentation. If you are still having issues follow this checklist:
+
+* Set debug ON (```ImgCache.options.debug = true;```) and follow the output within the console carefully.
+* Is init the first method of ImgCache to be called? (check out the console with debug ON to make sure of that)
+* Add alert/console.log calls throughout your code to see what gets called and what doesn't.
+* Am I running the latest version of ImgCache? If not, try with the latest version or look into the [changelog](CHANGELOG.md) for fixes related to your problem in newer releases.
+
+If using Cordova/Phonegap, make sure you read [this documentation](CORDOVA.md) first, then double check the following:
+
+* Are all the required plugins activated ? (config.xml)
+* Are the correct permissions set? (config.xml)
+* Is my code running AFTER the "deviceready" event is launched?
+
+If you are still stuck, look for a similar problem within existing issues.
+
+If you cannot find any, open an issue with a description of your problem, a simpler version of your code if you can.
+
+Whenever you post an issue it's IMPORTANT you add the following details to get a quicker answer:
+
+* ImgCache version
+* Options used
+* JS frameworks used with it (jQuery / Angular / Ionic ..)
+* Environment : Chrome or Cordova
+* If Cordova is used:
+    * Its version
+    * The version of the plugins
+    * The target OS (iOS / Android..)
+    * The target OS version (e.g: iOS 8.1)
+
+
 Known issues
 ------------
 See [KNOWN_ISSUES](KNOWN_ISSUES.md) for a list of known issues.
+
+See also
+--------
+Wrappers for AngularJS:
+
+* [angular-imgcache.js](https://github.com/jBenes/angular-imgcache.js)
+* [ngImgCache](https://github.com/sunsus/ngImgCache/)
 
 License
 -------
