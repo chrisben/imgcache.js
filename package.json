@@ -1,0 +1,27 @@
+{
+  "name": "imgcache.js",
+  "version": "1.0.0",
+  "description": "JS library based on the File API to cache images for offline recovery (target: cordova/phonegap & chrome)",
+  "main": "js/imgcache.js",
+  "directories": {
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chaddjohnson/imgcache.js.git"
+  },
+  "keywords": [
+    "image",
+    "cache",
+    "html5",
+    "file",
+    "filesystem",
+    "offline"
+  ],
+  "author": "Christophe BENOIT",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/chrisben/imgcache.js/issues"
+  },
+  "homepage": "https://github.com/chaddjohnson/imgcache.js"
+}
