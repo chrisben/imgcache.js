@@ -35,6 +35,12 @@ To use this library, you need to copy `js/imgcache.js` into your project and imp
 ```html
 <script src="js/imgcache.js"></script>
 ```
+### npm
+
+```shell
+npm install imgcache.js
+```
+
 ### bower
 
 ```shell
