@@ -35,6 +35,17 @@ To use this library, you need to copy `js/imgcache.js` into your project and imp
 ```html
 <script src="js/imgcache.js"></script>
 ```
+### bower
+
+```shell
+bower install imgcache.js --save
+```
+
+Add a `<script>` to your `index.html`:
+
+```html
+<script src="/bower_components/imgcache.js/js/imgcache.js"></script>
+```
 
 Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
 
