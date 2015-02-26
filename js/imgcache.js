@@ -47,8 +47,6 @@ var ImgCache = {
                     }
             }
         },
-        jQuery: (window.jQuery || window.Zepto) ? true : false,        /* using jQuery if it's available otherwise the DOM API */
-        jQueryLite: (typeof window.angular !== 'undefined' && window.angular.element) ? true : false,    /* is AngularJS jQueryLite available */
         ready: false,
         attributes: {}
     },
@@ -127,18 +125,8 @@ var ImgCache = {
         return ext;
     };
 
-    Helpers.hasJqueryOrFunctions = function (element) {
-        if (ImgCache.jQuery || ImgCache.jQueryLite) {
-            return true;
-        } else {
-            var functions = Array.prototype.slice.call(arguments);
-            functions.shift();
-            functions.forEach(function(fn) {
-                if (element[fn] === undefined)
-                    return false;
-            });
-            return true;
-        }
+    Helpers.hasJqueryOrJQueryLite = function (element) {
+        return (ImgCache.jQuery || ImgCache.jQueryLite); 
     };
 
     Helpers.isCordova = function () {
@@ -250,28 +238,28 @@ var ImgCache = {
     };
 
     DomHelpers.removeAttribute = function (element, attrName) {
-        if (Helpers.hasJqueryOrFunctions(element, 'removeAttr')) {
+        if (Helpers.hasJqueryOrJQueryLite()) {
             element.removeAttr(attrName);
         } else {
             element.removeAttribute(attrName);
         }
     };
     DomHelpers.setAttribute = function (element, attrName, value) {
-        if (Helpers.hasJqueryOrFunctions(element, 'attr')) {
+        if (Helpers.hasJqueryOrJQueryLite()) {
             element.attr(attrName, value);
         } else {
             element.setAttribute(attrName, value);
         }
     };
     DomHelpers.getAttribute = function (element, attrName) {
-        if (Helpers.hasJqueryOrFunctions(element, 'attr')) {
+        if (Helpers.hasJqueryOrJQueryLite()) {
             return element.attr(attrName);
         } else {
             return element.getAttribute(attrName);
         }
     };
     DomHelpers.getBackgroundImage = function (element) {
-        if (Helpers.hasJqueryOrFunctions(element, 'attr', 'css')) {
+        if (Helpers.hasJqueryOrJQueryLite()) {
             return element.attr('data-old-background') ? "url(" + element.attr('data-old-background') + ")" : element.css('background-image');
         } else {
             var style = window.getComputedStyle(element, null);
@@ -282,7 +270,7 @@ var ImgCache = {
         }
     };
     DomHelpers.setBackgroundImage = function (element, styleValue) {
-        if (Helpers.hasJqueryOrFunctions(element, 'css')) {
+        if (Helpers.hasJqueryOrJQueryLite()) {
             element.css('background-image', styleValue);
         } else {
             element.style.backgroundImage = styleValue;
@@ -546,6 +534,9 @@ var ImgCache = {
         IMGCACHE_READY_TRIGGERED_EVENT = 'ImgCacheReady';
 
     ImgCache.init = function (success_callback, error_callback) {
+        ImgCache.jQuery = (window.jQuery || window.Zepto) ? true : false;        /* using jQuery if it's available otherwise the DOM API */
+        ImgCache.jQueryLite = (typeof window.angular !== 'undefined' && window.angular.element) ? true : false;    /* is AngularJS jQueryLite available */
+
         ImgCache.attributes.init_callback = success_callback;
 
         ImgCache.overridables.log('ImgCache initialising', LOG_LEVEL_INFO);
