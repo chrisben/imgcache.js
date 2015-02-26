@@ -125,7 +125,7 @@ var ImgCache = {
         return ext;
     };
 
-    Helpers.hasJqueryOrJQueryLite = function (element) {
+    Helpers.hasJqueryOrJqueryLite = function (element) {
         return (ImgCache.jQuery || ImgCache.jQueryLite); 
     };
 
@@ -238,28 +238,28 @@ var ImgCache = {
     };
 
     DomHelpers.removeAttribute = function (element, attrName) {
-        if (Helpers.hasJqueryOrJQueryLite()) {
+        if (Helpers.hasJqueryOrJqueryLite()) {
             element.removeAttr(attrName);
         } else {
             element.removeAttribute(attrName);
         }
     };
     DomHelpers.setAttribute = function (element, attrName, value) {
-        if (Helpers.hasJqueryOrJQueryLite()) {
+        if (Helpers.hasJqueryOrJqueryLite()) {
             element.attr(attrName, value);
         } else {
             element.setAttribute(attrName, value);
         }
     };
     DomHelpers.getAttribute = function (element, attrName) {
-        if (Helpers.hasJqueryOrJQueryLite()) {
+        if (Helpers.hasJqueryOrJqueryLite()) {
             return element.attr(attrName);
         } else {
             return element.getAttribute(attrName);
         }
     };
     DomHelpers.getBackgroundImage = function (element) {
-        if (Helpers.hasJqueryOrJQueryLite()) {
+        if (Helpers.hasJqueryOrJqueryLite()) {
             return element.attr('data-old-background') ? "url(" + element.attr('data-old-background') + ")" : element.css('background-image');
         } else {
             var style = window.getComputedStyle(element, null);
@@ -270,7 +270,7 @@ var ImgCache = {
         }
     };
     DomHelpers.setBackgroundImage = function (element, styleValue) {
-        if (Helpers.hasJqueryOrJQueryLite()) {
+        if (Helpers.hasJqueryOrJqueryLite()) {
             element.css('background-image', styleValue);
         } else {
             element.style.backgroundImage = styleValue;
