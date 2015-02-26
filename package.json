@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git://github.com/chaddjohnson/imgcache.js.git"
   },
+  "scripts": {
+    "test": "open '/Applications/Google Chrome.app' 'index.html' --args --allow-file-access-from-files --allow-file-access"
+  },
   "keywords": [
     "image",
     "cache",
