@@ -13,9 +13,9 @@
             LOG_LEVEL_ERROR = 3,
             logger = function (str, level) {
                 var levelClass = '';
-                if (level == LOG_LEVEL_INFO) { levelClass = 'info' } ;
-                if (level == LOG_LEVEL_WARNING) { levelClass = 'warn' };
-                if (level == LOG_LEVEL_ERROR) { levelClass = 'error' };
+                if (level == LOG_LEVEL_INFO) { levelClass = 'info'; }
+                if (level == LOG_LEVEL_WARNING) { levelClass = 'warn'; }
+                if (level == LOG_LEVEL_ERROR) { levelClass = 'error'; }
                 $('#log').append($('<li></li>').addClass(levelClass).text(str));
             };
 
