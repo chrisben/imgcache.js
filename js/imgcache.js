@@ -462,6 +462,42 @@ var ImgCache = {
 
         return img_src.replace(/(['"])/g, "");
     };
+    
+    Private.getDataFromEntry = function(img_src, entry, success_callback, error_callback) {
+        var _win = function (file) {
+            var reader = new FileReader();
+            reader.onloadend = function (e) {
+                // prefix with : 'data:' + mime_type + ';base64;' + .. ?
+                /* var mime_type = '';
+                if (filename && filename.length > 4) {
+                    //TODO: of course relying on extension is wrong.. but we trust our data here
+                    var ext = filename.substr(filename.length - 4).toLowerCase();
+                    if (ext == '.jpg' || ext == 'jpeg') {
+                        mime_type = 'image/jpeg';
+                    } else if (ext == '.png') {
+                        mime_type = 'image/png';
+                    } else if (ext == '.gif') {
+                        mime_type = 'image/gif';
+                    }
+                } */
+                var base64content = e.target.result;
+                if (!base64content) {
+                    ImgCache.overridables.log('File in cache ' + img_src + ' is empty', LOG_LEVEL_WARNING);
+                    if (error_callback) { error_callback(img_src); }
+                    return;
+                }
+                ImgCache.overridables.log('File ' + img_src + ' loaded from cache', LOG_LEVEL_INFO);
+                if (success_callback) { success_callback(base64content); }
+            };
+            reader.readAsDataURL(file);
+        };
+        var _fail = function (error) {
+            ImgCache.overridables.log('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
+            if (error_callback) { error_callback(img_src); }
+        };
+
+        entry.file(_win, _fail);
+    };
 
     Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, error_callback) {
         if (!Private.isImgCacheLoaded()) {
@@ -476,40 +512,17 @@ var ImgCache = {
 
         var _gotFileEntry = function (entry) {
             if (ImgCache.options.useDataURI) {
-                var _win = function (file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function (e) {
-                        // prefix with : 'data:' + mime_type + ';base64;' + .. ?
-                        /* var mime_type = '';
-                        if (filename && filename.length > 4) {
-                            //TODO: of course relying on extension is wrong.. but we trust our data here
-                            var ext = filename.substr(filename.length - 4).toLowerCase();
-                            if (ext == '.jpg' || ext == 'jpeg') {
-                                mime_type = 'image/jpeg';
-                            } else if (ext == '.png') {
-                                mime_type = 'image/png';
-                            } else if (ext == '.gif') {
-                                mime_type = 'image/gif';
-                            }
-                        } */
-                        var base64content = e.target.result;
-                        if (!base64content) {
-                            ImgCache.overridables.log('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
-                            if (error_callback) { error_callback($element); }
-                            return;
-                        }
-                        set_path_callback($element, base64content, img_src);
-                        ImgCache.overridables.log('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
-                        if (success_callback) { success_callback($element); }
-                    };
-                    reader.readAsDataURL(file);
-                };
-                var _fail = function (error) {
-                    ImgCache.overridables.log('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
+                Private.getDataFromEntry(img_src, entry, function(base64content) {
+                    set_path_callback($element, base64content, img_src);
+                    ImgCache.overridables.log('File ' + filename + ' loaded from cache', LOG_LEVEL_INFO);
+                    if (success_callback) { success_callback($element); }
+                }, function(error) {
+                    if(!error || !error.code)
+                        ImgCache.overridables.log('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
+                    else
+                        ImgCache.overridables.log('Failed to read file ' + error.code, LOG_LEVEL_ERROR);
                     if (error_callback) { error_callback($element); }
-                };
-
-                entry.file(_win, _fail);
+                });
             } else {
                 // using src="filesystem:" kind of url
                 var new_url = Helpers.EntryGetURL(entry);
@@ -707,6 +720,19 @@ var ImgCache = {
         ImgCache.getCachedFile(img_src, _getURL);
     };
 
+    ImgCache.getCachedFileData = function (img_src, success_callback, error_callback) {
+        var response_callback=function(img_src, entry) {
+            if(entry) {
+                Private.getDataFromEntry(img_src, entry, function(base64content){
+                    success_callback(img_src, base64content);
+                }, error_callback);
+            } else {
+                ImgCache.overridables.log('Failed not in cache ' + img_src, LOG_LEVEL_ERROR);
+                if (error_callback) { error_callback(img_src); }
+            }
+        };
+        ImgCache.getCachedFile(img_src, response_callback);
+    };
 
     // checks if a copy of the file has already been cached
     // Reminder: this is an asynchronous method!
