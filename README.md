@@ -67,6 +67,15 @@ ImgCache.options.debug = true;
 
 // increase allocated space on Chrome to 50MB, default was 10MB
 ImgCache.options.chromeQuota = 50*1024*1024;
+
+// Instead of using the PERSISTENT or TEMPORARY filesystems, use one of the
+// Cordova File plugin's app directories
+// (https://github.com/apache/cordova-plugin-file#where-to-store-files).
+// This is friendlier in a mobile application environment as we are able to store
+// files in the correct platform-recommended/enforced directories.
+// WARNING: Make sure this points to a __directory__!
+// NOTE: Only has effect when running in a Cordova environment
+ImgCache.options.cordovaFilesystemRoot = cordova.file.dataDirectory;
 ```
 
 See `ImgCache.options` at the top of the source file for more settings.

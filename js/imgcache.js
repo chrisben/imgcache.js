@@ -569,7 +569,24 @@ var ImgCache = {
         };
         if (Helpers.isCordova()) {
             // PHONEGAP
-            window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+            if(ImgCache.options.cordovaFilesystemRoot) {
+                try {
+                    window.resolveLocalFileSystemURL(
+                        ImgCache.options.cordovaFilesystemRoot,
+                        function (dirEntry) {
+                            _gotFS({ root: dirEntry });
+                        },
+                        function (e) {
+                            if(typeof e == "object") _fail(e);
+                            else _fail({}); // no idea whether the error callback is guaranteed to be called with an object argument
+                        }
+                    );
+                } catch (e) {
+                    _fail({ code: e.message })
+                }
+            } else {
+                window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+            }
         } else {
             //CHROME
             window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
