@@ -369,7 +369,8 @@ var ImgCache = {
                 dirEntry.getFile('.nomedia', {create: true, exclusive: false}, _androidNoMediaFileCreated, _fail);
             } else if (!Helpers.isCordovaWindowsPhone()) {
                 // #73 - iOS: the directory should not be backed up in iCloud
-                if (dirEntry.setMetadata) {
+                if (Helpers.isCordovaIOS) {
+                  if (dirEntry.setMetadata) {
                     dirEntry.setMetadata(function () {
                             /* success*/
                             ImgCache.overridables.log('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
@@ -378,7 +379,8 @@ var ImgCache = {
                             ImgCache.overridables.log('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
                         }, { 'com.apple.MobileBackup': 1 }
                         // 1=NO backup oddly enough..
-                    );
+                     );
+                  }
                 }
 
                 if (success_callback) { success_callback(); }
