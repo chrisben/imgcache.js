@@ -165,7 +165,7 @@ var ImgCache = {
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
             return entry.toNativeURL();
         } else {
-            return entry.toURL();
+            return entry.toInternalURL();
         }
     };
 
