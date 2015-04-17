@@ -2,6 +2,10 @@
 
 ## master ##
 
+### IMPROVED ###
+* Don't set iCloud-related metadata outside iOS (#112)
+* Added note about bower & npm in the README (#104)
+
 ## 1.0rc1 ##
 
 ### NEW ###

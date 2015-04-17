@@ -30,7 +30,10 @@ Optional Dependencies
 
 Installation
 ------------
-To use this library, you need to copy `js/imgcache.js` into your project and import that script within your html file:
+
+Note: You can use [bower](http://bower.io/) or [npm](https://www.npmjs.com/) to add this library as a dependency to your project (repository name: `imgcache.js`).
+
+To start to use this library, import `js/imgcache.js` within your html file:
 
 ```html
 <script src="js/imgcache.js"></script>
@@ -74,13 +77,13 @@ See `ImgCache.options` at the top of the source file for more settings.
 After setting any custom configuration, initialize the cache:
 
 ```javascript
-ImgCache.init(function(){
+ImgCache.init(function () {
     alert('ImgCache init: success!');
 
     // from within this function you're now able to call other ImgCache methods
     // or you can wait for the ImgCacheReady event
 
-}, function(){
+}, function () {
     alert('ImgCache init: error! Check the log for errors');
 });
 ```
@@ -144,7 +147,7 @@ Clearing the cache
 To remove all cached files, clear the local cache folder:
 
 ```javascript
-ImgCache.clearCache(function(){
+ImgCache.clearCache(function () {
   // continue cleanup...
 }, function () {
   // something went wrong
@@ -169,7 +172,7 @@ High level API
 * ImgCache.**useCachedBackground**() *-- replaces the background image source of the given element with the cached version*
 * ImgCache.**useBackgroundOnlineFile**() *-- replaces back a background image with the original (online) version*
 * ImgCache.**removeFile**() *-- removes a given file from the cache*
-* ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method *
+* ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method*
 
 Private methods are accessible through:
 
@@ -197,11 +200,11 @@ Check out the [sample code](examples/promises.html).
 
 Unit tests
 ----------
-Open ```index.html``` and click 'Start unit tests' to launch unit tests.
+Open `index.html` and click 'Start unit tests' to launch unit tests.
 
 Code samples
 ------------
-Open ```index.html``` to check out several examples.
+Open `index.html` to check out several examples.
 
 Release Notes
 -------------

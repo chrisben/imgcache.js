@@ -125,7 +125,7 @@ var ImgCache = {
         return ext;
     };
 
-    Helpers.hasJqueryOrJqueryLite = function (element) {
+    Helpers.hasJqueryOrJqueryLite = function () {
         return (ImgCache.jQuery || ImgCache.jQueryLite); 
     };
 
@@ -142,7 +142,7 @@ var ImgCache = {
     };
 
     Helpers.isCordovaIOS = function () {
-        return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase() == "ios");
+        return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase() === 'ios');
     };
 
     // special case for #93
@@ -369,7 +369,7 @@ var ImgCache = {
                 dirEntry.getFile('.nomedia', {create: true, exclusive: false}, _androidNoMediaFileCreated, _fail);
             } else if (!Helpers.isCordovaWindowsPhone()) {
                 // #73 - iOS: the directory should not be backed up in iCloud
-                if (dirEntry.setMetadata) {
+                if (Helpers.isCordovaIOS() && dirEntry.setMetadata) {
                     dirEntry.setMetadata(function () {
                             /* success*/
                             ImgCache.overridables.log('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
