@@ -16,6 +16,7 @@ This library works with Phonegap/Cordova (v >= 1.7), the supported platforms bei
 * Android
 * iOS
 * Windows Phone 8.1
+* Amazon Fire OS
 
 Most methods are **ASYNCHRONOUS** : use callbacks if required.
 
