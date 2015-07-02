@@ -125,8 +125,8 @@ var ImgCache = {
         return ext;
     };
 
-    Helpers.hasJqueryOrJqueryLite = function () {
-        return (ImgCache.jQuery || ImgCache.jQueryLite); 
+    Helpers.hasJqueryOrJqueryLite = function (element) {
+        return (ImgCache.jQuery || ImgCache.jQueryLite);
     };
 
     Helpers.isCordova = function () {
@@ -163,9 +163,10 @@ var ImgCache = {
     // Fix for #42 (Cordova versions < 4.0)
     Helpers.EntryToURL = function (entry) {
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
-            return entry.toNativeURL();
-        } else {
-            return entry.toURL();
+			  return entry.toNativeURL();
+		  } else {
+			  //fixes undefined is not function on chrome
+			  return entry.toInternalURL ? entry.toInternalURL() : entry.toURL();
         }
     };
 
