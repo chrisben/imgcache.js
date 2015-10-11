@@ -138,7 +138,7 @@ var ImgCache = {
     };
 
     Helpers.isCordovaWindowsPhone = function () {
-        return (Helpers.isCordova() && device && device.platform && device.platform.toLowerCase().indexOf('win32nt') >= 0);
+        return (Helpers.isCordova() && device && device.platform && ((device.platform.toLowerCase().indexOf('win32nt') >= 0) || (device.platform.toLowerCase().indexOf('windows') >= 0)));
     };
 
     Helpers.isCordovaIOS = function () {
