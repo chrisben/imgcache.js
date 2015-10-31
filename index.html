@@ -93,7 +93,7 @@
                         if (ImgCache.getCurrentSize() === 0) {
                             ok();
                         } else {
-                            nok();
+                            nok('Invalid cache size: ' + ImgCache.getCurrentSize());
                         }
                     }
                 },
@@ -227,7 +227,7 @@
                         if (ImgCache.getCurrentSize() > 0) {
                             ok();
                         } else {
-                            nok();
+                            nok('Invalid cache size: ' + ImgCache.getCurrentSize());
                         }
                     }
                 },
@@ -312,14 +312,15 @@
                 cur_test_suite ++;
             };
 
-            var test_method = function (result) {
+            var test_method = function (result, err) {
                 if (result !== undefined) {
                     if (result) {
                         logger('> Result: SUCCESS', LOG_LEVEL_INFO);
                         success_count ++;
                     }
-                    else
-                        logger('> Result: FAILURE', LOG_LEVEL_ERROR);
+                    else {
+                        logger('> Result: FAILURE' + (err ? ' ' + err : ''), LOG_LEVEL_ERROR);
+                    }
                 }
                 if (item >= tests_list.length) {
                     $('#result').text('TEST RESULT: ' + success_count + '/' + num_tests);
@@ -360,7 +361,7 @@
                 // ready for next one
                 item ++;
                 //starts test now!
-                cur_test.test(function () { test_method(true); }, function () { test_method(false); });
+                cur_test.test(function () { test_method(true); }, function (err) { test_method(false, err); });
             };
 
             run_next_test_suite();

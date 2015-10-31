@@ -2,15 +2,20 @@
 
 ## master ##
 
+### FIXED ###
+* Fix for Windows Phone 8.1 (#132 thanks badpenguin and Sturgelose)
+* Fixed empty cache size on Chrome
+
 ### IMPROVED ###
 * Don't set iCloud-related metadata outside iOS (#112)
 * Added note about bower & npm in the README (#104)
+* Avoid double forward slashes in cached files paths (#108)
 
 ## 1.0rc1 ##
 
 ### NEW ###
 * Added a wrapper for imgcache that supports Promises (qimgcache.js)
-* Helpers, DomHelpers and Private classes are now available publicly via ImgCache.helpers, ImgCache.domHelpers and ImgCache.private respectively. Those are not just plain public because you generally shouldn't need them, though they're now accessible.
+* Helpers, DomHelpers and Private classes are now available publicly via ImgCache.helpers, ImgCache.domHelpers and ImgCache.private respectively. Those are not just plain public because you generally shouldn't need them, though they're now accessible
 
 ### FIXED ###
 * Fixed issue on iOS devices (#93)

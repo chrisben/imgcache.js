@@ -112,7 +112,7 @@ var ImgCache = {
     };
 
     // returns extension from filename (without leading '.')
-    Helpers.FileGetExtension = function (filename) {
+    Helpers.fileGetExtension = function (filename) {
         if (!filename) {
             return '';
         }
@@ -125,8 +125,18 @@ var ImgCache = {
         return ext;
     };
 
+    Helpers.appendPaths = function (path1, path2) {
+        if (!path2) {
+            path2 = '';
+        }
+        if (!path1 || path1 === '') {
+            return (path2.length > 0 && path2[0] == '/' ? '' : '/') + path2;
+        }
+        return path1 + ( ((path1[path1.length - 1] == '/') || (path2.length > 0 && path2[0] == '/')) ? '' : '/' ) + path2;
+    };
+
     Helpers.hasJqueryOrJqueryLite = function () {
-        return (ImgCache.jQuery || ImgCache.jQueryLite); 
+        return (ImgCache.jQuery || ImgCache.jQueryLite);
     };
 
     Helpers.isCordova = function () {
@@ -312,19 +322,19 @@ var ImgCache = {
 
     Private.setCurrentSize = function (curSize) {
         ImgCache.overridables.log('current size: ' + curSize, LOG_LEVEL_INFO);
-        if (Private.hasLocalStorage()){
+        if (Private.hasLocalStorage()) {
             localStorage.setItem('imgcache:' + ImgCache.options.localCacheFolder, curSize);
         }
     };
 
     Private.getCachedFilePath = function (img_src) {
-        return ImgCache.options.localCacheFolder + '/' + Private.getCachedFileName(img_src);
+        return Helpers.appendPaths(ImgCache.options.localCacheFolder, Private.getCachedFileName(img_src));
     };
 
     // used for FileTransfer.download only
     Private.getCachedFileFullPath = function (img_src) {
         var local_root = Helpers.EntryGetPath(ImgCache.attributes.dirEntry);
-        return (local_root ? local_root + '/' : '/') + Private.getCachedFileName(img_src);
+        return Helpers.appendPaths(local_root, Private.getCachedFileName(img_src));
     };
 
     Private.getCachedFileName = function (img_src) {
@@ -333,7 +343,7 @@ var ImgCache = {
             return;
         }
         var hash = ImgCache.overridables.hash(img_src);
-        var ext = Helpers.FileGetExtension(Helpers.URIGetFileName(img_src));
+        var ext = Helpers.fileGetExtension(Helpers.URIGetFileName(img_src));
         return hash + (ext ? ('.' + ext) : '');
     };
 
@@ -627,7 +637,7 @@ var ImgCache = {
             filePath,
             function (entry) {
                 entry.getMetadata(function (metadata) {
-                    if (metadata && metadata.hasOwnProperty('size')) {
+                    if (metadata && ('size' in metadata)) {
                         ImgCache.overridables.log('Cached file size: ' + metadata.size, LOG_LEVEL_INFO);
                         Private.setCurrentSize(ImgCache.getCurrentSize() + parseInt(metadata.size, 10));
                     } else {
