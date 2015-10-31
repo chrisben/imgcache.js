@@ -173,15 +173,29 @@ var ImgCache = {
     // Fix for #42 (Cordova versions < 4.0)
     Helpers.EntryToURL = function (entry) {
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
-            return entry.toNativeURL();
+            if (Helpers.isCordovaIOS())  {
+                return Helpers.getNativeUrlForIos(entry);
+            } else {
+                return entry.toNativeURL();
+            }
         } else {
             return entry.toURL();
         }
     };
 
+    // fix for #120 
+    Helpers.getNativeUrlForIos = function (entry) {
+        var rootToURL = entry.filesystem.root.toURL();
+        var rootToInternalURL = entry.filesystem.root.toInternalURL();
+        return entry.nativeURL.replace(rootToURL, rootToInternalURL);
+    };
+
     // Returns a URL that can be used to locate a file
     Helpers.EntryGetURL = function (entry) {
         // toURL for html5, toURI for cordova 1.x
+        if (Helpers.isCordovaIOS()) {
+            return Helpers.getNativeUrlForIos(entry);
+        }
         return (typeof entry.toURL === 'function' ? Helpers.EntryToURL(entry) : entry.toURI());
     };
 
@@ -193,7 +207,7 @@ var ImgCache = {
                 if (Helpers.isCordovaAndroidOlderThan3_3()) {
                     return entry.fullPath;
                 } else {
-                    return entry.nativeURL;
+                    return Helpers.getNativeUrlForIos(entry);
                 }
             }
             // From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
