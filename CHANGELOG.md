@@ -11,6 +11,7 @@
 * Don't set iCloud-related metadata outside iOS (#112)
 * Added note about bower & npm in the README (#104)
 * Avoid double forward slashes in cached files paths (#108)
+* Added Meteor integration (#125 thanks @caio-ribeiro-pereira)
 
 ## 1.0rc1 ##
 
