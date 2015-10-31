@@ -174,6 +174,9 @@ var ImgCache = {
     Helpers.EntryToURL = function (entry) {
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
             return entry.toNativeURL();
+        } else if (typeof entry.toInternalURL === 'function') {
+            // Fix for #97
+            return entry.toInternalURL();
         } else {
             return entry.toURL();
         }

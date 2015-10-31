@@ -4,7 +4,8 @@
 
 ### FIXED ###
 * Fix for Windows Phone 8.1 (#132 thanks badpenguin and Sturgelose)
-* Fixed empty cache size on Chrome
+* Fix for empty cache size on Chrome
+* Fix for 'Not allowed to load local resource' error (#97, #115 thanks Maistho)
 
 ### IMPROVED ###
 * Don't set iCloud-related metadata outside iOS (#112)
