@@ -2,6 +2,8 @@
 
 ## master ##
 
+## 1.0rc2 ##
+
 ### FIXED ###
 * Fix for Windows Phone 8.1 (#132 thanks badpenguin and Sturgelose)
 * Fix for empty cache size on Chrome
