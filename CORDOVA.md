@@ -76,3 +76,26 @@ If you only want to do tests you can allow access to all domains to avoid this k
 In order to avoid possible security issues, always limit the allowed domains list whenever possible.
 
 For more information about this access origin configuration see [Whitelist Guide](http://docs.phonegap.com/en/edge/guide_appdev_whitelist_index.md.html#Whitelist%20Guide).
+
+## Android
+
+For Android, it has been reported in [#148](https://github.com/chrisben/imgcache.js/issues/148) that the following is also required for Android:
+
+```xml
+<access origin="cdvfile://*" />
+```
+
+If you use the whitelist plugin you probably have to add the following as well:
+
+```xml
+<allow-intent href="cdvfile://*" />
+```
+
+## iOS
+
+To keep cached images persistent across app updates, add the following to your
+config.xml file:
+
+```xml
+<preference name="iosPersistentFileLocation" value="Library" />
+```

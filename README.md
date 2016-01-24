@@ -257,7 +257,7 @@ Wrappers for AngularJS:
 
 License
 -------
-Copyright 2012-2015 (c) Christophe BENOIT - [Wobis](http://www.wobis.fr)
+Copyright 2012-2016 (c) Christophe BENOIT
 
 Apache License - see LICENSE.md
 

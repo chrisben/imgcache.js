@@ -10,10 +10,7 @@
 
 	<description>Test application</description>
 
-	<author href="http://www.wobis.fr"
-		email="christophe@wobis.fr">
-		Christophe Benoit
-	</author>
+	<author>ImgCache</author>
 
 	<feature name="http://api.phonegap.com/1.0/file"/>
 	<feature name="http://api.phonegap.com/1.0/device"/>
@@ -22,7 +19,7 @@
 	<gap:plugin name="org.apache.cordova.file" />
 	<gap:plugin name="org.apache.cordova.device" />
 	<gap:plugin name="org.apache.cordova.file-transfer" />
-	
+
 	<feature name="Device">
 		<param name="ios-package" value="CDVDevice" />
 		<param name="android-package" value="org.apache.cordova.device.Device" />
@@ -35,11 +32,13 @@
 		<param name="ios-package" value="CDVFileTransfer" />
 		<param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
 	</feature>
-	
+
 	<preference name="orientation" value="default" />
 	<preference name="target-device" value="universal" />
 	<preference name="fullscreen" value="true" />
 	<preference name="phonegap-version" value="3.3.0" />
 
 	<access origin="*" />
+<!--	<access origin="cdvfile://*" /> -->
+
 </widget>

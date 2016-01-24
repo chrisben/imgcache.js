@@ -2,7 +2,16 @@
 
 ## master ##
 
-## 1.0rc2 ##
+## 1.0.0 ##
+
+### FIXED ###
+* Fixed issue with _chrisben:imgcache_ folder name (Meteor package) (thanks filozoom)
+
+### IMPROVED ###
+* Improved documentation regarding Android and iOS (#148 thanks eekilli)
+* Some code improvements (thanks Lanayx)
+
+## 1.0rc2 ##
 
 ### FIXED ###
 * Fix for Windows Phone 8.1 (#132 thanks badpenguin and Sturgelose)
@@ -13,9 +22,9 @@
 * Don't set iCloud-related metadata outside iOS (#112)
 * Added note about bower & npm in the README (#104)
 * Avoid double forward slashes in cached files paths (#108)
-* Added Meteor integration (#125 thanks @caio-ribeiro-pereira)
+* Added Meteor integration (#125 thanks caio-ribeiro-pereira)
 
-## 1.0rc1 ##
+## 1.0rc1 ##
 
 ### NEW ###
 * Added a wrapper for imgcache that supports Promises (qimgcache.js)

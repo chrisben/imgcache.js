@@ -1,11 +1,10 @@
 {
   "name": "imgcache.js",
-  "version": "1.0rc2",
+  "version": "1.0.0",
   "homepage": "https://github.com/chrisben/imgcache.js",
   "authors": [
 	{
-		"name": "Christophe Benoit",
-		"homepage": "http://www.wobis.fr"
+		"name": "Christophe Benoit"
 	}
   ],
   "repository": {

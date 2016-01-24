@@ -31,7 +31,7 @@
                     testableMethods.push(m);
                 }
             }
-            var testedMethods = {};
+              var testedMethods = {};
 
             ImgCache.options.debug = true;
             ImgCache.overridables.log = logger;
@@ -61,7 +61,8 @@
                     return;
                 }
                 var regexp = /\((.+)\)/;
-                return regexp.exec(backgroundImageProperty)[1];
+                var img_src = regexp.exec(backgroundImageProperty)[1];
+                return img_src.replace(/(['"])/g, '');
             };
 
             var getAppropriateElement = function (element) {
@@ -285,7 +286,7 @@
             var run_next_test_suite = function () {
                 if (cur_test_suite === test_suites_options.length + 1) {
                     // reset non-option
-                    ImgCache.jQuery = window.jQuery;
+                    ImgCache.jQuery = !!window.jQuery;
                     logger('END OF TESTS', LOG_LEVEL_INFO);
                     return;
                 }

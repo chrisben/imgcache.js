@@ -3,7 +3,7 @@
    ImgCache.js wrapper using Q (https://github.com/kriskowal/q) to use promises.
    This version takes care of calling the init method for you.
 
-   Copyright 2014-2015 Christophe BENOIT
+   Copyright 2014-2016 Christophe BENOIT
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

@@ -1,5 +1,5 @@
 /*! imgcache.js
-   Copyright 2012-2015 Christophe BENOIT
+   Copyright 2012-2016 Christophe BENOIT
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '1.0rc2',
+        version: '1.0.0',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,                           /* call the log method ? */
@@ -66,6 +66,9 @@ var ImgCache = {
         if (ImgCache.options.skipURIencoding) {
             return uri;
         } else {
+            if (uri.length >= 2 && uri[0] === '"' && uri[uri.length - 1] === '"') {
+              uri = uri.substr(1, uri.length - 2);
+            }
             var encodedURI = encodeURI(uri);
             /*
             TODO: The following bit of code will have to be checked first (#30)
@@ -472,8 +475,7 @@ var ImgCache = {
         }
         var regexp = /\((.+)\)/;
         var img_src = regexp.exec(backgroundImageProperty)[1];
-
-        return img_src.replace(/(['"])/g, "");
+        return img_src.replace(/(['"])/g, '');
     };
 
     Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, error_callback) {
@@ -580,12 +582,12 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        if (Helpers.isCordova()) {
+        if (Helpers.isCordova() && window.requestFileSystem) {
             // PHONEGAP
             window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
         } else {
             //CHROME
-            window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+            var savedFS = window.requestFileSystem || window.webkitRequestFileSystem;
             window.storageInfo = window.storageInfo || (ImgCache.options.usePersistentCache ? navigator.webkitPersistentStorage : navigator.webkitTemporaryStorage);
             if (!window.storageInfo) {
                 ImgCache.overridables.log('Your browser does not support the html5 File API', LOG_LEVEL_WARNING);
@@ -599,7 +601,7 @@ var ImgCache = {
                 function () {
                     /* success*/
                     var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
-                    window.requestFileSystem(persistence, quota_size, _gotFS, _fail);
+                    savedFS(persistence, quota_size, _gotFS, _fail);
                 },
                 function (error) {
                     /* error*/
@@ -666,7 +668,9 @@ var ImgCache = {
                     );
                 }
 
-                if (success_callback) { success_callback(); }
+                if (success_callback) {
+                  success_callback(entry.toURL());
+                }
             },
             function (error) {
                 if (error.source) { ImgCache.overridables.log('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
