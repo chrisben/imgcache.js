@@ -200,7 +200,9 @@ var ImgCache = {
                 }
             }
             // From Cordova 3.3 onward toURL() seems to be required instead of fullPath (#38)
-            return (typeof entry.toURL === 'function' ? Helpers.EntryToURL(entry) : entry.fullPath);
+            var toUrlNeeded = typeof entry.toURL === 'function' && entry.nativeURL && 
+                (entry.nativeURL !== "undefined/");//workaround for windows phone emulator            
+            return (toUrlNeeded  ? Helpers.EntryToURL(entry) : entry.fullPath);
         } else {
             return entry.fullPath;
         }
@@ -580,12 +582,12 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        if (Helpers.isCordova()) {
+        if (Helpers.isCordova() && window.requestFileSystem) {
             // PHONEGAP
             window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
         } else {
             //CHROME
-            window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+            var savedFS = window.requestFileSystem || window.webkitRequestFileSystem; //fixed strange change of window.requestFileSystem
             window.storageInfo = window.storageInfo || (ImgCache.options.usePersistentCache ? navigator.webkitPersistentStorage : navigator.webkitTemporaryStorage);
             if (!window.storageInfo) {
                 ImgCache.overridables.log('Your browser does not support the html5 File API', LOG_LEVEL_WARNING);
@@ -599,7 +601,7 @@ var ImgCache = {
                 function () {
                     /* success*/
                     var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
-                    window.requestFileSystem(persistence, quota_size, _gotFS, _fail);
+                    savedFS(persistence, quota_size, _gotFS, _fail);
                 },
                 function (error) {
                     /* error*/
@@ -666,7 +668,9 @@ var ImgCache = {
                     );
                 }
 
-                if (success_callback) { success_callback(); }
+                if (success_callback) { 
+                    success_callback(entry.toURL());
+                }
             },
             function (error) {
                 if (error.source) { ImgCache.overridables.log('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
@@ -726,7 +730,7 @@ var ImgCache = {
     // Answer to the question comes in response_callback as the second argument (first being the path)
     ImgCache.isCached = function (img_src, response_callback) {
         ImgCache.getCachedFile(img_src, function (src, file_entry) {
-            response_callback(src, file_entry !== null);
+            response_callback(src, file_entry);
         });
     };
 
