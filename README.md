@@ -252,7 +252,7 @@ See also
 --------
 Wrappers for AngularJS:
 
-* [angular-imgcache.js](https://github.com/jBenes/angular-imgcache.js)
+* [angular-imgcache.js](https://github.com/maistho/angular-imgcache.js)
 * [ngImgCache](https://github.com/sunsus/ngImgCache/)
 
 License
