@@ -1,24 +1,24 @@
 /*! imgcache.js
-   Copyright 2012-2015 Christophe BENOIT
+ Copyright 2012-2016 Christophe BENOIT
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 /*jslint browser:true*/
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '1.0rc2',
+        version: '1.0.0',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,                           /* call the log method ? */
@@ -38,13 +38,13 @@ var ImgCache = {
                 /* jshint ignore:end */
             },
             log: function (str, level) {
-                    'use strict';
-                    if (ImgCache.options.debug) {
-                        if (level === LOG_LEVEL_INFO) { str = 'INFO: ' + str; }
-                        if (level === LOG_LEVEL_WARNING) { str = 'WARN: ' + str; }
-                        if (level === LOG_LEVEL_ERROR) { str = 'ERROR: ' + str; }
-                        console.log(str);
-                    }
+                'use strict';
+                if (ImgCache.options.debug) {
+                    if (level === LOG_LEVEL_INFO) { str = 'INFO: ' + str; }
+                    if (level === LOG_LEVEL_WARNING) { str = 'WARN: ' + str; }
+                    if (level === LOG_LEVEL_ERROR) { str = 'ERROR: ' + str; }
+                    console.log(str);
+                }
             }
         },
         ready: false,
@@ -66,13 +66,16 @@ var ImgCache = {
         if (ImgCache.options.skipURIencoding) {
             return uri;
         } else {
+            if (uri.length >= 2 && uri[0] === '"' && uri[uri.length - 1] === '"') {
+                uri = uri.substr(1, uri.length - 2);
+            }
             var encodedURI = encodeURI(uri);
             /*
-            TODO: The following bit of code will have to be checked first (#30)
-            if (Helpers.isCordova()) {
-                return encodedURI.replace(/%/g, '%25');
-            }
-            */
+             TODO: The following bit of code will have to be checked first (#30)
+             if (Helpers.isCordova()) {
+             return encodedURI.replace(/%/g, '%25');
+             }
+             */
             return encodedURI;
         }
     };
@@ -402,7 +405,11 @@ var ImgCache = {
             ImgCache.ready = true;
             DomHelpers.trigger(document, IMGCACHE_READY_TRIGGERED_EVENT);
         };
-        ImgCache.attributes.filesystem.root.getDirectory(ImgCache.options.localCacheFolder, {create: true, exclusive: false}, _getDirSuccess, _fail);
+        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        fileSource.getDirectory(ImgCache.options.localCacheFolder, {
+            create: true,
+            exclusive: false
+        }, _getDirSuccess, _fail);
     };
 
     // This is a wrapper for phonegap's FileTransfer object in order to implement the same feature
@@ -448,10 +455,13 @@ var ImgCache = {
         }
         xhr.onload = function () {
             if (xhr.response && (xhr.status === 200 || xhr.status === 0)) {
-                filesystem.root.getFile(localPath, { create:true }, function (fileEntry) {
+                var fileSource = (Helpers.isCordovaAndroid)?filesystem:filesystem.root;
+                fileSource.getFile(localPath, {create: true}, function (fileEntry) {
                     fileEntry.createWriter(function (writer) {
                         writer.onerror = error_callback;
-                        writer.onwriteend = function () { success_callback(fileEntry);  };
+                        writer.onwriteend = function () {
+                            success_callback(fileEntry);
+                        };
                         writer.write(xhr.response, error_callback);
                     }, error_callback);
                 }, error_callback);
@@ -472,8 +482,7 @@ var ImgCache = {
         }
         var regexp = /\((.+)\)/;
         var img_src = regexp.exec(backgroundImageProperty)[1];
-
-        return img_src.replace(/(['"])/g, "");
+        return img_src.replace(/(['"])/g, '');
     };
 
     Private.loadCachedFile = function ($element, img_src, set_path_callback, success_callback, error_callback) {
@@ -494,17 +503,17 @@ var ImgCache = {
                     reader.onloadend = function (e) {
                         // prefix with : 'data:' + mime_type + ';base64;' + .. ?
                         /* var mime_type = '';
-                        if (filename && filename.length > 4) {
-                            //TODO: of course relying on extension is wrong.. but we trust our data here
-                            var ext = filename.substr(filename.length - 4).toLowerCase();
-                            if (ext == '.jpg' || ext == 'jpeg') {
-                                mime_type = 'image/jpeg';
-                            } else if (ext == '.png') {
-                                mime_type = 'image/png';
-                            } else if (ext == '.gif') {
-                                mime_type = 'image/gif';
-                            }
-                        } */
+                         if (filename && filename.length > 4) {
+                         //TODO: of course relying on extension is wrong.. but we trust our data here
+                         var ext = filename.substr(filename.length - 4).toLowerCase();
+                         if (ext == '.jpg' || ext == 'jpeg') {
+                         mime_type = 'image/jpeg';
+                         } else if (ext == '.png') {
+                         mime_type = 'image/png';
+                         } else if (ext == '.gif') {
+                         mime_type = 'image/gif';
+                         }
+                         } */
                         var base64content = e.target.result;
                         if (!base64content) {
                             ImgCache.overridables.log('File in cache ' + filename + ' is empty', LOG_LEVEL_WARNING);
@@ -580,12 +589,16 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        if (Helpers.isCordova()) {
+        if (Helpers.isCordova() && window.requestFileSystem) {
             // PHONEGAP
-            window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+            if (Helpers.isCordovaAndroid) { // <--- This solves issue with Android API 23 permissions, this folder does not require them, but had to change all uses of fileSystem.root to be without the .root
+                window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory, _gotFS, _fail);
+            } else{
+                window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+            }
         } else {
             //CHROME
-            window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+            var savedFS = window.requestFileSystem || window.webkitRequestFileSystem;
             window.storageInfo = window.storageInfo || (ImgCache.options.usePersistentCache ? navigator.webkitPersistentStorage : navigator.webkitTemporaryStorage);
             if (!window.storageInfo) {
                 ImgCache.overridables.log('Your browser does not support the html5 File API', LOG_LEVEL_WARNING);
@@ -599,7 +612,7 @@ var ImgCache = {
                 function () {
                     /* success*/
                     var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
-                    window.requestFileSystem(persistence, quota_size, _gotFS, _fail);
+                    savedFS(persistence, quota_size, _gotFS, _fail);
                 },
                 function (error) {
                     /* error*/
@@ -654,11 +667,11 @@ var ImgCache = {
                 if (entry.setMetadata) {
                     entry.setMetadata(
                         function () {
-                        /* success*/
+                            /* success*/
                             ImgCache.overridables.log('com.apple.MobileBackup metadata set', LOG_LEVEL_INFO);
                         },
                         function () {
-                        /* failure */
+                            /* failure */
                             ImgCache.overridables.log('com.apple.MobileBackup metadata could not be set', LOG_LEVEL_WARNING);
                         },
                         { 'com.apple.MobileBackup': 1 }
@@ -666,7 +679,9 @@ var ImgCache = {
                     );
                 }
 
-                if (success_callback) { success_callback(); }
+                if (success_callback) {
+                    success_callback(entry.toURL());
+                }
             },
             function (error) {
                 if (error.source) { ImgCache.overridables.log('Download error source: ' + error.source, LOG_LEVEL_ERROR); }
@@ -699,11 +714,16 @@ var ImgCache = {
         }
 
         // try to get the file entry: if it fails, there's no such file in the cache
-        ImgCache.attributes.filesystem.root.getFile(
+        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        fileSource.getFile(
             path,
-            { create: false },
-            function (file_entry) { response_callback(img_src, file_entry); },
-            function () { response_callback(img_src, null); }
+            {create: false},
+            function (file_entry) {
+                response_callback(img_src, file_entry);
+            },
+            function () {
+                response_callback(img_src, null);
+            }
         );
     };
 
@@ -800,7 +820,8 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        ImgCache.attributes.filesystem.root.getFile(filePath, { create: false }, function (fileEntry) {
+        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        fileSource.getFile(filePath, { create: false }, function (fileEntry) {
             fileEntry.remove(
                 function () {
                     if (success_callback) { success_callback(); }
