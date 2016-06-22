@@ -405,7 +405,7 @@ var ImgCache = {
             ImgCache.ready = true;
             DomHelpers.trigger(document, IMGCACHE_READY_TRIGGERED_EVENT);
         };
-        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        var fileSource = (Helpers.isCordovaAndroid())?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
         fileSource.getDirectory(ImgCache.options.localCacheFolder, {
             create: true,
             exclusive: false
@@ -455,7 +455,7 @@ var ImgCache = {
         }
         xhr.onload = function () {
             if (xhr.response && (xhr.status === 200 || xhr.status === 0)) {
-                var fileSource = (Helpers.isCordovaAndroid)?filesystem:filesystem.root;
+                var fileSource = (Helpers.isCordovaAndroid())?filesystem:filesystem.root;
                 fileSource.getFile(localPath, {create: true}, function (fileEntry) {
                     fileEntry.createWriter(function (writer) {
                         writer.onerror = error_callback;
@@ -591,7 +591,7 @@ var ImgCache = {
         };
         if (Helpers.isCordova() && window.requestFileSystem) {
             // PHONEGAP
-            if (Helpers.isCordovaAndroid) { // <--- This solves issue with Android API 23 permissions, this folder does not require them, but had to change all uses of fileSystem.root to be without the .root
+            if (Helpers.isCordovaAndroid()) { // <--- This solves issue with Android API 23 permissions, this folder does not require them, but had to change all uses of fileSystem.root to be without the .root
                 window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory, _gotFS, _fail);
             } else{
                 window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
@@ -714,7 +714,7 @@ var ImgCache = {
         }
 
         // try to get the file entry: if it fails, there's no such file in the cache
-        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        var fileSource = (Helpers.isCordovaAndroid())?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
         fileSource.getFile(
             path,
             {create: false},
@@ -820,7 +820,7 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to remove file due to ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        var fileSource = (Helpers.isCordovaAndroid)?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
+        var fileSource = (Helpers.isCordovaAndroid())?ImgCache.attributes.filesystem:ImgCache.attributes.filesystem.root;
         fileSource.getFile(filePath, { create: false }, function (fileEntry) {
             fileEntry.remove(
                 function () {
