@@ -1,5 +1,14 @@
 # Release Notes #
 
+## 2.x ##
+
+## 2.0.0 ##
+
+### IMPROVED ###
+* Use 2 characters spacing convention
+* Add eslint
+* Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
+
 ## master ##
 
 ## 1.0.0 ##

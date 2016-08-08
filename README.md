@@ -34,10 +34,10 @@ Installation
 
 Note: You can use [bower](http://bower.io/) or [npm](https://www.npmjs.com/) to add this library as a dependency to your project (repository name: `imgcache.js`).
 
-To start to use this library, import `js/imgcache.js` within your html file:
+To start to use this library, import `src/imgcache.js` within your html file:
 
 ```html
-<script src="js/imgcache.js"></script>
+<script src="src/imgcache.js"></script>
 ```
 
 Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
@@ -193,7 +193,7 @@ Overridable methods
 
 Promises
 --------
-Include also [qimgcache.js](js/qimgcache.js) in your html files to be able to use its [Q Promises](https://github.com/kriskowal/q) interface if you don't like callbacks and prefer to use the simpler then/fail/progress methods.
+Include also [qimgcache.js](src/qimgcache.js) in your html files to be able to use its [Q Promises](https://github.com/kriskowal/q) interface if you don't like callbacks and prefer to use the simpler then/fail/progress methods.
 
 This wrapper also makes sure the init method is always called first, so you SHOULDN'T call this method yourself when using this wrapper.
 
