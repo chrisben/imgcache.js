@@ -5,7 +5,6 @@ body {
     background-color: #bbb;
     margin: 1em;
     padding: 1em;
-    display: inline-block;
     float: right;
     clear: right;
 }
@@ -25,4 +24,7 @@ code {
 }
 h1 {
     text-align: center;
+}
+.errors {
+    color: red;
 }

@@ -12,7 +12,7 @@
 	"url": "git://github.com/chrisben/imgcache.js.git"
   },
   "description": "JS library that stores images locally for offline apps using PhoneGap/Cordova or browsers supporting the new html5 File API",
-  "main": "src/imgcache.js",
+  "main": "lib/imgcache.js",
   "keywords": [
     "cordova",
     "phonegap",

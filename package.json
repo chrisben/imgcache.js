@@ -2,7 +2,7 @@
   "name": "imgcache.js",
   "version": "2.0.0",
   "description": "JS library based on the File API to cache images for offline recovery (target: cordova/phonegap & chrome)",
-  "main": "src/imgcache.js",
+  "main": "lib/imgcache.js",
   "directories": {
     "example": "examples"
   },
@@ -11,7 +11,8 @@
     "url": "git://github.com/chrisben/imgcache.js.git"
   },
   "scripts": {
-    "test": "eslint src/*.js"
+    "test": "eslint lib/*.js",
+    "start": "node server.js"
   },
   "keywords": [
     "image",
@@ -28,6 +29,7 @@
   },
   "homepage": "https://github.com/chrisben/imgcache.js",
   "devDependencies": {
-    "eslint": "^3.2.2"
+    "eslint": "^3.2.2",
+    "static-server": "^2.0.3"
   }
 }

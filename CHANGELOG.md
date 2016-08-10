@@ -4,7 +4,14 @@
 
 ## 2.0.0 ##
 
+### NEW ###
+* Add static-server node implementation to run html examples from a local server (`npm start`)
+
+### FIXED ###
+* Fixed some tests
+
 ### IMPROVED ###
+* Move main library folder to `lib/`
 * Use 2 characters spacing convention
 * Add eslint
 * Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises

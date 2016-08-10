@@ -6,5 +6,5 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom(["METEOR@0.9.5", "METEOR@1.1.0.2"]);
-  api.addFiles("src/imgcache.js");
+  api.addFiles("lib/imgcache.js");
 });
