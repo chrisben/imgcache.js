@@ -691,6 +691,7 @@ var ImgCache = {
             return;
         }
 
+        var original_img_src = img_src;
         img_src = Helpers.sanitizeURI(img_src);
 
         var path = Private.getCachedFilePath(img_src);
@@ -703,11 +704,12 @@ var ImgCache = {
         }
 
         // try to get the file entry: if it fails, there's no such file in the cache
+        // if it fails, we send the original path, not the sanitized one.
         ImgCache.attributes.filesystem.root.getFile(
             path,
             { create: false },
             function (file_entry) { response_callback(img_src, file_entry); },
-            function () { response_callback(img_src, null); }
+            function () { response_callback(original_img_src, null); }
         );
     };
 
