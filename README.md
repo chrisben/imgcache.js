@@ -255,6 +255,10 @@ Wrappers for AngularJS:
 * [angular-imgcache.js](https://github.com/maistho/angular-imgcache.js)
 * [ngImgCache](https://github.com/sunsus/ngImgCache/)
 
+Wrapper for Ionic Framework:
+
+* [ionic-img-cache](https://github.com/vitaliy-bobrov/ionic-img-cache)
+
 License
 -------
 Copyright 2012-2016 (c) Christophe BENOIT
