@@ -21,6 +21,7 @@
 ### FIXED ###
 
 * Fix for background image url parser (#181 thanks vitaliy-bobrov)
+* Prevent url from being sanitized twice (#176 thanks jlopezinc)
 
 ## 1.0.0 ##
 
