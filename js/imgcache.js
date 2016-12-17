@@ -473,7 +473,7 @@ var ImgCache = {
         if (!backgroundImageProperty) {
             return;
         }
-        var regexp = /\((.+)\)/;
+        var regexp = /url\s?\((.+)\)/;
         var img_src = regexp.exec(backgroundImageProperty)[1];
         return img_src.replace(/(['"])/g, '');
     };
