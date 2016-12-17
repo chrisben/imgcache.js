@@ -5,6 +5,7 @@
 ### NEW ###
 
 * Add `withCredentials` option (#179 thanks oliver-schoendorn)
+* Add `cordovaFilesystemRoot` option (#111 thanks tjwoon)
 
 ### FIXED ###
 

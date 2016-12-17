@@ -28,8 +28,9 @@ var ImgCache = {
             usePersistentCache: true,               /* false = use temporary cache storage */
             cacheClearSize: 0,                      /* size in MB that triggers cache clear on init, 0 to disable */
             headers: {},                            /* HTTP headers for the download requests -- e.g: headers: { 'Accept': 'application/jpg' } */
-            withCredentials: false,              /* indicates whether or not cross-site Access-Control requests should be made using credentials */
-            skipURIencoding: false                  /* enable if URIs are already encoded (skips call to sanitizeURI) */
+            withCredentials: false,                 /* indicates whether or not cross-site Access-Control requests should be made using credentials */
+            skipURIencoding: false,                 /* enable if URIs are already encoded (skips call to sanitizeURI) */
+            cordovaFilesystemRoot: null             /* if specified, use one of the Cordova File plugin's app directories for storage */
         },
         overridables: {
             hash: function (s) {
@@ -590,17 +591,14 @@ var ImgCache = {
         };
         if (Helpers.isCordova() && window.requestFileSystem) {
             // PHONEGAP
-            if(ImgCache.options.cordovaFilesystemRoot) {
+            if (ImgCache.options.cordovaFilesystemRoot) {
                 try {
                     window.resolveLocalFileSystemURL(
                         ImgCache.options.cordovaFilesystemRoot,
                         function (dirEntry) {
                             _gotFS({ root: dirEntry });
                         },
-                        function (e) {
-                            if(typeof e == "object") _fail(e);
-                            else _fail({}); // no idea whether the error callback is guaranteed to be called with an object argument
-                        }
+                        _fail
                     );
                 } catch (e) {
                     _fail({ code: e.message })
