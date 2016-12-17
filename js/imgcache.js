@@ -28,6 +28,7 @@ var ImgCache = {
             usePersistentCache: true,               /* false = use temporary cache storage */
             cacheClearSize: 0,                      /* size in MB that triggers cache clear on init, 0 to disable */
             headers: {},                            /* HTTP headers for the download requests -- e.g: headers: { 'Accept': 'application/jpg' } */
+            withCredentials: false,              /* indicates whether or not cross-site Access-Control requests should be made using credentials */
             skipURIencoding: false                  /* enable if URIs are already encoded (skips call to sanitizeURI) */
         },
         overridables: {
@@ -445,6 +446,11 @@ var ImgCache = {
         if (isOnProgressAvailable) {
             xhr.onprogress = on_progress;
         }
+
+        if (ImgCache.options.withCredentials) {
+            xhr.withCredentials = true;
+        }
+
         xhr.responseType = 'blob';
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);
