@@ -18,6 +18,10 @@
 
 ## master ##
 
+### FIXED ###
+
+* Fix for background image url parser (#181 thanks vitaliy-bobrov)
+
 ## 1.0.0 ##
 
 ### FIXED ###
