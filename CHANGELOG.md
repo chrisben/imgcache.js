@@ -2,6 +2,10 @@
 
 ## master ##
 
+### NEW ###
+
+* Add `withCredentials` option (#179 thanks oliver-schoendorn)
+
 ### FIXED ###
 
 * Fix for background image url parser (#181 thanks vitaliy-bobrov)
