@@ -30,7 +30,8 @@ var ImgCache = {
             headers: {},                            /* HTTP headers for the download requests -- e.g: headers: { 'Accept': 'application/jpg' } */
             withCredentials: false,                 /* indicates whether or not cross-site Access-Control requests should be made using credentials */
             skipURIencoding: false,                 /* enable if URIs are already encoded (skips call to sanitizeURI) */
-            cordovaFilesystemRoot: null             /* if specified, use one of the Cordova File plugin's app directories for storage */
+            cordovaFilesystemRoot: null,            /* if specified, use one of the Cordova File plugin's app directories for storage */
+            timeout: 5000                           /* set a timeout option for xhr request */
         },
         overridables: {
             hash: function (s) {
@@ -451,7 +452,7 @@ var ImgCache = {
         if (ImgCache.options.withCredentials) {
             xhr.withCredentials = true;
         }
-
+        xhr.timeout = ImgCache.options.timeout || 30 * 1000
         xhr.responseType = 'blob';
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);
