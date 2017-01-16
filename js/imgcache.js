@@ -1,5 +1,5 @@
 /*! imgcache.js
-   Copyright 2012-2016 Christophe BENOIT
+   Copyright 2012-2017 Christophe BENOIT
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '1.0.0',
+        version: '1.1.0',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,                           /* call the log method ? */
@@ -30,7 +30,8 @@ var ImgCache = {
             headers: {},                            /* HTTP headers for the download requests -- e.g: headers: { 'Accept': 'application/jpg' } */
             withCredentials: false,                 /* indicates whether or not cross-site Access-Control requests should be made using credentials */
             skipURIencoding: false,                 /* enable if URIs are already encoded (skips call to sanitizeURI) */
-            cordovaFilesystemRoot: null             /* if specified, use one of the Cordova File plugin's app directories for storage */
+            cordovaFilesystemRoot: null,            /* if specified, use one of the Cordova File plugin's app directories for storage */
+            timeout: 0                              /* timeout delay in ms for xhr request */
         },
         overridables: {
             hash: function (s) {
@@ -452,6 +453,7 @@ var ImgCache = {
             xhr.withCredentials = true;
         }
 
+        xhr.timeout = ImgCache.options.timeout
         xhr.responseType = 'blob';
         for (var key in headers) {
             xhr.setRequestHeader(key, headers[key]);

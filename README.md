@@ -270,7 +270,7 @@ Wrapper for Ionic Framework:
 
 License
 -------
-Copyright 2012-2016 (c) Christophe BENOIT
+Copyright 2012-2017 (c) Christophe BENOIT
 
 Apache License - see LICENSE.md
 
