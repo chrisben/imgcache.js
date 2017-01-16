@@ -16,12 +16,13 @@
 * Add eslint
 * Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
 
-## master ##
+## 1.1.0 ##
 
 ### NEW ###
 
 * Add `withCredentials` option (#179 thanks oliver-schoendorn)
 * Add `cordovaFilesystemRoot` option (#111 thanks tjwoon)
+* Add `timeout` option (#190 thanks gabrielstuff)
 
 ### FIXED ###
 
