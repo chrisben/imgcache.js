@@ -1,5 +1,5 @@
 {
-  "name": "imgcache.js",
+  "name": "@chrisben/imgcache.js",
   "version": "1.1.0",
   "description": "JS library based on the File API to cache images for offline recovery (target: cordova/phonegap & chrome)",
   "main": "js/imgcache.js",

@@ -1,0 +1,114 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/7.4.0/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@4.0.5
+3 info using node@v7.4.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/chris/code/imgcache.js',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/chris/.npm/imgcache.js/1.1.0/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/chris/.npm correctMkdir not in flight; initializing
+10 info lifecycle imgcache.js@1.1.0~prepublish: imgcache.js@1.1.0
+11 silly lifecycle imgcache.js@1.1.0~prepublish: no script for prepublish, continuing
+12 info lifecycle imgcache.js@1.1.0~prepare: imgcache.js@1.1.0
+13 silly lifecycle imgcache.js@1.1.0~prepare: no script for prepare, continuing
+14 verbose tar pack [ '/Users/chris/.npm/imgcache.js/1.1.0/package.tgz',
+14 verbose tar pack   '/Users/chris/code/imgcache.js' ]
+15 verbose tarball /Users/chris/.npm/imgcache.js/1.1.0/package.tgz
+16 verbose folder /Users/chris/code/imgcache.js
+17 verbose addLocalTarball adding from inside cache /Users/chris/.npm/imgcache.js/1.1.0/package.tgz
+18 verbose correctMkdir /Users/chris/.npm correctMkdir not in flight; initializing
+19 silly cache afterAdd imgcache.js@1.1.0
+20 verbose afterAdd /Users/chris/.npm/imgcache.js/1.1.0/package/package.json not in flight; writing
+21 verbose correctMkdir /Users/chris/.npm correctMkdir not in flight; initializing
+22 verbose afterAdd /Users/chris/.npm/imgcache.js/1.1.0/package/package.json written
+23 silly publish { name: 'imgcache.js',
+23 silly publish   version: '1.1.0',
+23 silly publish   description: 'JS library based on the File API to cache images for offline recovery (target: cordova/phonegap & chrome)',
+23 silly publish   main: 'js/imgcache.js',
+23 silly publish   directories: { example: 'examples' },
+23 silly publish   repository:
+23 silly publish    { type: 'git',
+23 silly publish      url: 'git+https://github.com/chrisben/imgcache.js.git' },
+23 silly publish   scripts: { test: 'open \'/Applications/Google Chrome.app\' \'index.html\' --args --allow-file-access-from-files --allow-file-access' },
+23 silly publish   keywords: [ 'image', 'cache', 'html5', 'file', 'filesystem', 'offline' ],
+23 silly publish   author: { name: 'Christophe BENOIT' },
+23 silly publish   license: 'Apache-2.0',
+23 silly publish   bugs: { url: 'https://github.com/chrisben/imgcache.js/issues' },
+23 silly publish   homepage: 'https://github.com/chrisben/imgcache.js',
+23 silly publish   readme: '# imgcache.js\n\nThe purpose of this JS library is to provide a nice interface for locally storing images for offline apps using PhoneGap/Cordova or [browsers supporting the new html5 File API](http://caniuse.com/filesystem) (e.g. Chrome).\n\nThis library is especially useful for mobile web applications using Phonegap/Cordova where the normal browser cache cannot be relied upon and where offline navigation is quite common.\n\nUsed with [imagesloaded](http://desandro.github.com/imagesloaded/) as shown in `examples/example2.html`, you can see that it can automatically:\n\n* store images in cache\n* replace images with cached version if they fail to load (offline / busy server..)\n\nThis is the best solution I have found so far to provide easy caching of images within a phonegap web app.\n\nThis library works with Phonegap/Cordova (v >= 1.7), the supported platforms being:\n\n* Android\n* iOS\n* Windows Phone 8.1\n* Amazon Fire OS\n\nMost methods are **ASYNCHRONOUS** : use callbacks if required.\n\nUsing imgcache.js\n=================\n\nOptional Dependencies\n---------------------\n* jQuery (any version from 1.6 should do), Zepto or AngularJS (jQueryLite) *optional*\n* Phonegap/Cordova (v >= v1.7) *optional*\n* [imagesloaded] (http://desandro.github.com/imagesloaded/) *optional*\n\nInstallation\n------------\n\nNote: You can use [bower](http://bower.io/) or [npm](https://www.npmjs.com/) to add this library as a dependency to your project (repository name: `imgcache.js`).\n\nTo start to use this library, import `js/imgcache.js` within your html file:\n\n```html\n<script src="js/imgcache.js"></script>\n```\n\nUsing with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).\n\nUsing with Chrome or other browsers that support the [html5 filesystem API]:\n\n* Beware of cross domain ajax issue! retrieve image from the same domain or set CORS solutions with the server...\n* If the page is opened locally (file:// ..), Chrome needs to be loaded with the following flags: `--allow-file-access-from-files --allow-file-access` otherwise the local filesystem will not be accessible (security error)\n* To navigate through the local filesystem open a new tab with filesystem:http://*yourSiteDomain*/persistent/ or filesystem:http://*yourSiteDomain*/temporary/\n\nUsing as AMD / CommonJS modules\n-------------------------------\n* To use this library with AMD:\n```javascript\ndefine(function (require) {\n    var ImgCache = require("imgcache");\n});\n```\n* To use this library with CommonJS:\n```javascript\nvar cache = require("imgcache");\n```\n\nSetup your cache\n----------------\nBefore initializing the cache, you must specify any default option you wish to override:\n\n```javascript\n// write log to console\nImgCache.options.debug = true;\n\n// increase allocated space on Chrome to 50MB, default was 10MB\nImgCache.options.chromeQuota = 50*1024*1024;\n\n// Instead of using the PERSISTENT or TEMPORARY filesystems, use one of the\n// Cordova File plugin\'s app directories\n// (https://github.com/apache/cordova-plugin-file#where-to-store-files).\n// This is friendlier in a mobile application environment as we are able to store\n// files in the correct platform-recommended/enforced directories.\n// WARNING: Make sure this points to a __directory__!\n// NOTE: Only has effect when running in a Cordova environment\nImgCache.options.cordovaFilesystemRoot = cordova.file.dataDirectory;\n```\n\nSee `ImgCache.options` at the top of the source file for more settings.\n\nAfter setting any custom configuration, initialize the cache:\n\n```javascript\nImgCache.init(function () {\n    alert(\'ImgCache init: success!\');\n\n    // from within this function you\'re now able to call other ImgCache methods\n    // or you can wait for the ImgCacheReady event\n\n}, function () {\n    alert(\'ImgCache init: error! Check the log for errors\');\n});\n```\n\nIf the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.\n\nIf you\'re using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called after the `onDeviceReady` event has been triggered, not before!\n\nNote that in Chrome, the user will be prompted to give permission to the page for accessing the local filesystem (which will run the error callback if they refuse).\n\nStoring images\n--------------\nImages are stored into the local folder specified by `ImgCache.options.localCacheFolder`. To add a file to the cache:\n\n```javascript\nImgCache.cacheFile(\'http://my-cdn.com/users/2/profile.jpg\');\n```\n\nTo cache an image defined as a background image, you can either use cacheFile or use the helper function `ImgCache.cacheBackground` that accepts a DOM/jQuery element, retrieves its background attribute and cache that file.\n\nUsing cached images\n-------------------\nOnce an image is stored in the cache, you can replace the file displayed in an img element by the cached one:\n\n```javascript\nvar target = $(\'img#profile\');\nImgCache.cacheFile(target.attr(\'src\'), function () {\n  ImgCache.useCachedFile(target, function () {\n    alert(\'now using local copy\');\n  }, function(){\n    alert(\'could not load from cache\');\n  })\n});\n```\n\nTo check if a file is stored locally:\n\n```javascript\nImgCache.isCached(target.attr(\'src\'), function(path, success) {\n  if (success) {\n    // already cached\n    ImgCache.useCachedFile(target);\n  } else {\n    // not there, need to cache the image\n    ImgCache.cacheFile(target.attr(\'src\'), function () {\n      ImgCache.useCachedFile(target);\n    });\n  }\n});\n```\n\nWhen you no longer want to use the locally cached file:\n\n```javascript\nvar target = $(\'img#profile\');\nImgCache.useOnlineFile(target);\n```\n\nClearing the cache\n------------------\nTo remove all cached files, clear the local cache folder:\n\n```javascript\nImgCache.clearCache(function () {\n  // continue cleanup...\n}, function () {\n  // something went wrong\n});\n```\n\nThere is currently no way to invalidate single images from the cache.\n\nHigh level API\n--------------\n* ImgCache.**init**() *-- initialises the local cache*\n* ImgCache.**cacheFile**() *-- writes a copy of a file into the local cache*\n* ImgCache.**isCached**() *-- checks if a the given image exists in the cache - does not check if the latest version of that file is cached*\n* ImgCache.**getCachedFile**() *-- returns the cached file*\n* ImgCache.**getCachedFileURL**() *-- returns the URL of the cached version of a file*\n* ImgCache.**useCachedFile**() *-- replaces the img src with the cached version*\n* ImgCache.**useCachedFileWithSource**() *-- similar to useCachedFile but with the image source url as extra parameter*\n* ImgCache.**useOnlineFile**() *-- replaces back the img src with the original (online) version // synchronous method*\n* ImgCache.**clearCache**() *-- clears the local cache folder*\n* ImgCache.**isBackgroundCached**() *-- checks if a the given element background image exists in the cache - does not check if the latest version of that file is cached*\n* ImgCache.**cacheBackground**() *-- caches the background image of an element*\n* ImgCache.**useCachedBackground**() *-- replaces the background image source of the given element with the cached version*\n* ImgCache.**useBackgroundOnlineFile**() *-- replaces back a background image with the original (online) version*\n* ImgCache.**removeFile**() *-- removes a given file from the cache*\n* ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method*\n\nPrivate methods are accessible through:\n\n* ImgCache.helpers *-- general helper methods*\n* ImgCache.domHelpers *-- DOM manipulation helper functions*\n* ImgCache.private *-- private methods*\n\nOptions\n-------\nSee ImgCache.options at the top of the source file for the list of options.\nOptions can be overridden from your own script, no need to modify the library!\n\nOverridable methods\n-------------------\n* The hash method used by default in ImgCache is SHA-1. It was chosen for its near absence of collision. Though it might slow things down if you have a large number of files to cache (see #81). You can plug-in your own method by overriding ImgCache.overridables.hash.\n* If logging is enabled, ImgCache output some log entries in the console by default. You can override ImgCache.overridables.log in order to change this behaviour.\n\nPromises\n--------\nInclude also [qimgcache.js](js/qimgcache.js) in your html files to be able to use its [Q Promises](https://github.com/kriskowal/q) interface if you don\'t like callbacks and prefer to use the simpler then/fail/progress methods.\n\nThis wrapper also makes sure the init method is always called first, so you SHOULDN\'T call this method yourself when using this wrapper.\n\nCheck out the [sample code](examples/promises.html).\n\nUnit tests\n----------\nOpen `index.html` and click \'Start unit tests\' to launch unit tests.\n\nCode samples\n------------\nOpen `index.html` to check out several examples.\n\nRelease Notes\n-------------\nSee [CHANGELOG](CHANGELOG.md) for the complete release notes.\n\nTroubleshooting\n---------------\n\nMake sure you first read carefully this documentation. If you are still having issues follow this checklist:\n\n* Set debug ON (```ImgCache.options.debug = true;```) and follow the output within the console carefully.\n* Is init the first method of ImgCache to be called? (check out the console with debug ON to make sure of that)\n* Add alert/console.log calls throughout your code to see what gets called and what doesn\'t.\n* Am I running the latest version of ImgCache? If not, try with the latest version or look into the [changelog](CHANGELOG.md) for fixes related to your problem in newer releases.\n\nIf using Cordova/Phonegap, make sure you read [this documentation](CORDOVA.md) first, then double check the following:\n\n* Are all the required plugins activated ? (config.xml)\n* Are the correct permissions set? (config.xml)\n* Is my code running AFTER the "deviceready" event is launched?\n\nIf you are still stuck, look for a similar problem within existing issues.\n\nIf you cannot find any, open an issue with a description of your problem, a simpler version of your code if you can.\n\nWhenever you post an issue it\'s IMPORTANT you add the following details to get a quicker answer:\n\n* ImgCache version\n* Options used\n* JS frameworks used with it (jQuery / Angular / Ionic ..)\n* Environment : Chrome or Cordova\n* If Cordova is used:\n    * Its version\n    * The version of the plugins\n    * The target OS (iOS / Android..)\n    * The target OS version (e.g: iOS 8.1)\n\n\nKnown issues\n------------\nSee [KNOWN_ISSUES](KNOWN_ISSUES.md) for a list of known issues.\n\nSee also\n--------\nWrappers for AngularJS:\n\n* [angular-imgcache.js](https://github.com/maistho/angular-imgcache.js)\n* [ngImgCache](https://github.com/sunsus/ngImgCache/)\n\nWrapper for Ionic Framework:\n\n* [ionic-img-cache](https://github.com/vitaliy-bobrov/ionic-img-cache)\n\nLicense\n-------\nCopyright 2012-2017 (c) Christophe BENOIT\n\nApache License - see LICENSE.md\n\nCode from http://code.google.com/p/tiny-sha1/ is being used which is under the MIT License.\nThe copyright for this part belongs to the creator of this work.\n',
+23 silly publish   readmeFilename: 'README.md',
+23 silly publish   gitHead: '69ab7a8936d051273fcef0991d125a6cf00d3c06',
+23 silly publish   _id: 'imgcache.js@1.1.0',
+23 silly publish   _shasum: '7fc8401221e29a237dbf9a2aacf4054fd0f4bbf5',
+23 silly publish   _from: '.' }
+24 info lifecycle imgcache.js@1.1.0~prepublishOnly: imgcache.js@1.1.0
+25 silly lifecycle imgcache.js@1.1.0~prepublishOnly: no script for prepublishOnly, continuing
+26 verbose getPublishConfig undefined
+27 silly mapToRegistry name imgcache.js
+28 silly mapToRegistry using default registry
+29 silly mapToRegistry registry https://registry.npmjs.org/
+30 silly mapToRegistry data Result {
+30 silly mapToRegistry   raw: 'imgcache.js',
+30 silly mapToRegistry   scope: null,
+30 silly mapToRegistry   escapedName: 'imgcache.js',
+30 silly mapToRegistry   name: 'imgcache.js',
+30 silly mapToRegistry   rawSpec: '',
+30 silly mapToRegistry   spec: 'latest',
+30 silly mapToRegistry   type: 'tag' }
+31 silly mapToRegistry uri https://registry.npmjs.org/imgcache.js
+32 verbose publish registryBase https://registry.npmjs.org/
+33 silly publish uploading /Users/chris/.npm/imgcache.js/1.1.0/package.tgz
+34 verbose request uri https://registry.npmjs.org/imgcache.js
+35 verbose request sending authorization for write operation
+36 info attempt registry request try #1 at 21:41:30
+37 verbose request using bearer token for auth
+38 verbose request id 52a8dd6bac1e3186
+39 http request PUT https://registry.npmjs.org/imgcache.js
+40 http 403 https://registry.npmjs.org/imgcache.js
+41 verbose headers { 'content-type': 'application/json',
+41 verbose headers   'cache-control': 'max-age=300',
+41 verbose headers   'content-length': '105',
+41 verbose headers   'accept-ranges': 'bytes',
+41 verbose headers   date: 'Mon, 16 Jan 2017 20:41:32 GMT',
+41 verbose headers   via: '1.1 varnish',
+41 verbose headers   connection: 'keep-alive',
+41 verbose headers   'x-served-by': 'cache-lhr6332-LHR',
+41 verbose headers   'x-cache': 'MISS',
+41 verbose headers   'x-cache-hits': '0',
+41 verbose headers   'x-timer': 'S1484599290.945127,VS0,VE1468',
+41 verbose headers   vary: 'Accept-Encoding' }
+42 verbose request invalidating /Users/chris/.npm/registry.npmjs.org/imgcache.js on PUT
+43 error publish Failed PUT 403
+44 verbose stack Error: you do not have permission to publish "imgcache.js". Are you logged in as the correct user? : imgcache.js
+44 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:302:12)
+44 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:290:14)
+44 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:210:14)
+44 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:186:22)
+44 verbose stack     at emitTwo (events.js:106:13)
+44 verbose stack     at Request.emit (events.js:191:7)
+44 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1081:10)
+44 verbose stack     at emitOne (events.js:96:13)
+44 verbose stack     at Request.emit (events.js:188:7)
+44 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1001:12)
+45 verbose statusCode 403
+46 verbose pkgid imgcache.js
+47 verbose cwd /Users/chris/code/imgcache.js
+48 error Darwin 16.3.0
+49 error argv "/usr/local/Cellar/node/7.4.0/bin/node" "/usr/local/bin/npm" "publish"
+50 error node v7.4.0
+51 error npm  v4.0.5
+52 error code E403
+53 error you do not have permission to publish "imgcache.js". Are you logged in as the correct user? : imgcache.js
+54 error If you need help, you may report this error at:
+54 error     <https://github.com/npm/npm/issues>
+55 verbose exit [ 1, true ]
