@@ -16,6 +16,16 @@
 * Add eslint
 * Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
 
+## 1.2.0 ##
+
+### NEW ###
+
+* Added `useCachedBackgroundWithSource` API method (#195)
+
+### FIXED ###
+
+* Fix for usePersistentCache flag not working (#197)
+
 ## 1.1.0 ##
 
 ### NEW ###

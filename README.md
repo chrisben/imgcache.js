@@ -171,6 +171,7 @@ High level API
 * ImgCache.**isBackgroundCached**() *-- checks if a the given element background image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.**cacheBackground**() *-- caches the background image of an element*
 * ImgCache.**useCachedBackground**() *-- replaces the background image source of the given element with the cached version*
+* ImgCache.**useCachedBackgroundWithSource**() *-- similar to useCachedBackground but with the image source url as extra parameter*
 * ImgCache.**useBackgroundOnlineFile**() *-- replaces back a background image with the original (online) version*
 * ImgCache.**removeFile**() *-- removes a given file from the cache*
 * ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method*
