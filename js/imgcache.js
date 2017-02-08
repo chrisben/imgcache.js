@@ -550,6 +550,12 @@ var ImgCache = {
         ImgCache.attributes.filesystem.root.getFile(Private.getCachedFilePath(img_src), {create: false}, _gotFileEntry, _fail);
     };
 
+    Private.setBackgroundImagePath = function ($element, new_src, old_src) {
+        DomHelpers.setBackgroundImage($element, 'url("' + new_src + '")');
+        // store previous url in case we need to reload it
+        DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
+    };
+
     /****************************************************************************/
 
 
@@ -876,13 +882,16 @@ var ImgCache = {
             return;
         }
 
-        var _setBackgroundImagePath = function ($element, new_src, old_src) {
-            DomHelpers.setBackgroundImage($element, 'url("' + new_src + '")');
-            // store previous url in case we need to reload it
-            DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
-        };
+        Private.loadCachedFile($div, img_src, Private.setBackgroundImagePath, success_callback, error_callback);
+    };
 
-        Private.loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, error_callback);
+    ImgCache.useCachedBackgroundWithSource = function ($div, image_url, success_callback, error_callback) {
+
+        if (!Private.isImgCacheLoaded()) {
+            return;
+        }
+
+        Private.loadCachedFile($div, image_url, Private.setBackgroundImagePath, success_callback, error_callback);
     };
 
 
