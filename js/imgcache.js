@@ -623,7 +623,7 @@ var ImgCache = {
                 quota_size,
                 function () {
                     /* success*/
-                    var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
+                    var persistence = (ImgCache.options.usePersistentCache ? window.PERSISTENT : window.TEMPORARY);
                     savedFS(persistence, quota_size, _gotFS, _fail);
                 },
                 function (error) {
