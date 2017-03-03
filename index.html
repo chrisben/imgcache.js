@@ -259,6 +259,12 @@
                     }
                 },
                 {
+                    name: 'useCachedBackgroundWithSource',
+                    test: function (ok, nok) {
+                        ImgCache.useCachedBackgroundWithSource(getAppropriateElement($test_div), $test_div.css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,''), ok, nok);
+                    }
+                },
+                {
                     name: 'getCacheFolderURI',
                     test: function (ok, nok) {
                         var folder = ImgCache.getCacheFolderURI();
@@ -377,7 +383,7 @@
         #version { font-size: 1.2em; }
         #result { font-size: 1.5em; font-weight: bold; }
         #test_img { display: none; }
-        .bgimg { display: none; background-image: url(http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/180px-State-lib-sum.png);  }
+        .bgimg { display: none; background-image: url(https://i.imgur.com/RpikbHf.jpg);  }
         #actions li {
             line-height: 2em;
         }
@@ -411,7 +417,7 @@
     </div>
 
     <!-- this is the test image, it needs to in a CORS enabled domain -->
-    <img id="test_img" src="http://data-gov.tw.rpi.edu/w/images/thumb/b/b1/State-lib-sum.png/120px-State-lib-sum.png">
+    <img id="test_img" src="https://i.imgur.com/RpikbHf.jpg">
     <!-- this is the test div, it needs to in a CORS enabled domain -->
     <div id="test_div" class="bgimg">&nbsp;</div>
     <br/>
