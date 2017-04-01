@@ -39,6 +39,23 @@ To start to use this library, import `js/imgcache.js` within your html file:
 ```html
 <script src="js/imgcache.js"></script>
 ```
+### npm
+
+```shell
+npm install imgcache.js
+```
+
+### bower
+
+```shell
+bower install imgcache.js --save
+```
+
+Add a `<script>` to your `index.html`:
+
+```html
+<script src="/bower_components/imgcache.js/js/imgcache.js"></script>
+```
 
 Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
 
