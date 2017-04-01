@@ -755,6 +755,11 @@ var ImgCache = {
         ImgCache.getCachedFile(img_src, _getURL);
     };
 
+    // Returns the cached URL of a specific source URL
+    ImgCache.returnCachedURL = function (img_src) {
+        return Private.getCachedFileFullPath(img_src);
+    };
+
 
     // checks if a copy of the file has already been cached
     // Reminder: this is an asynchronous method!
