@@ -474,6 +474,9 @@ var ImgCache = {
         xhr.onerror = function () {
             _fail('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3, error_callback);
         };
+       xhr.ontimeout = function () {
+            _fail('XHR error - Image ' + uri + ' timed out - status: ' + xhr.status, 3, error_callback);
+        };
         xhr.send();
     };
 
