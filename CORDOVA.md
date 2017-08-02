@@ -21,10 +21,17 @@ See [config.xml](config.xml) at the root of this project as an example.
 
 #### Cordova 3.x -> 7.x
 
-imgcache.js requires the following Cordova features/plugins:
+imgcache.js requires the following Cordova plugins:
 * [File](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/index.html)
 * [Device](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/index.html)
 * [FileTransfer](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file-transfer/index.html)
+
+
+```
+cordova plugin add cordova-plugin-file --save
+cordova plugin add cordova-plugin-device --save
+cordova plugin add cordova-plugin-file-transfer --save
+```
 
 For each of these plugins you will be required to define the corresponding package for the OS you target. Here is a default configuration for both iOS and Android :
 
