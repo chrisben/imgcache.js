@@ -26,7 +26,6 @@ imgcache.js requires the following Cordova plugins:
 * [Device](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/index.html)
 * [FileTransfer](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file-transfer/index.html)
 
-
 ```
 cordova plugin add cordova-plugin-file --save
 cordova plugin add cordova-plugin-device --save

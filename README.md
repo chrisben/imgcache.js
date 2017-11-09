@@ -34,10 +34,10 @@ Installation
 
 Note: You can use [bower](http://bower.io/) or [npm](https://www.npmjs.com/) to add this library as a dependency to your project (repository name: `imgcache.js`).
 
-To start to use this library, import `js/imgcache.js` within your html file:
+To start to use this library, import `lib/imgcache.js` within your html file:
 
 ```html
-<script src="js/imgcache.js"></script>
+<script src="lib/imgcache.js"></script>
 ```
 
 Using with PhoneGap/Cordova: see [CORDOVA.md](CORDOVA.md).
@@ -203,19 +203,26 @@ Overridable methods
 
 Promises
 --------
-Include also [qimgcache.js](js/qimgcache.js) in your html files to be able to use its [Q Promises](https://github.com/kriskowal/q) interface if you don't like callbacks and prefer to use the simpler then/fail/progress methods.
+Include the [imgcache-promise.js](lib/imgcache-promise.js) wrapper into your project to be able to use ES6-compatible Promises (using [Bluebird](http://bluebirdjs.com/) for instance) if you don't like callbacks and prefer to use the simpler then/catch methods.
 
 This wrapper also makes sure the init method is always called first, so you SHOULDN'T call this method yourself when using this wrapper.
 
 Check out the [sample code](examples/promises.html).
 
-Unit tests
+Unit tests and code samples
 ----------
-Open `index.html` and click 'Start unit tests' to launch unit tests.
+Run a local server:
 
-Code samples
-------------
-Open `index.html` to check out several examples.
+```shell
+npm install
+npm start
+```
+
+Then open the given url in your Chrome browser (`index.html`) and click 'Start unit tests' to launch unit tests.
+
+You will be able to find several code samples.
+
+To lint the main javascript code, you can run `npm test` to start [eslint](http://eslint.org/)
 
 Release Notes
 -------------

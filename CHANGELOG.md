@@ -2,10 +2,21 @@
 
 ## master ##
 
+## 2.0.0 ##
+
+### NEW ###
+* Add static-server node implementation to run html examples from a local server (`npm start`)
+* Add Circle-CI with lint checks for now
+
+### FIXED ###
+* Fix some tests
 * Fix xhr timeout issues (#209 thanks altelante)
 
 ### IMPROVED ###
-
+* Move main library folder to `lib/`
+* Use 2 characters spacing convention
+* Add eslint (`npm test`)
+* Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
 * Improve Cordova documentation (#222 thanks jQrgen)
 
 ## 1.2.0 ##
