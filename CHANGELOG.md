@@ -6,9 +6,10 @@
 
 ### NEW ###
 * Add static-server node implementation to run html examples from a local server (`npm start`)
+* Add Circle-CI with lint checks for now
 
 ### FIXED ###
-* Fixed some tests
+* Fix some tests
 * Fix xhr timeout issues (#209 thanks altelante)
 
 ### IMPROVED ###
