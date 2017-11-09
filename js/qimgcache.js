@@ -105,6 +105,21 @@ var QImgCache = {};
         });
     };
 
+    QImgCache.getCachedFileData = function (url) {
+        return initCheck(function (def) {
+            ImgCache.getCachedFileData(
+                url,
+                function(img_src, base64content) {
+                    if (base64content === null) {
+                        def.reject();
+                    } else {
+                        def.resolve(base64content);
+                    }
+                }
+            );
+        });
+    };
+
     // $img: jQuery or DOM element for the <img/> element
     QImgCache.useCachedFile = function ($img) {
         return initCheck(function (def) {
