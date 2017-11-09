@@ -1,6 +1,6 @@
 # Release Notes #
 
-## 2.x ##
+## master ##
 
 ## 2.0.0 ##
 
@@ -9,12 +9,14 @@
 
 ### FIXED ###
 * Fixed some tests
+* Fix xhr timeout issues (#209 thanks altelante)
 
 ### IMPROVED ###
 * Move main library folder to `lib/`
 * Use 2 characters spacing convention
 * Add eslint
 * Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
+* Improve Cordova documentation (#222 thanks jQrgen)
 
 ## 1.2.0 ##
 

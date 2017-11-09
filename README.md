@@ -91,7 +91,7 @@ ImgCache.init(function () {
 
 If the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.
 
-If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called after the `onDeviceReady` event has been triggered, not before!
+**If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called after the `onDeviceReady` event has been triggered, not before!**
 
 Note that in Chrome, the user will be prompted to give permission to the page for accessing the local filesystem (which will run the error callback if they refuse).
 
