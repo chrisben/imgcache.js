@@ -14,7 +14,7 @@
 ### IMPROVED ###
 * Move main library folder to `lib/`
 * Use 2 characters spacing convention
-* Add eslint
+* Add eslint (`npm test`)
 * Replace qimgcache with imgcache-promise: using new ES6/Bluebird Promises
 * Improve Cordova documentation (#222 thanks jQrgen)
 
@@ -22,7 +22,7 @@
 
 ### NEW ###
 
-* Added `useCachedBackgroundWithSource` API method (#195)
+* Add `useCachedBackgroundWithSource` API method (#195)
 
 ### FIXED ###
 

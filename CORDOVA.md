@@ -4,7 +4,7 @@
 
 You will need to include the cordova.js script in the html files where you want to use imgcache.js - see the `examples` folder.
 
-imgcache.js should be initialised and used after the [deviceready](http://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#deviceready) event has been fired.
+imgcache.js should be initialised and used **AFTER** the [deviceready](http://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#deviceready) event has been fired.
 For instance if the code calling imgcache.js is within a function called `yourCallbackFunction` :
 
 ```
