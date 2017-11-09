@@ -18,7 +18,7 @@
 /*global console,LocalFileSystem,device,FileTransfer,define,module*/
 
 var ImgCache = {
-        version: '1.1.0',
+        version: '1.2.0',
         // options to override before using the library (but after loading this script!)
         options: {
             debug: false,                           /* call the log method ? */
@@ -146,7 +146,7 @@ var ImgCache = {
     };
 
     Helpers.isCordova = function () {
-        return (typeof cordova !== 'undefined' || typeof phonegap !== 'undefined');
+        return (typeof cordova !== 'undefined' || typeof phonegap !== 'undefined') && (cordova||phonegap).platformId !== 'browser';
     };
 
     Helpers.isCordovaAndroid = function () {
@@ -474,6 +474,9 @@ var ImgCache = {
         xhr.onerror = function () {
             _fail('XHR error - Image ' + uri + ' could not be downloaded - status: ' + xhr.status, 3, error_callback);
         };
+       xhr.ontimeout = function () {
+            _fail('XHR error - Image ' + uri + ' timed out - status: ' + xhr.status, 3, error_callback);
+        };
         xhr.send();
     };
 
@@ -550,6 +553,12 @@ var ImgCache = {
         ImgCache.attributes.filesystem.root.getFile(Private.getCachedFilePath(img_src), {create: false}, _gotFileEntry, _fail);
     };
 
+    Private.setBackgroundImagePath = function ($element, new_src, old_src) {
+        DomHelpers.setBackgroundImage($element, 'url("' + new_src + '")');
+        // store previous url in case we need to reload it
+        DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
+    };
+
     /****************************************************************************/
 
 
@@ -623,7 +632,7 @@ var ImgCache = {
                 quota_size,
                 function () {
                     /* success*/
-                    var persistence = (ImgCache.options.usePersistentCache ? window.storageInfo.PERSISTENT : window.storageInfo.TEMPORARY);
+                    var persistence = (ImgCache.options.usePersistentCache ? window.PERSISTENT : window.TEMPORARY);
                     savedFS(persistence, quota_size, _gotFS, _fail);
                 },
                 function (error) {
@@ -876,13 +885,16 @@ var ImgCache = {
             return;
         }
 
-        var _setBackgroundImagePath = function ($element, new_src, old_src) {
-            DomHelpers.setBackgroundImage($element, 'url("' + new_src + '")');
-            // store previous url in case we need to reload it
-            DomHelpers.setAttribute($element, OLD_BACKGROUND_ATTR, old_src);
-        };
+        Private.loadCachedFile($div, img_src, Private.setBackgroundImagePath, success_callback, error_callback);
+    };
 
-        Private.loadCachedFile($div, img_src, _setBackgroundImagePath, success_callback, error_callback);
+    ImgCache.useCachedBackgroundWithSource = function ($div, image_url, success_callback, error_callback) {
+
+        if (!Private.isImgCacheLoaded()) {
+            return;
+        }
+
+        Private.loadCachedFile($div, image_url, Private.setBackgroundImagePath, success_callback, error_callback);
     };
 
 

@@ -4,7 +4,7 @@
 
 You will need to include the cordova.js script in the html files where you want to use imgcache.js - see the `examples` folder.
 
-imgcache.js should be initialised and used after the [deviceready](http://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#deviceready) event has been fired.
+imgcache.js should be initialised and used **AFTER** the [deviceready](http://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#deviceready) event has been fired.
 For instance if the code calling imgcache.js is within a function called `yourCallbackFunction` :
 
 ```
@@ -19,12 +19,19 @@ See [config.xml](config.xml) at the root of this project as an example.
 
 ### Features
 
-#### Cordova 3.x
+#### Cordova 3.x -> 7.x
 
-imgcache.js requires the following Cordova features/plugins:
-* [File](http://docs.phonegap.com/en/edge/cordova_file_file.md.html#File_accessing_the_feature)
-* [Device](http://docs.phonegap.com/en/edge/cordova_device_device.md.html#Device_accessing_the_feature)
-* [FileTransfer](https://github.com/apache/cordova-plugin-file-transfer/blob/dev/doc/index.md)
+imgcache.js requires the following Cordova plugins:
+* [File](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file/index.html)
+* [Device](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/index.html)
+* [FileTransfer](http://cordova.apache.org/docs/en/latest/reference/cordova-plugin-file-transfer/index.html)
+
+
+```
+cordova plugin add cordova-plugin-file --save
+cordova plugin add cordova-plugin-device --save
+cordova plugin add cordova-plugin-file-transfer --save
+```
 
 For each of these plugins you will be required to define the corresponding package for the OS you target. Here is a default configuration for both iOS and Android :
 

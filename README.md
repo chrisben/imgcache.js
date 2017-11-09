@@ -100,7 +100,7 @@ ImgCache.init(function () {
 
 If the cache successfully initializes, `ImgCache.ready` will be set to `true`. You can also watch for the triggered `ImgCacheReady` event.
 
-If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called after the `onDeviceReady` event has been triggered, not before!
+**If you're using imgcache.js with PhoneGap/Cordova, `ImgCache.init()` must be called after the `onDeviceReady` event has been triggered, not before!**
 
 Note that in Chrome, the user will be prompted to give permission to the page for accessing the local filesystem (which will run the error callback if they refuse).
 
@@ -180,6 +180,7 @@ High level API
 * ImgCache.**isBackgroundCached**() *-- checks if a the given element background image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.**cacheBackground**() *-- caches the background image of an element*
 * ImgCache.**useCachedBackground**() *-- replaces the background image source of the given element with the cached version*
+* ImgCache.**useCachedBackgroundWithSource**() *-- similar to useCachedBackground but with the image source url as extra parameter*
 * ImgCache.**useBackgroundOnlineFile**() *-- replaces back a background image with the original (online) version*
 * ImgCache.**removeFile**() *-- removes a given file from the cache*
 * ImgCache.**getCurrentSize**() *-- returns the current size of the ImgCache cache in bytes // synchronous method*

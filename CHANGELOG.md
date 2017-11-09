@@ -2,6 +2,22 @@
 
 ## master ##
 
+* Fix xhr timeout issues (#209 thanks altelante)
+
+### IMPROVED ###
+
+* Improve Cordova documentation (#222 thanks jQrgen)
+
+## 1.2.0 ##
+
+### NEW ###
+
+* Add `useCachedBackgroundWithSource` API method (#195)
+
+### FIXED ###
+
+* Fix for usePersistentCache flag not working (#197)
+
 ## 1.1.0 ##
 
 ### NEW ###
