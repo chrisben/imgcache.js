@@ -1,6 +1,6 @@
 # Apache License
 
-Copyright 2012-2016 (c) Christophe BENOIT
+Copyright 2012-2018 (c) Christophe BENOIT
 
 *Version 2.0, January 2004*
 

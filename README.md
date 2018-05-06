@@ -20,6 +20,8 @@ This library works with Phonegap/Cordova (v >= 1.7), the supported platforms bei
 
 Most methods are **ASYNCHRONOUS** : use callbacks if required.
 
+This library uses plain old ES5 JavaScript with no transpiler and has no dependency.
+
 Using imgcache.js
 =================
 
@@ -173,6 +175,7 @@ High level API
 * ImgCache.**isCached**() *-- checks if a the given image exists in the cache - does not check if the latest version of that file is cached*
 * ImgCache.**getCachedFile**() *-- returns the cached file*
 * ImgCache.**getCachedFileURL**() *-- returns the URL of the cached version of a file*
+* ImgCache.**getCachedFileBase64Data**() *-- returns the base64 data of a cached file*
 * ImgCache.**useCachedFile**() *-- replaces the img src with the cached version*
 * ImgCache.**useCachedFileWithSource**() *-- similar to useCachedFile but with the image source url as extra parameter*
 * ImgCache.**useOnlineFile**() *-- replaces back the img src with the original (online) version // synchronous method*
@@ -276,9 +279,13 @@ Wrapper for Ionic Framework:
 
 * [ionic-img-cache](https://github.com/vitaliy-bobrov/ionic-img-cache)
 
+Ionic example:
+
+* [offline-ionic](https://github.com/mahcr/offline-ionic)
+
 License
 -------
-Copyright 2012-2017 (c) Christophe BENOIT
+Copyright 2012-2018 (c) Christophe BENOIT
 
 Apache License - see LICENSE.md
 

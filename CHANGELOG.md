@@ -2,6 +2,14 @@
 
 ## master ##
 
+## 2.1.0 ##
+
+### NEW ###
+* Add ImgCache.getCachedFileBase64Data (#107 thanks begrossi)
+
+### FIXED ###
+* Fix spaces in src URLs (#201 thanks henkkelder)
+
 ## 2.0.0 ##
 
 ### NEW ###

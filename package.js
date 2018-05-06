@@ -1,6 +1,6 @@
 Package.describe({
   summary: "JS library that stores images locally for offline apps using PhoneGap/Cordova or browsers supporting the new html5 File API",
-  version: "2.0.0",
+  version: "2.1.0",
   git: "https://github.com/chrisben/imgcache.js"
 });
 

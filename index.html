@@ -176,6 +176,28 @@
                     }
                 },
                 {
+                    name: 'getCachedFileBase64Data',
+                    test: function (ok, nok) {
+                        var img_src = getBackgroundImageUrl($test_div);
+                        if (img_src) {
+                            ImgCache.getCachedFileBase64Data(img_src, function (src, base64) {
+                                if (base64) {
+                                    logger('Cached File base64 data: ' + base64.slice(0, 80) + '[...]', LOG_LEVEL_INFO);
+                                    ok();
+                                } else {
+                                    nok();
+                                }
+                            }, function (img_src) {
+                                logger('Failed to retrieve cache base64 data for file: ' + img_src, LOG_LEVEL_ERROR);
+                                nok();
+                            });
+                        }
+                        else {
+                            nok();
+                        }
+                    }
+                },
+                {
                     name: 'useCachedFile',
                     test: function (ok, nok) {
                         ImgCache.useCachedFile(getAppropriateElement($test_img), ok, nok);
