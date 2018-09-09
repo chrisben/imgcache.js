@@ -2,6 +2,9 @@
 
 ## master ##
 
+### NEW ###
+* Add two options for cordova iOS+Android cache folder behaviour (#230 thanks oliversalzburg)
+
 ## 2.1.0 ##
 
 ### NEW ###
