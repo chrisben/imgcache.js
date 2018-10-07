@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git://github.com/chrisben/imgcache.js.git"
   },
+  "engines": {
+    "node": ">=9.10.0"
+  },
   "scripts": {
     "test": "eslint lib/*.js",
     "start": "node server.js"
@@ -29,7 +32,7 @@
   },
   "homepage": "https://github.com/chrisben/imgcache.js",
   "devDependencies": {
-    "eslint": "^3.2.2",
+    "eslint": "^5.6.1",
     "static-server": "^2.0.3"
   }
 }
