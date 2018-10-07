@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git://github.com/chrisben/imgcache.js.git"
   },
+  "engines": {
+    "node": ">=9.10.0"
+  },
   "scripts": {
     "test": "eslint lib/*.js",
     "start": "node server.js"
