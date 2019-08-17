@@ -2,6 +2,10 @@
 
 ## master ##
 
+### FIXED ###
+* Added missing parameter in error callback (#240 thanks ravi9376)
+* Fixed npm dev dependencies (audit fix)
+
 ## 2.1.1 ##
 
 ### FIXED ###
